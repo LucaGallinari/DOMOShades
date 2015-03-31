@@ -4,6 +4,7 @@
 
             <#import "head.ftl" as head>
             <@head.headLayout />
+            <link href="/assets/css/first_page.css" rel="stylesheet">
 
         </head>
         <body class="blue-grey lighten-5">
