@@ -1,0 +1,23 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+
+nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i{
+    height: 250px;
+    line-height: 250px;
+}
+
+.xlarge{
+    width: 100%;
+    height: 100%;
+    top: -20%;
+}

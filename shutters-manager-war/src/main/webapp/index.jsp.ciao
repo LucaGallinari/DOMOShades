@@ -1,0 +1,35 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
+<%@ page import="it.unimore.awd.DomoWrapper, it.unimore.awd.classes.*" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
+<%
+    /**
+    DomoWrapper domoWrapper = new DomoWrapper();
+    String owner;
+    String home;
+    String id;
+    String room_id;
+    String window_id;
+
+     User
+    System.out.println(domoWrapper.putUser("brosds@gmail.com","Dario","Stabili","http://dummy.pic/ture"));
+    System.out.println(domoWrapper.putUser("lukegalli@gmail.com","Luca","Gallinari","http://dummy.pic/ture"));
+
+    User usr = domoWrapper.getUser("brosds@gmail.com");
+    owner=usr.getEmail();
+
+    System.out.println(domoWrapper.deleteUser("lukegalli@gmail.com"));
+     */
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+        <title>Hello World!</title>
+    </head>
+    <body>
+        <h2>ciao</h2>
+    </body>
+</html>

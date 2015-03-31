@@ -1,0 +1,73 @@
+<html>
+<head>
+
+    <title>DomoShades</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+
+</head>
+<body class="blue-grey lighten-5">
+<header>
+    <nav class="top-nav teal">
+        <div class="container">
+            <div class="nav-wrapper">
+                <a href="#" class="brand-logo center">DomoShades</a>
+                <div class="container"><a href="#" data-activates="nav-mobile" class="button-collapse top-nav full"><i class="mdi-navigation-menu"></i></a></div>
+            </div>
+        </div>
+    </nav>
+    <ul id="nav-mobile" class="side-nav fixed">
+        <li class="logo">
+            <div class="user_profile"> <img src="null" /> </div>
+            <div class="user_name"> Dario Stabili </div>
+            <div class="user_email"> brosds@gmail.com </div>
+        </li>
+        <li class="bold"><a href="#" class="waves-effect waves-default">Prova</a></li>
+        <li class="bold"><a href="#" class="waves-effect waves-default">Prova</a></li>
+    </ul>
+</header>
+
+
+<main>
+    <div class="container">
+
+
+    </div>
+</main>
+
+
+<footer class="page-footer blue-grey darken-3">
+    <div class="container">
+        <div class="row">
+            <div class="col l6 s12">
+                <h5 class="white-text">Footer Content</h5>
+                <p class="grey-text text-lighten-4">You can use rows and columns here to organize your footer content.</p>
+            </div>
+            <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                    <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            © 2014 Copyright Text
+            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery is required by Materialize to function -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="js/materialize.min.js"></script>
+<script type="text/javascript" src="js/customs.js"></script>
+
+</body>
+</html>

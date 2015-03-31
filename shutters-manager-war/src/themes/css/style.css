@@ -1,0 +1,45 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+
+nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-collapse i{
+    height: 122px;
+    line-height: 122px;
+}
+
+.logo{
+    background-image: url(../images/profile_background.gif);
+}
+
+.user_profile{
+    position: relative;
+    height: 82px;
+    width: 100%;
+}
+
+.user_name{
+    color: white;
+    position: relative;
+    height: 20px;
+    width: 100%;
+    line-height: 20px;
+    font-size: 16px;
+}
+
+.user_email{
+    color: #f5f5f5;
+    position: relative;
+    height: 20px;
+    width: 100%;
+    line-height: 20px;
+    font-size: 12px;
+}

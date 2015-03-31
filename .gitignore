@@ -1,0 +1,15 @@
+target/
+build/
+.gradle
+datanucleus.log
+.DS_Store
+out
+*.iml
+*.ipr
+*.iws
+.idea
+.settings
+.classpath
+.project
+shutters-manager-war/target/
+shutters-manager-ear/target/
