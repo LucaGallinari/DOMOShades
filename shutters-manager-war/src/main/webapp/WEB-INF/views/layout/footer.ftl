@@ -26,7 +26,7 @@
         </div>
     </footer>
     <#else>
-        No footer
+
     </#if>
 
     <script type="text/javascript" src="/assets/js/materialize.min.js"></script>
