@@ -8,7 +8,7 @@
 </#if>
 
 <#if logged=="true" >
-    <#-- TODO: this case has the same code as index.ftl -->
+    <#-- TODO: this case has the same code as home.ftl -->
     <#-- Some checks -->
     <#if !userNick??>
         <#assign userNick="ERROR: value for 'userNick' not passed to the template."/>

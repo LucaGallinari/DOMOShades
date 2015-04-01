@@ -44,14 +44,14 @@ public class Controller extends HttpServlet {
         String s = req.getPathInfo();
         if (s != null) {
             String[] s1 = s.split("/");
-            System.out.println("Action: " + (s1.length>1? s1[1] : "index"));
+            System.out.println("Action: " + (s1.length>1? s1[1] : "root"));
             try {
                 java.lang.reflect.Method method;
 
                 if (s1.length>1) {
                     method = this.getClass().getMethod(s1[1]);
-                } else {// call the index page if no path has been specified
-                    method = this.getClass().getMethod("index");
+                } else {// call the index page if no path has been specified = root page
+                    method = this.getClass().getMethod("root");
                 }
                 try {
                     method.invoke(this, new Object[] {});
@@ -72,6 +72,12 @@ public class Controller extends HttpServlet {
                     e.printStackTrace();
                 }
             }
+        } else {
+            try {
+                this.errorpage("404 - Page not found!");
+            } catch (ServletException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -79,12 +85,19 @@ public class Controller extends HttpServlet {
             throws IOException, ServletException {
         /* check user login */
         UserService userService = UserServiceFactory.getUserService();
-        User user = userService.getCurrentUser();
+        User gaeUser = userService.getCurrentUser();
 
-        Map<String,String> root = new HashMap<String,String>();
-        root.put("message",message);
-        root.put("logged", (user!=null?"true":"false"));
+        // define page variables
+        Map<String, String> root = new HashMap<String, String>();
+        root.put("message", message);
+        root.put("logged", (gaeUser != null ? "true" : "false"));
+
+        if (gaeUser != null) { // already logged
+            root.put("userEmail", gaeUser.getEmail());
+            root.put("userNick", gaeUser.getNickname()); // TODO: usernick is not the same as firstname
+            root.put("logoutURL", userService.createLogoutURL(req.getRequestURI()));
+        }
+
         TemplateHelper.callTemplate(cfg, resp, "/errorpage.ftl", root);
     }
-
 }
