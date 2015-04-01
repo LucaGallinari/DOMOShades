@@ -26,7 +26,7 @@
         </div>
     </footer>
     <#else>
-        No footer
+
     </#if>
 
     <!-- jQuery is required by Materialize to function -->

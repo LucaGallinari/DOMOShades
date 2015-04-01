@@ -13,6 +13,6 @@
     <p>Yo biatch</p>
 </div>
 <div class="card-action">
-    <a href="${loginURL}" class="waves-effect waves-light btn-large"><i class="mdi-action-account-circle right"></i>button</a>
+    <a href=${loginURL} class="waves-effect waves-light btn-large amber right"><i class="mdi-action-account-circle right"></i>button</a>
 </div>
 </@layout.mainLayout>

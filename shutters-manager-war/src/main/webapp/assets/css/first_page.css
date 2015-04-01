@@ -31,3 +31,11 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
     margin-right: auto;
     width: 100%;
 }
+
+.card a{
+    color: white;
+}
+
+.card a:hover{
+    color: white;
+}

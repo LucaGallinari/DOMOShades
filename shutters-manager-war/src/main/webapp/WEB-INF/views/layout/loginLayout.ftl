@@ -7,7 +7,7 @@
             <link href="/assets/css/first_page.css" rel="stylesheet">
 
         </head>
-        <body class="blue-grey lighten-5">
+        <body class="blue-grey lighten-4">
             <header>
                 <nav class="top-nav teal huge">
                     <div class="container">
@@ -19,16 +19,13 @@
 
             <main>
                 <div class="container">
-                    <div class="card xlarge">
+                    <div class="card xlarge blue-grey lighten-5">
                         <div class="container">
                             <#nested/>
                         </div>
                     </div>
                 </div>
             </main>
-
-            <footer class="page-footer blue-grey lighten-5"></footer>
-
             <#import "footer.ftl" as footer>
             <@footer.footerLayout showFooter=false />
         </body>

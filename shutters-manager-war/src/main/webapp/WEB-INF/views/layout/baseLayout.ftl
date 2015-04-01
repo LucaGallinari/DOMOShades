@@ -6,7 +6,7 @@
             <@head.headLayout />
 
         </head>
-        <body class="blue-grey lighten-5">
+        <body class="blue-grey lighten-4">
             <header>
                 <nav class="top-nav teal">
                     <div class="container">
