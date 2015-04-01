@@ -5,4 +5,7 @@
     <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css"  media="screen,projection"/>
     <link type="text/css" rel="stylesheet" href="/assets/css/style.css">
 
+    <!-- jQuery is required by Materialize to function -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
 </#macro>

@@ -1,6 +1,6 @@
 <#-- Some checks -->
 <#if !loginURL??>
-    <#assign message="ERROR: value for 'loginURL' not passed to the template."/>
+    <#assign loginURL="/"/>
 </#if>
 
 <#-- Import and display -->
