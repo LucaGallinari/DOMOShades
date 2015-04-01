@@ -39,3 +39,7 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
 .card a:hover{
     color: white;
 }
+
+header,main,footer{
+    padding-left: 0;
+}

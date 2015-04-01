@@ -1,6 +1,7 @@
 body {
     display: flex;
     min-height: 100vh;
+    min-width:400px;
     flex-direction: column;
     margin: 0;
     padding: 0;
@@ -8,6 +9,10 @@ body {
 
 main {
     flex: 1 0 auto;
+}
+
+header, main, footer{
+    padding-left: 0;
 }
 
 
@@ -42,3 +47,17 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
     line-height: 20px;
     font-size: 12px;
 }
+
+.removeHome > i {
+    font-size:20pt;
+}
+.hidden {
+    display: none;
+}
+
+@media only screen and (min-width: 992px){
+    header, main, footer{
+        padding-left: 240px;
+    }
+}
+

@@ -6,15 +6,13 @@
             <@head.headLayout />
 
         </head>
-        <body class="blue-grey lighten-4">
+        <body class="grey lighten-5">
             <header>
                 <nav class="top-nav teal">
                     <div class="container">
                         <div class="nav-wrapper">
                             <a href="#" class="brand-logo center">DomoShades</a>
-                            <div class="container">
-                                <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full"><i class="mdi-navigation-menu"></i></a>
-                            </div>
+                            <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full"><i class="mdi-navigation-menu"></i></a>
                         </div>
                     </div>
                 </nav>
@@ -32,7 +30,7 @@
 
 
             <main>
-                <div class="container">
+                <div class="container col s12 m10 l8 offset-l2 offset-m1">
                     <#nested/>
                 </div>
             </main>
