@@ -120,8 +120,9 @@
                 })
                 .done(function( data ) {
                     if (data.toString()=="Ok") {
-                        $(parentId).parent().hide(1000);
-                        $(parentId).parent().remove();
+                        $(parentId).parent().hide(500, function(){
+                            $(parentId).parent().remove();
+                        });
                     } else {
                         $(parentId).html(data.toString());
                     }
