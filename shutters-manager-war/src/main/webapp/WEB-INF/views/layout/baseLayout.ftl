@@ -19,7 +19,7 @@
                     </div>
                 </nav>
                 <ul id="nav-mobile" class="side-nav fixed">
-                    <li class="logo teal darken-4">
+                    <li class="logo teal  darken-2">
                         <div class="user_profile"> <img src="null" /> </div>
                         <div class="user_name"> ${userNick} </div>
                         <div class="user_email"> ${userEmail} </div>

@@ -20,7 +20,9 @@
             <main>
                 <div class="container">
                     <div class="card xlarge">
-                        <h2><#nested/></h2>
+                        <div class="container">
+                            <#nested/>
+                        </div>
                     </div>
                 </div>
             </main>
