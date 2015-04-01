@@ -6,7 +6,7 @@
             <@head.headLayout />
 
         </head>
-        <body class="blue-grey lighten-4">
+        <body>
             <header>
                 <nav class="top-nav teal">
                     <div class="container">
@@ -32,7 +32,7 @@
 
 
             <main>
-                <div class="container">
+                <div class="container col s12 m2 l8 offset-l4 offset-m2">
                     <#nested/>
                 </div>
             </main>
