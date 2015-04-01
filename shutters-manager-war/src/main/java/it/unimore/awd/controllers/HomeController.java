@@ -2,6 +2,7 @@ package it.unimore.awd.controllers;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,16 +68,20 @@ public class HomeController extends Controller {
                     error = "1";
                 } else {// add home
                     System.out.println("Form inviato.");
-                    System.out.println(
-                        domoWrapper.putHome(
-                            owner,
-                            descr,
-                            country,
-                            cap,
-                            city,
-                            address+", "+address_number
-                        )
-                    );
+                    try {
+                        Home h = domoWrapper.putHome(
+                                owner,
+                                descr,
+                                country,
+                                cap,
+                                city,
+                                address + ", " + address_number
+                        );
+                        System.out.println("Casa inserita.");
+                    } catch (Exception e) {
+                        System.out.println("Casa non inserita perchè già presente!");
+                        error = "3";
+                    }
                 }
             }
 

@@ -14,6 +14,9 @@
 <#if !homes??>
     <#assign homes=[]/>
 </#if>
+<#if !error??>
+    <#assign error=""/>
+</#if>
 
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
@@ -21,7 +24,6 @@
     <div>
         <div class="row">
             <div class="section col s6">
-
                 <h5>Homes list</h5>
             <#if homes?has_content>
                 <table class="hoverable">
@@ -56,9 +58,22 @@
             </#if>
             </div>
         </div>
-        <div class="section row s6" id="addHome">
+        <div class="section row col s6" id="addHome">
+
+            <#if error!="">
+                <div class="card-panel red lighten-1">
+                    <#if error=="1">
+                        Home not added! One or more mandatory inputs were blank.
+                    <#elseif error=="2">
+                        Home not added! CAP must be a number.
+                    <#elseif error=="3">
+                        Home not added! This home already exists.
+                    </#if>
+                </div>
+            </#if>
+
             <h5>Add a home</h5>
-            <form class="col" method="post" name>
+            <form class="col" method="post">
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="mdi-editor-mode-edit prefix"></i>
