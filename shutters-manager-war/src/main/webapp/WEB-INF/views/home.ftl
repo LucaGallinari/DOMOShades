@@ -11,11 +11,21 @@
 <#if !logoutURL??>
     <#assign logoutURL="ERROR: value for 'logourURL' not passed to the template."/>
 </#if>
+<#if !homes??>
+    <#assign homes=[]/>
+</#if>
 
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
 <@layout.mainLayout userNick userEmail logoutURL>
     <div style="color: rgb(250,10,10);">
-        ${message}
+        <#if homes?has_content>
+            <h3>Homes list</h3>
+            <#list homes as home>
+                <p>Item: ${home.desription} - ${home.city}</p>
+            </#list>
+        <#else>
+            <h3>No homes found!</h3>
+        </#if>
     </div>
 </@layout.mainLayout>

@@ -3,12 +3,16 @@ package it.unimore.awd.controllers;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import it.unimore.awd.DomoWrapper;
+
+// import it.unimore.awd.classes.User; same name as gaeUser
+import it.unimore.awd.classes.Home;
 
 @SuppressWarnings("serial")
 public class HomeController extends Controller {
@@ -37,6 +41,8 @@ public class HomeController extends Controller {
                     )
                 );
             }
+            // get user's homes
+            List<Home> hl = domoWrapper.getHomesByUser(gaeUser.getEmail());
 
             // init the page
             Map<String, Object> root = new HashMap<String, Object>();
@@ -44,6 +50,7 @@ public class HomeController extends Controller {
             root.put("userEmail", domoUser.getEmail());
             root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
             root.put("logoutURL", userService.createLogoutURL(req.getRequestURI()));
+            root.put("homes", hl);
             TemplateHelper.callTemplate(cfg, resp, ctrlName + "/home.ftl", root);
         } else { // not logged, redirect
             resp.sendRedirect("/");

@@ -24,9 +24,8 @@ public class LoginController extends Controller {
         if (user != null) { // already logged, redirect
             resp.sendRedirect("/home/");
         } else { // not logged,show
-            String msg = "Please <a href='"+ userService.createLoginURL(req.getRequestURI())+ "'>LogIn</a>";
             Map<String, Object> root = new HashMap<String, Object>();
-            root.put("message", msg);
+            root.put("loginURL", userService.createLoginURL(req.getRequestURI()));
             TemplateHelper.callTemplate(cfg, resp, ctrlName + "/login.ftl", root);
         }
     }
