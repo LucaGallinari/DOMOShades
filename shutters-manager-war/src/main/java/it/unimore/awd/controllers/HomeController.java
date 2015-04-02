@@ -20,6 +20,8 @@ public class HomeController extends Controller {
 
     public static final String ctrlName = "";
 
+    private boolean ajax = true;
+
     private UserService userService = UserServiceFactory.getUserService();
     private com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
 
@@ -29,6 +31,7 @@ public class HomeController extends Controller {
         throws IOException, ServletException
     {
         String error = "";
+        this.ajax=false;
 
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
@@ -47,42 +50,8 @@ public class HomeController extends Controller {
             }
 
             // wanted to add a home?
-            if (req.getParameter("submit")!=null)
-            {
-                // retrieve parameters
-                String descr = req.getParameter("description");
-                String country = req.getParameter("country");
-                String city = req.getParameter("city");
-                int cap;
-                try {
-                    cap = Integer.parseInt(req.getParameter("cap"));
-                } catch (NumberFormatException e) {
-                    // error = "2";
-                    cap = 0;
-                }
-                String address = req.getParameter("address");
-                String address_number = req.getParameter("address_number");
-
-                // check manadatory inputs
-                if (descr.isEmpty() || address.isEmpty() || address_number.isEmpty()) {
-                    error = "1";
-                } else {// add home
-                    System.out.println("Form inviato.");
-                    try {
-                        Home h = domoWrapper.putHome(
-                                owner,
-                                descr,
-                                country,
-                                cap,
-                                city,
-                                address + ", " + address_number
-                        );
-                        System.out.println("Casa inserita.");
-                    } catch (Exception e) {
-                        System.out.println("Casa non inserita perchè già presente!");
-                        error = "3";
-                    }
-                }
+            if (req.getParameter("submit")!=null) {
+                error = this.add();
             }
 
             // get user's homes
@@ -102,33 +71,119 @@ public class HomeController extends Controller {
         } else { // not logged, redirect
             resp.sendRedirect("/");
         }
+        this.ajax=true;
     }
 
-    /*  MUST BE CALLED WITH AJAX
-     *
+    /*
      *  Remove a home.
+     *  If called by another function (eg: root()) you need to set ajax global variable
+     *  to false.
+     *  If called by ajax you only need to send the form with "serialized" data.
+     *
+     *  @ret String Ok if successful, an error if not.
+    */
+    public String add()
+            throws IOException, ServletException
+    {
+        String error="";
+
+        // retrieve parameters
+        String descr = req.getParameter("description");
+        String country = req.getParameter("country");
+        String city = req.getParameter("city");
+        int cap;
+        try {
+            cap = Integer.parseInt(req.getParameter("cap"));
+        } catch (NumberFormatException e) {
+            // error = "2";
+            cap = 0;
+        }
+        String address = req.getParameter("address");
+        String address_number = req.getParameter("address_number");
+
+        // check manadatory inputs
+        if (!(descr.isEmpty() || address.isEmpty() || address_number.isEmpty())) {// add home
+            System.out.println("Form inviato.");
+            try {
+                Home h =
+                    domoWrapper.putHome(
+                        gaeUser.getEmail(),
+                        descr,
+                        country,
+                        cap,
+                        city,
+                        address + ", " + address_number
+                    );
+                System.out.println("Casa inserita.");
+                if (this.ajax) {
+                    resp.getWriter().write("Ok: "+h.getId());
+                }
+            } catch (Exception e) {
+                System.out.println("Casa non inserita perchè già presente!");
+                if (this.ajax) {
+                    resp.getWriter().write("Error: this same home already exists!");
+                } else {
+                    error = "3";
+                }
+            }
+        } else {// error
+            if (this.ajax) {
+                resp.getWriter().write("Error: one or more mandatory inputs were empty!");
+            } else {
+                error = "1";
+            }
+        }
+        return error;
+    }
+
+    /*
+     *  Remove a home.
+     *  If called by another function (eg: root()) you need to set ajax global variable
+     *  to false.
+     *  If called by ajax you only need to send the form with "serialized" data.
+     *
      *  @par id Id of the home
      *  @ret String Ok if successful, an error if not.
     */
-    public void remove()
+    public String remove()
         throws IOException, ServletException
     {
-        /* check user login */
+        String error="";
 
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
 
-            // wanted to remove a home?
             String id = req.getParameter("id");
             if (id != null) {
-                domoWrapper.deleteHome(owner, id);
-                resp.getWriter().write("Ok");
+                try {
+                    domoWrapper.deleteHome(owner, id);
+                    if (this.ajax) {
+                        resp.getWriter().write("Ok");
+                    }
+                } catch (Exception e) { // home not found
+                    System.out.println("Casa non cancellata perchè non trovata!");
+                    if (this.ajax) {
+                        resp.getWriter().write("Error: this house has already been deleted!");
+                    } else {
+                        error = "3";
+                    }
+                }
             } else {
-                resp.getWriter().write("Error: expeced and id parameter.");
+                if (this.ajax) {
+                    resp.getWriter().write("Error: expected and id parameter.");
+                } else {
+                    error="2";
+                }
             }
         } else { // not logged, error
-            resp.getWriter().write("Error: you are not logged in.");
+
+            if (this.ajax) {
+                resp.getWriter().write("Error: you are not logged in.");
+            } else {
+                error="1";
+            }
         }
+        return error;
     }
 
     private boolean compareDomouserGaeuser(User domoUser, com.google.appengine.api.users.User gaeUser) {
