@@ -28,8 +28,8 @@
                 <tr>
                     <th data-field="description">Brief description</th>
                     <th data-field="address">Address</th>
-                    <th data-field="city">City</th>
-                    <th data-field="country">Country</th>
+                    <th class="hidden-tc-sm" data-field="city">City</th>
+                    <th class="hidden-tc-m" data-field="country">Country</th>
                     <th class="hidden" data-field="cap">Cap</th>
                     <th>Modify</th>
                     <th>Remove</th>
@@ -40,8 +40,8 @@
                 <tr>
                     <td class="description">${home.description}</td>
                     <td class="address">${home.address}</td>
-                    <td class="city">${home.city}</td>
-                    <td class="country">${home.country}</td>
+                    <td class="hidden-tc-sm city">${home.city}</td>
+                    <td class="hidden-tc-m country">${home.country}</td>
                     <td class="cap hidden">${home.cap}</td>
                     <td id="modifyHome${home.id}">
                         <a data-toggle="${home.id}" class="medium waves-effect waves-green btn-flat modifyHome">

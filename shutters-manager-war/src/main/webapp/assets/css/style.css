@@ -51,13 +51,51 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
 .removeHome > i {
     font-size:20pt;
 }
-.hidden {
+.hidden, .hidden-s, .hidden-sm, .hidden-m,
+.hidden-tc, .hidden-tc-s, .hidden-tc-sm, .hidden-tc-m {
     display: none;
+}
+
+.hidden-s {
+    display:inherit;
 }
 
 @media only screen and (min-width: 992px){
     header, main, footer{
         padding-left: 240px;
     }
+
+    .hidden-s, .hidden-sm, .hidden-m {
+        display:block;
+    }
+    .hidden-tc-s,.hidden-tc-sm, .hidden-tc-m {
+        display:table-cell;
+    }
 }
 
+@media only screen and (min-width: 780px) and (max-width: 991px){
+    header, main, footer{
+        padding-left: 0;
+    }
+
+    .hidden-s, .hidden-sm {
+        display:block;
+    }
+    .hidden-tc-s, .hidden-tc-sm {
+        display:table-cell;
+    }
+}
+
+
+@media only screen and (min-width: 600px) and (max-width: 779px){
+    header, main, footer{
+        padding-left: 0;
+    }
+
+    .hidden-s {
+        display:block;
+    }
+    .hidden-tc-s, {
+        display:table-cell;
+    }
+}
