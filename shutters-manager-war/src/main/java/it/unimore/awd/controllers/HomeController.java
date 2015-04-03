@@ -2,7 +2,6 @@ package it.unimore.awd.controllers;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class HomeController extends Controller {
             }
 
             // wanted to add a home?
-            if (req.getParameter("submit")!=null) {
+            if (req.getParameter("submit")!=null) {// TODO: you can submit even with "modify"
                 error = this.add();
             }
 
@@ -75,7 +74,7 @@ public class HomeController extends Controller {
     }
 
     /*
-     *  Remove a home.
+     *  Add home.
      *  If called by another function (eg: root()) you need to set ajax global variable
      *  to false.
      *  If called by ajax you only need to send the form with "serialized" data.
@@ -87,57 +86,100 @@ public class HomeController extends Controller {
     {
         String error="";
 
-        // retrieve parameters
-        String descr = req.getParameter("description");
-        String country = req.getParameter("country");
-        String city = req.getParameter("city");
-        int cap;
-        try {
-            cap = Integer.parseInt(req.getParameter("cap"));
-        } catch (NumberFormatException e) {
-            // error = "2";
-            cap = 0;
-        }
-        String address = req.getParameter("address");
-        String address_number = req.getParameter("address_number");
+        if (gaeUser != null) { // already logged
+            // retrieve parameters
+            String descr = req.getParameter("description");
+            String country = req.getParameter("country");
+            String city = req.getParameter("city");
+            int cap;
+            try {cap = Integer.parseInt(req.getParameter("cap"));}
+            catch (NumberFormatException e) {cap = 0;}
+            String address = req.getParameter("address");
 
-        // check manadatory inputs
-        if (!(descr.isEmpty() || address.isEmpty() || address_number.isEmpty())) {// add home
-            System.out.println("Form inviato.");
-            try {
-                Home h =
-                    domoWrapper.putHome(
-                        gaeUser.getEmail(),
-                        descr,
-                        country,
-                        cap,
-                        city,
-                        address + ", " + address_number
-                    );
-                System.out.println("Casa inserita.");
-                if (this.ajax) {
-                    resp.getWriter().write("Ok: "+h.getId());
+            // check manadatory inputs
+            if (!(descr.isEmpty() || address.isEmpty())) {// add home
+                System.out.println("Form inviato.");
+                try {
+                    Home h =domoWrapper.putHome(gaeUser.getEmail(),descr,country,cap,city,address);
+                    System.out.println("Casa inserita.");
+                    if (this.ajax) {
+                        resp.getWriter().write("Ok: "+h.getId());
+                    }
+                } catch (Exception e) {
+                    System.out.println("Casa non inserita perchè già presente!");
+                    if (this.ajax) {resp.getWriter().write("Error: this same home already exists!");}
+                    else {error = "3";}
                 }
-            } catch (Exception e) {
-                System.out.println("Casa non inserita perchè già presente!");
-                if (this.ajax) {
-                    resp.getWriter().write("Error: this same home already exists!");
-                } else {
-                    error = "3";
-                }
+            } else {// error
+                if (this.ajax) { resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
+                else {error = "2";}
             }
-        } else {// error
-            if (this.ajax) {
-                resp.getWriter().write("Error: one or more mandatory inputs were empty!");
+        } else { // not logged, error
+            if (this.ajax) {resp.getWriter().write("Error: you are not logged in.");}
+            else {error="1";}
+        }
+        return error;
+        //TODO: remake errors list in layouts
+    }
+
+    /*
+    *  Modify home.
+    *  If called by another function (eg: root()) you need to set ajax global variable
+    *  to false.
+    *  If called by ajax you only need to send the form with "serialized" data.
+    *
+    *  @ret String Ok if successful, an error if not.
+   */
+    public String modify()
+            throws IOException, ServletException
+    {
+        String error="";
+
+        if (gaeUser != null) { // already logged
+            String id = req.getParameter("id");
+
+            if (id != null) {
+                // retrieve parameters
+                String descr = req.getParameter("description");
+                String country = req.getParameter("country");
+                String city = req.getParameter("city");
+                int cap;
+                try {cap = Integer.parseInt(req.getParameter("cap"));}
+                catch (NumberFormatException e) {cap = 0;}
+                String address = req.getParameter("address");
+
+                // check manadatory inputs
+                if (!(descr.isEmpty() || address.isEmpty())) {// add home
+                    System.out.println("Form inviato.");
+                    /*try {
+                        Home h = domoWrapper.putHome(gaeUser.getEmail(),descr,country,cap,city,address);
+                        System.out.println("Casa inserita.");
+                        if (this.ajax) {
+                            resp.getWriter().write("Ok: "+h.getId());
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Casa non inserita perchè già presente!");
+                        if (this.ajax) {resp.getWriter().write("Error: this same home already exists!");}
+                        else {error = "4";}
+                    }*/
+                    resp.getWriter().write("Error: modify method is not fully implemented!");
+                } else {// error
+                    if (this.ajax) {resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
+                    else {error = "3";}
+                }
             } else {
-                error = "1";
+                if (this.ajax) {resp.getWriter().write("Error: expected and id parameter.");}
+                else {error="2"; }
             }
+        } else { // not logged, error
+            if (this.ajax) {resp.getWriter().write("Error: you are not logged in.");}
+            else {error="1";}
         }
         return error;
     }
 
     /*
-     *  Remove a home.
+     *  Remove home.
      *  If called by another function (eg: root()) you need to set ajax global variable
      *  to false.
      *  If called by ajax you only need to send the form with "serialized" data.
@@ -152,8 +194,8 @@ public class HomeController extends Controller {
 
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
-
             String id = req.getParameter("id");
+
             if (id != null) {
                 try {
                     domoWrapper.deleteHome(owner, id);
@@ -162,26 +204,16 @@ public class HomeController extends Controller {
                     }
                 } catch (Exception e) { // home not found
                     System.out.println("Casa non cancellata perchè non trovata!");
-                    if (this.ajax) {
-                        resp.getWriter().write("Error: this house has already been deleted!");
-                    } else {
-                        error = "3";
-                    }
+                    if (this.ajax) {resp.getWriter().write("Error: this house has already been deleted!");}
+                    else {error = "3";}
                 }
             } else {
-                if (this.ajax) {
-                    resp.getWriter().write("Error: expected and id parameter.");
-                } else {
-                    error="2";
-                }
+                if (this.ajax) {resp.getWriter().write("Error: expected and id parameter.");}
+                else {error="2";}
             }
         } else { // not logged, error
-
-            if (this.ajax) {
-                resp.getWriter().write("Error: you are not logged in.");
-            } else {
-                error="1";
-            }
+            if (this.ajax) {resp.getWriter().write("Error: you are not logged in.");}
+            else {error="1";}
         }
         return error;
     }
