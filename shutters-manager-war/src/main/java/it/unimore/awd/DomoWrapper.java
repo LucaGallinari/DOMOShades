@@ -65,6 +65,17 @@ public class DomoWrapper {
         return gson.fromJson(returnString,token.getType());
     }
 
+    public Home updateHome(String owner, Long home, String description, String city, int cap, String country, String address) throws IOException {
+        this.scope= String.format("/home?owner=%s&home=%s&description=%s&city=%s&cap=%s&country=%s&address=%s", owner, home , URLEncoder.encode(description, "UTF-8"), URLEncoder.encode(city,"UTF-8"), cap, URLEncoder.encode(country,"UTF-8"), URLEncoder.encode(address,"UTF-8"));
+        ClientResource cr = new ClientResource(uri+scope);
+        System.out.println(uri+scope);
+        String returnString = cr.put(Home.class).getText();
+        if(returnString.equals("[]"))
+            return null;
+        Gson gson = new Gson();
+        return gson.fromJson(returnString,Home.class);
+    }
+
     public Home putHome(String owner, String description, String city, int cap, String country, String address) throws IOException {
         this.scope= String.format("/home?owner=%s&description=%s&city=%s&cap=%s&country=%s&address=%s", owner, URLEncoder.encode(description, "UTF-8"), URLEncoder.encode(city,"UTF-8"), cap, URLEncoder.encode(country,"UTF-8"), URLEncoder.encode(address,"UTF-8"));
         ClientResource cr = new ClientResource(uri+scope);

@@ -95,12 +95,13 @@ public class HomeController extends Controller {
             try {cap = Integer.parseInt(req.getParameter("cap"));}
             catch (NumberFormatException e) {cap = 0;}
             String address = req.getParameter("address");
-
+            if(city==null) city="";
+            if(country==null) country="";
             // check manadatory inputs
             if (!(descr.isEmpty() || address.isEmpty())) {// add home
                 System.out.println("Form inviato.");
                 try {
-                    Home h =domoWrapper.putHome(gaeUser.getEmail(),descr,country,cap,city,address);
+                    Home h = domoWrapper.putHome(gaeUser.getEmail(),descr,city,cap,country,address);
                     System.out.println("Casa inserita.");
                     if (this.ajax) {
                         resp.getWriter().write("Ok: "+h.getId());
@@ -136,38 +137,40 @@ public class HomeController extends Controller {
         String error="";
 
         if (gaeUser != null) { // already logged
-            String id = req.getParameter("id");
+            try {
+                Long id = Long.parseLong(req.getParameter("id"));
+                //if (id != 0) {
+                    // retrieve parameters
+                    String descr = req.getParameter("description");
+                    String country = req.getParameter("country");
+                    String city = req.getParameter("city");
+                    int cap;
+                    try {cap = Integer.parseInt(req.getParameter("cap"));}
+                    catch (NumberFormatException e) {cap = 0;}
+                    String address = req.getParameter("address");
+                    if(city==null) city="";
+                    if(country==null) country="";
 
-            if (id != null) {
-                // retrieve parameters
-                String descr = req.getParameter("description");
-                String country = req.getParameter("country");
-                String city = req.getParameter("city");
-                int cap;
-                try {cap = Integer.parseInt(req.getParameter("cap"));}
-                catch (NumberFormatException e) {cap = 0;}
-                String address = req.getParameter("address");
-
-                // check manadatory inputs
-                if (!(descr.isEmpty() || address.isEmpty())) {// add home
-                    System.out.println("Form inviato.");
-                    /*try {
-                        Home h = domoWrapper.putHome(gaeUser.getEmail(),descr,country,cap,city,address);
-                        System.out.println("Casa inserita.");
-                        if (this.ajax) {
-                            resp.getWriter().write("Ok: "+h.getId());
+                    // check manadatory inputs
+                    if (!(descr.isEmpty() || address.isEmpty())) {// add home
+                        System.out.println("Form inviato.");
+                        try {
+                            Home h = domoWrapper.updateHome(gaeUser.getEmail(),id,descr,city,cap,country,address);
+                            System.out.println("Casa modificata.");
+                            if (this.ajax) {
+                                resp.getWriter().write("Ok");
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Casa non modificata perchè non è stata apportata alcuna modifica!");
+                            if (this.ajax) {resp.getWriter().write("Error: you didn't make any changes to this house!");}
+                            else {error = "4";}
                         }
-                    } catch (Exception e) {
-                        System.out.println("Casa non inserita perchè già presente!");
-                        if (this.ajax) {resp.getWriter().write("Error: this same home already exists!");}
-                        else {error = "4";}
-                    }*/
-                    resp.getWriter().write("Error: modify method is not fully implemented!");
-                } else {// error
-                    if (this.ajax) {resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
-                    else {error = "3";}
-                }
-            } else {
+                    } else {// error
+                        if (this.ajax) {resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
+                        else {error = "3";}
+                    }
+                //} TODO: number empty?
+            } catch (NumberFormatException e) {
                 if (this.ajax) {resp.getWriter().write("Error: expected and id parameter.");}
                 else {error="2"; }
             }

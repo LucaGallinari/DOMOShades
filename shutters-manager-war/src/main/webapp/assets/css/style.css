@@ -51,25 +51,38 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
 .removeHome > i {
     font-size:20pt;
 }
-.hidden, .hidden-s, .hidden-sm, .hidden-m,
+.hidden, .hidden-s, .hidden-sm, .hidden-m, .hidden-l, .hidden-xl,
 .hidden-tc, .hidden-tc-s, .hidden-tc-sm, .hidden-tc-m {
     display: none;
 }
 
-.hidden-s {
-    display:inherit;
-}
 
-@media only screen and (min-width: 992px){
+@media only screen and (min-width: 1700px){
     header, main, footer{
         padding-left: 240px;
     }
+    .hidden-s, .hidden-sm, .hidden-m, .hidden-l {
+        display:block;
+    }
+    .hidden-tc-s,.hidden-tc-sm, .hidden-tc-m {
+        display:table-cell;
+    }
+    .xl9 {width:75%;}
+    .offset-xl1 {margin-left: 8.33333%; }
+}
 
+@media only screen and (min-width: 992px) and (max-width: 1700px){
+    header, main, footer{
+        padding-left: 240px;
+    }
     .hidden-s, .hidden-sm, .hidden-m {
         display:block;
     }
     .hidden-tc-s,.hidden-tc-sm, .hidden-tc-m {
         display:table-cell;
+    }
+    .show-l {
+        display:block;
     }
 }
 
@@ -77,12 +90,14 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
     header, main, footer{
         padding-left: 0;
     }
-
     .hidden-s, .hidden-sm {
         display:block;
     }
     .hidden-tc-s, .hidden-tc-sm {
         display:table-cell;
+    }
+    .show-l {
+        display:block;
     }
 }
 
@@ -91,11 +106,13 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
     header, main, footer{
         padding-left: 0;
     }
-
     .hidden-s {
         display:block;
     }
-    .hidden-tc-s, {
+    .hidden-tc-s {
         display:table-cell;
+    }
+    .show-l {
+        display:block;
     }
 }

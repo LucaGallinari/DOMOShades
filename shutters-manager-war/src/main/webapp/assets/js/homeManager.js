@@ -70,9 +70,9 @@ $(document).ready(function(){
             data = data.toString();
             if (data=="Ok") { // if everything's ok
                 toast('Home removed!', 3000, 'rounded');
-                $(parentId).parent().hide(500, function(){
+                $('#listHome'+id).hide(500, function(){
                     // some animations
-                    $(parentId).parent().remove();
+                    $(this).remove();
                     if ($('.removeHome').length==0) {
                         $(listHomes).hide();
                         $('#noHomes').show(500);
@@ -117,10 +117,9 @@ $(document).ready(function(){
     $(modifyHomeForm).on('submit', function() {
         // pre ajax request
         var buttonsRow = $(this).find('.buttons-row').first();
-        var id = buttonsRow.find('button').attr('id');
+        var id = buttonsRow.find('button').attr('data-toggle');
         buttonsRow.find('button').hide();
         buttonsRow.append(preloader_wrapper());
-
         // do an ajax req
         $.ajax({
             type: "POST",
@@ -134,7 +133,7 @@ $(document).ready(function(){
             buttonsRow.find('button').show();
             if (data.toString()=="Ok") { // if everything's ok
                 toast('Home modified!', 3000, 'rounded');
-                // TODO: refect changes in the list
+                modifyListElement(id);
             } else { // if not display error
                 toast('Ops! An error occured.', 3000, 'rounded');
                 $('#modifyHomeErrors').html(data).fadeIn();
@@ -145,11 +144,18 @@ $(document).ready(function(){
 
 });
 
+function modifyListElement(id) {
+    $(modifyHomeForm).find('input').each(function(){ // for each input fill the respective td
+        $('#listHome'+id) // get the tr
+            .find('.'+$(this).attr('name')) // get the respective "td"
+            .html($(this).val());// set the value of that element
+    });
+}
+
 function setupModifyForm(id) {
-    $(modifyHomeForm).find('input').each(function(){ // fill each input with respective values
+    $(modifyHomeForm).find('input').each(function(){ // fill each input with respective value
         $(this).val(
-            $('#modifyHome'+id)
-                .parent()   // get "tr" of that home
+            $('#listHome'+id) // get the tr
                 .find('.'+$(this).attr('name')) // get the respective "td"
                 .html() // get the value of that element
         )
@@ -175,11 +181,11 @@ function addListElement(id) {
 
 function list_element(id, descr, addr, city, country, cap) {
     return ' \
-        <tr class="new"> \
+        <tr id="listHome'+(id)+'" class="new"> \
             <td class="description">'+descr+'</td> \
             <td class="address">'+addr+'</td> \
-            <td class="city">'+city+'</td> \
-            <td class="country">'+country+'</td> \
+            <td class="hidden-tc-sm city">'+city+'</td> \
+            <td class="hidden-tc-m country">'+country+'</td> \
             <td class="cap hidden">'+cap+'</td> \
             <td id="modifyHome'+(id)+'"> \
                 <a data-toggle="'+(id)+'" class="medium waves-effect waves-green btn-flat modifyHome"> \
