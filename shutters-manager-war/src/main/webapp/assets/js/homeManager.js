@@ -102,7 +102,9 @@ $(document).ready(function(){
     $(modifyHomeForm).find('label').each(function(){ // change fors
         $(this).attr('for',$(this).attr('for')+'Modify')
     });
-    $(modifyHomeForm).find('button i').attr('class', 'mdi-editor-mode-edit'); // modify button
+
+    $(modifyHomeForm).find('button').attr('class', 'btn-floating btn-flat btn-large waves-effect waves-light light-blue right'); // modify button
+    $(modifyHomeForm).find('button i').attr('class', 'mdi-navigation-check'); // modify button
 
     // events
     $(listHomes).on('click', 'a.modifyHome', function() {
@@ -134,9 +136,11 @@ $(document).ready(function(){
             if (data.toString()=="Ok") { // if everything's ok
                 toast('Home modified!', 3000, 'rounded');
                 modifyListElement(id);
+                /* TODO: Close modal */
             } else { // if not display error
                 toast('Ops! An error occured.', 3000, 'rounded');
                 $('#modifyHomeErrors').html(data).fadeIn();
+                /* TODO: Close errors after some seconds */
             }
         });
         return false; // avoid to execute the actual submit of the form.

@@ -69,8 +69,8 @@
                     <p>You are removing a house and all floors, rooms and shutters associated! You won't be able to undo that.</p>
                 </div>
                 <div class="modal-footer">
-                    <a class="modal-action modal-close waves-effect waves-green btn-flat" id="agreeRemove">Agree</a>
-                    <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat" id="disagreeRemove">Disagree</a>
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat teal-text" id="agreeRemove">Agree</a>
+                    <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat red-text" id="disagreeRemove">Disagree</a>
                 </div>
             </div>
 
