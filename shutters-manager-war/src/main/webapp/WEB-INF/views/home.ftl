@@ -47,17 +47,17 @@
                         <td class="cap hidden">${home.cap}</td>
                         <td id="modifyHome${home.id}">
                             <a data-toggle="${home.id}" class="medium waves-effect waves-green btn-flat modifyHome">
-                                <i class="mdi-editor-mode-edit green-text"></i>
+                                <i class="mdi-content-create green-text"></i>
                             </a>
                         </td>
                         <td id="removeHome${home.id}">
                             <a data-toggle="${home.id}" class="medium waves-effect waves-red btn-flat removeHome">
-                                <i class="mdi-action-highlight-remove red-text"></i>
+                                <i class="mdi-content-clear red-text"></i>
                             </a>
                         </td>
                         <td id="manageHome${home.id}">
                             <a href="/floor/manage?home=${home.id}" class="medium waves-effect waves-red btn-flat manageHome">
-                                <i class="mdi-action-pageview blue-text"></i>
+                                <i class="mdi-content-forward blue-text"></i>
                             </a>
                         </td>
                     </tr>
@@ -75,11 +75,11 @@
                     <p>You are removing a house and all floors, rooms and shutters associated! You won't be able to undo that.</p>
                 </div>
                 <div class="modal-footer">
-                    <a class="modal-action modal-close waves-effect waves-green btn-flat" id="agreeRemove">
-                        Agree&nbsp;<i class="mdi-navigation-check teal-text"></i>
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat teal-text right" id="agreeRemove">
+                        Agree
                     </a>
-                    <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat" id="disagreeRemove">
-                        Disagree&nbsp;<i class="mdi-navigation-close red-text"></i>
+                    <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat left" id="disagreeRemove">
+                        Disagree
                     </a>
                 </div>
             </div>

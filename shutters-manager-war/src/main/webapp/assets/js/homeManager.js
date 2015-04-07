@@ -106,11 +106,11 @@ $(document).ready(function(){
 	$(modifyHomeForm).find('button').attr('class', 'btn-floating btn-flat btn-large waves-effect waves-light light-blue right'); // modify button
     $(modifyHomeForm).find('button i').attr('class', 'mdi-navigation-check'); // modify button
 
-    $(modifyHomeForm).find('button i').attr('class', 'mdi-editor-mode-edit'); // modify button
+    $(modifyHomeForm).find('button i').attr('class', 'mdi-action-done'); // modify button
     // add close modal button
     $(modifyHomeForm).find('.buttons-row').append(
-        '<button class="btn-floating btn-large waves-effect waves-light red accent-2 modal-close spaced-r-20 right"> ' +
-            '<i class="mdi-hardware-keyboard-backspace"></i>' +
+        '<button class="btn-floating btn-large btn-flat waves-effect waves-light modal-close left grey lighten-3"> ' +
+            '<i class="mdi-content-clear grey-text"></i>' +
         '</button>'
     );
 
@@ -145,11 +145,10 @@ $(document).ready(function(){
             if (data.toString()=="Ok") { // if everything's ok
                 toast('Home modified!', 3000, 'rounded');
                 modifyListElement(id);
-                /* TODO: Close modal */
+                $('#modifyModal').closeModal();
             } else { // if not display error
                 toast('Ops! An error occured.', 3000, 'rounded');
-                $('#modifyHomeErrors').html(data).fadeIn();
-                /* TODO: Close errors after some seconds */
+                $('#modifyHomeErrors').html(data).fadeIn().delay(3000).fadeOut();
             }
         });
         return false; // avoid to execute the actual submit of the form.
