@@ -15,7 +15,7 @@ import it.unimore.awd.classes.User;
 import it.unimore.awd.classes.Home;
 
 @SuppressWarnings("serial")
-public class HomeController extends Controller {
+public class FloorController extends Controller {
 
     public static final String ctrlName = "";
 
@@ -49,7 +49,7 @@ public class HomeController extends Controller {
             }
 
             // wanted to add a home?
-            if (req.getParameter("submit")!=null) {// TODO: you can submit even with "modify" and "remove"
+            if (req.getParameter("submit")!=null) {// TODO: you can submit even with "modify"
                 error = this.add();
             }
 

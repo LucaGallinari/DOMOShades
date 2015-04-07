@@ -51,6 +51,13 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
 .removeHome > i {
     font-size:20pt;
 }
+
+.spaced-r-20 {margin-right:20px;}
+.spaced-r-10 {margin-right:10px;}
+.spaced-l-20 {margin-left:20px;}
+.spaced-l-10 {margin-left:10px;}
+
+
 .hidden, .hidden-s, .hidden-sm, .hidden-m, .hidden-l, .hidden-xl,
 .hidden-tc, .hidden-tc-s, .hidden-tc-sm, .hidden-tc-m {
     display: none;

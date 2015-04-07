@@ -55,11 +55,13 @@
                                 <i class="mdi-action-highlight-remove red-text"></i>
                             </a>
                         </td>
-                        <td id="manageHome${home.id}">
-                            <a href="/floor/manage?home=${home.id}" class="medium waves-effect waves-red btn-flat manageHome">
+                        <td id="removeHome${home.id}">
+                            <a href="/${home.id}" class="medium waves-effect waves-red btn-flat manageHome">
                                 <i class="mdi-action-pageview blue-text"></i>
                             </a>
                         </td>
+
+
                     </tr>
                 </#list>
                 </tbody>

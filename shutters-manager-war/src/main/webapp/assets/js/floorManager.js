@@ -2,7 +2,7 @@
  * Created by kalu on 03/04/15.
  *
  * Library of functions for handling homes management
- * with lots of transitions and some ajax request.
+ * with a lost of transitions and some ajax request.
  *
  */
 var addHomeForm     = "#addHomeForm";
@@ -147,7 +147,7 @@ $(document).ready(function(){
             }
         });
         return false; // avoid to execute the actual submit of the form.
-    });
+    })
 
 });
 

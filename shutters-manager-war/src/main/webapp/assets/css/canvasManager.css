@@ -1,0 +1,93 @@
+
+
+.item-icon {
+    float:left;
+    width:40px;
+    text-align: center;
+}
+
+.item-icon > i {
+    font-size: 18pt;
+}
+
+div.active {
+    color:#009efe;
+}
+
+.item-icon > i:hover {
+    color:#43a047;
+    cursor: pointer;
+}
+
+.canvas_list > div {
+    float:left;
+}
+
+.canvas {
+    border: 1px solid #43a047;
+}
+
+.list {
+    width: 100%;
+    margin-top:20px;
+    margin-left:20px;
+    min-width: 200px;
+}
+
+.list > div {
+    width: 100%;
+    display: inline-block;
+    min-width: 200px;
+    max-width:300px;
+}
+.my-list {
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+.my-list .active {
+    background-color:#bbb;
+}
+.my-list .list-el {
+    height:30px;
+}
+.my-list .list-el > div:first-child {
+    width:60%;
+    float:left;
+}
+.my-list .list-el > div {
+    float:right;
+}
+
+.buttons-row {
+    width: 100%;
+    margin-top: 30px;
+    padding-right:30px;
+    text-align: right;
+}
+
+/*BOOTSTRAP REWRITE*/
+.btn-small {
+    padding: 5px;
+
+}
+.right {
+    float:right;
+}
+.left {
+    float:left;
+}
+.brclear {
+    margin:0;
+    padding:0;
+    width:0;
+    height:0;
+    font-size: 0;
+    clear:both;
+}
+.nomargin {
+    margin:0;
+}
+.nopadding {
+    padding:0;
+}
