@@ -76,7 +76,7 @@
                 </div>
                 <div class="modal-footer">
                     <a class="modal-action modal-close waves-effect waves-green btn-flat" id="agreeRemove">
-                        Agree&nbsp;<i class="mdi-navigation-check green-text"></i>
+                        Agree&nbsp;<i class="mdi-navigation-check teal-text"></i>
                     </a>
                     <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat" id="disagreeRemove">
                         Disagree&nbsp;<i class="mdi-navigation-close red-text"></i>
