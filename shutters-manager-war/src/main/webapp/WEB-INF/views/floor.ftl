@@ -27,108 +27,123 @@
 
             <!-- Tools panel -->
             <div class="row">
-                <p>Tools panel - Choose the tool that you want to use.</p>
-                <p>Keyboard shortcuts</p>
-                <ul>
-                    <li>ESC - Toggle "add room" and Save room while adding one.</li>
-                    <li>Q - Toggle "show grid".</li>
-                    <li>+/- - Zoom in and out the grid.</li>
-                    <li>X - Remove last added point while adding a room.</li>
-                    <li>Canc - Remove the selected object.</li>
-                </ul>
-                <div class="row z-depth-1">
-                    <!-- Tools of rooms -->
-                    <div class="col l4 m6 hidden-s">
-                        <p>Manage rooms</p>
-                        <div>
-                            <div class="item-icon" id="addRoom">
-                                <i class="mdi-content-add-circle-outline"></i>
-                                <h6 class="nomargin"><small>Add a room</small></h6>
-                            </div>
-                            <div class="item-icon" id="undoLastPoint">
-                                <i class="mdi-content-undo"></i>
-                                <h6 class="nomargin"><small>Undo last point</small></h6>
-                            </div>
-                            <div class="item-icon" id="removeRoom">
-                                <i class="mdi-content-remove-circle-outline"></i>
-                                <h6 class="nomargin"><small>Remove a room</small></h6>
-                            </div>
-                            <br class="brclear" />
-                        </div>
-                    </div>
-                    <!-- Tools of shutters -->
-                    <div class="col l4 m6 hidden-s">
-                        <p>Manage shutters</p>
-                        <div class="item-icon" id="addShutter">
-                            <i class="mdi-content-add-circle-outline"></i>
-                            <h6 class="nomargin"><small>Add a ahutter</small></h6>
-                        </div>
-                        <div class="item-icon" id="removeShutter">
-                            <i class="mdi-content-remove-circle-outline"></i>
-                            <h6 class="nomargin"><small>Remove a shutter</small></h6>
-                        </div>
-                    </div>
-                    <!-- Drawing area utilities -->
-                    <div class="col l4 m6 hidden-s">
-                        <p>Drawing area utilities</p>
-                        <div class="switch">
-                            <h6 class="nomargin"><small>Show grid</small></h6>
-                            <label>
-                                Off
-                                <input type="checkbox" id="showGrid">
-                                <span class="lever"></span>
-                                On
-                            </label>
-                        </div>
-                        <div class="switch">
-                            <h6 class="nomargin"><small>Lock points on grid</small></h6>
-                            <label>
-                                Off
-                                <input type="checkbox" id="lockGrid">
-                                <span class="lever"></span>
-                                On
-                            </label>
-                        </div>
-                        <div class="switch">
-                            <h6 class="nomargin"><small>Zoom grid</small></h6>
-                            <p class="range-field">
-                                <input type="range" id="zoomGrid" min="0" max="2" />
-                            </p>
-                        </div>
-                    </div>
 
+                <div class="row">
+                    <div class="col m6 offset-l3 offset-m3 hidden-s">
+                        <div class="card" id="keyboard-shortcut-card">
+                            <div class="card-content black-text">
+                                <span class="card-title">Keyboard Shortcuts</span>
+                                <p class="flow-text">
+                                    Become a Pro using these Keyboard Shortcuts!
+                                    <ul>
+                                        <li><div class="teal-text">ESC</div>Toggle "add room" and Save room while adding one.</li>
+                                        <li><div class="teal-text">Q</div>Toggle "show grid".</li>
+                                        <li><div class="teal-text">+/-</div>Zoom in and out the grid.</li>
+                                        <li><div class="teal-text">X</div>Remove last added point while adding a room.</li>
+                                        <li><div class="teal-text">Canc</div>Remove the selected object.</li>
+                                    </ul>
+                                </p>
+                            </div>
+                            <div class="card-action row buttons-row">
+                                <!-- TODO: Data Dismiss -->
+                                <a class="btn teal white-text waves-effect waves-light right" onclick="$('#keyboard-shortcut-card').fadeOut()">Got it!</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Canvas and list of rooms -->
-            <div class="row">
-                <div class="col s12">
-                    <div class="canvas col l7 m7 s7 left">
-                        <h5>Draw area</h5>
-                        <canvas id="fabric" height="500" class="z-depth-1"></canvas>
+                <div class="row">
+                    <!-- Tools of rooms -->
+                    <div class="col l7 m7 s7 left">
+                        <div class="col l4 m6 s12">
+                            <p>Manage rooms</p>
+                            <div>
+                                <div class="item-icon" id="addRoom">
+                                    <i class="mdi-content-add-circle-outline"></i>
+                                    <h6 class="nomargin"><small>New Room</small></h6>
+                                </div>
+                                <div class="item-icon" id="undoLastPoint">
+                                    <i class="mdi-content-undo"></i>
+                                    <h6 class="nomargin"><small>Undo</small></h6>
+                                </div>
+                                <div class="item-icon" id="removeRoom">
+                                    <i class="mdi-content-remove-circle-outline"></i>
+                                    <h6 class="nomargin"><small>Delete Room</small></h6>
+                                </div>
+                                <br class="brclear" />
+                            </div>
+                        </div>
+                        <!-- Tools of shutters -->
+                        <div class="col l4 m6 s12">
+                            <p>Manage shutters</p>
+                            <div class="item-icon" id="addShutter">
+                                <i class="mdi-content-add-circle-outline"></i>
+                                <h6 class="nomargin"><small>New Shutter</small></h6>
+                            </div>
+                            <div class="item-icon" id="removeShutter">
+                                <i class="mdi-content-remove-circle-outline"></i>
+                                <h6 class="nomargin"><small>Remove Shutter</small></h6>
+                            </div>
+                        </div>
+                        <!-- Drawing area utilities -->
+
+                        <div class="col l4 m6 offset-m3 hidden-s">
+                            <p>Drawing area utilities</p>
+                            <div class="switch">
+                                <h6 class="nomargin"><small>Show grid</small></h6>
+                                <label>
+                                    Off
+                                    <input type="checkbox" id="showGrid">
+                                    <span class="lever"></span>
+                                    On
+                                </label>
+                            </div>
+                            <div class="switch">
+                                <h6 class="nomargin"><small>Lock points on grid</small></h6>
+                                <label>
+                                    Off
+                                    <input type="checkbox" id="lockGrid">
+                                    <span class="lever"></span>
+                                    On
+                                </label>
+                            </div>
+                            <div class="switch">
+                                <h6 class="nomargin"><small>Zoom grid</small></h6>
+                                <p class="range-field">
+                                    <input type="range" id="zoomGrid" min="0" max="2" />
+                                </p>
+                            </div>
+                        </div>
                     </div>
+
                     <!-- List of rooms -->
                     <div class="col l5 m5 s5 right">
                         <h5>Rooms list</h5>
                         <div class="row">
-                            <ul id="rooms-list" class="collapsible popout" data-collapsible="accordion"></ul>
+                            <ul id="rooms-list" class="collapsible" data-collapsible="accordion"></ul>
                         </div>
                     </div>
                 </div>
 
+                <!-- Canvas -->
+                <div class="row">
+                        <div class="canvas col l12 m12 s12">
+                            <h5>Plant Drawing Area</h5>
+                            <canvas id="fabric" height="500" class="z-depth-1"></canvas>
+                        </div>
 
+                    <!-- Hidden form and buttons -->
+                    <div class="col s12">
+                        <form name="canvasForm" method="POST" id="canvasForm">
+                            <input type="hidden" name="roomsRemoved" value="">
+                            <input type="hidden" name="roomsModified" value="">
+                            <input type="hidden" name="roomsAdded" value="">
+                        </form>
 
-                <!-- Hidden form and buttons -->
-                <div class="col s12">
-                    <form name="canvasForm" method="POST" id="canvasForm">
-                        <input type="hidden" name="roomsRemoved" value="">
-                        <input type="hidden" name="roomsModified" value="">
-                        <input type="hidden" name="roomsAdded" value="">
-                    </form>
-
-                    <div class="buttons-row">
-                        <a href="javascript:resetCanvas();" class="btn btn-warning btn-raised">Reset changes</a>
-                        <a href="javascript:saveCanvas();" class="btn btn-success btn-raised">Save!</a>
+                        <div class="buttons-row">
+                            <a href="javascript:resetCanvas();" class="btn btn-warning btn-raised">Reset changes</a>
+                            <a href="javascript:saveCanvas();" class="btn btn-success btn-raised">Save!</a>
+                        </div>
                     </div>
                 </div>
             </div>

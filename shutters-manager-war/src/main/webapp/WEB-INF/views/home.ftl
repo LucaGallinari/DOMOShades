@@ -56,7 +56,7 @@
                             </a>
                         </td>
                         <td id="manageHome${home.id}">
-                            <a href="/floor/manage?home=${home.id}" class="medium waves-effect waves-red btn-flat manageHome">
+                            <a href="/floor/manage?home=${home.id}" class="medium waves-effect waves-blue btn-flat manageHome">
                                 <i class="mdi-content-forward blue-text"></i>
                             </a>
                         </td>

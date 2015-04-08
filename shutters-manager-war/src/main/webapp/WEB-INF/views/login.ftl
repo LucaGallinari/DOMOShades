@@ -11,9 +11,10 @@
     </div>
     <div class="divider"></div>
     <div class="card-content">
-        <p class="flow-text">Yo biatch! This is Trevor</p>
+        <p class="flow-text">DOMOShades is a simple web interface for easily manage your houses Domotic rolling shutters. <br />
+        In order to use the DOMOShades services you first need to import your houses layouts and windows positions. After that you can easily manage your rolling shutters using our simple rule mechanism.</p>
     </div>
-    <div class="card-action">
-        <a href="${loginURL}" class="waves-effect waves-light btn-large amber right"><i class="mdi-action-account-circle right"></i>button</a>
+    <div class="card-action row buttons-row">
+        <p><a href="${loginURL}" class="waves-effect waves-light btn-large amber right white-text"><i class="mdi-content-forward left white-text"></i>Start DOMOShades</a></p>
     </div>
 </@layout.mainLayout>
