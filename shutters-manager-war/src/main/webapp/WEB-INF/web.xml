@@ -23,6 +23,18 @@
         <url-pattern>/home/*</url-pattern>
     </servlet-mapping>
 
+
+    <servlet>
+        <servlet-name>FloorController</servlet-name>
+        <servlet-class>
+            it.unimore.awd.controllers.FloorController
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FloorController</servlet-name>
+        <url-pattern>/floor/*</url-pattern>
+    </servlet-mapping>
+
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>home</web-resource-name>

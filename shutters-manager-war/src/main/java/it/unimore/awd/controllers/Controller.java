@@ -42,6 +42,7 @@ public class Controller extends HttpServlet {
         System.out.println("Controller: " + req.getServletPath());
 
         String s = req.getPathInfo();
+        System.out.println("Path info: " + s);
         if (s != null) {
             String[] s1 = s.split("/");
             System.out.println("Action: " + (s1.length>1? s1[1] : "root"));

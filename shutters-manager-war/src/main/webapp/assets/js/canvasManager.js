@@ -6,25 +6,10 @@
  * - Change shape of shutters and shutter' pointer
  */
 
-
-var area = w = $(window).width();
-if (w > 768) {
-    if (w > 992) {
-        area=area/12*8;
-    } else {
-        area=area/12*10;
-    }
-    area-=60; // margins and paddings
-    $('#fabric').attr('width', Math.round(area*0.65));
-    $('#list').css('width', Math.round(area*0.35));
-} else {
-    area-=30; // margins and paddings
-    $('#fabric').attr('width', Math.round(area));
-}
-
+$('#fabric').attr('width', $('#fabric').parent().width());
 
 var canvas = new fabric.Canvas('fabric');
-//fabric.Object.prototype.transparentCorners = false;
+canvas.tabIndex=1000;
 
 /*
 * mode: 0, normal
@@ -53,10 +38,12 @@ var currentEdit = null;
 var currentPoly = null;
 
 /* Grid Lines */
+var currentGridIndex = 1;
 var gridLines = [];
-var gridSpaces = {x:20, y:20};
+var gridSpaces = [{x:20, y:20},{x:30, y:30},{x:40, y:40},{x:60, y:60}];
 var dashArray = [5, 5];
 var showGridLines = false;
+var lockGrid = false;
 
 /* ######### ######### ######### ######### ######### #########
  * PolygonExtended is the extension of the Polygon object defined
@@ -78,9 +65,7 @@ function PolygonExtended(pos, id, name) {
         selectable: true,
         hasControls: false,
         lockMovementX: true,
-        lockMovementY: true,
-        left: pos.x,
-        top: pos.y
+        lockMovementY: true
     });
 
     // custom properties
@@ -109,6 +94,30 @@ PolygonExtended.prototype.addPoint = function (pos) {
         y: pos.y - this.fabricPoly.get("top")
     });
     this.fabricPoly.set({points: points});
+};
+/*
+ * Set coords of points.
+ * @points Object with x and y variables
+
+PolygonExtended.prototype.setPoints = function (points) {
+    for(var i=0; i < points.length; ++i) {
+        points[i].x = points[i].x - this.fabricPoly.get("left");
+        points[i].y = points[i].y - this.fabricPoly.get("top");
+    }
+    this.fabricPoly.set({points: points});
+};*/
+/*
+ * Set coords of points.
+ * @points Object with x and y variables
+ */
+PolygonExtended.prototype.logPoints = function () {
+    var polygonCenter = this.fabricPoly.getCenterPoint();
+    var points = this.fabricPoly.get("points");
+    for(var i=0; i < points.length; ++i) {
+        console.log("->point "+i+", x:"+points[i].x+" y:"+points[i].y);
+    }
+    console.log("->point "+i+", l:"+polygonCenter.x+" t:"+polygonCenter.y);
+    //this.fabricPoly.set({points: points});
 };
 /*
  * Set coords of the last added point.
@@ -174,7 +183,7 @@ PolygonExtended.prototype.removeCornersCircles = function(canvas) {
 /*
  * Calculate the left-most and top-most points of the polygon.
  * @return Object with left and top points or Null if no points are found.
- */
+
 PolygonExtended.prototype.getLeftAndTopPoints = function () {
     var points = this.fabricPoly.get("points");
     if (points.length == 0) {
@@ -198,7 +207,7 @@ PolygonExtended.prototype.getLeftAndTopPoints = function () {
         left:   this.fabricPoly.get("minX") + min_left,
         top:    this.fabricPoly.get("minY") + min_top
     };
-};
+};*/
 /*
  * Clean the poly and set up on the canvas
  * @makeCircleCallback function Callback for drawing corners' circles
@@ -222,17 +231,33 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
     // remove last point and add the shape to the canvas
     if (removelast) {
         points.pop();
-        this.fabricPoly.set({points: points});
     }
-    // place the polygon correctly
-    var pos = this.getLeftAndTopPoints();
-    this.fabricPoly.set({
-        left: pos.left,
-        top: pos.top,
-        fill: '#222222'
-    });
+    // call helpers
     this.fabricPoly._calcDimensions(false);
     this.fabricPoly.setCoords();
+
+    // place the polygon correctly
+    //var pos = this.getLeftAndTopPoints();
+    var minx = this.fabricPoly.get("minX");
+    var miny = this.fabricPoly.get("minY");
+    var l = this.fabricPoly.get("left") + minx;
+    var t = this.fabricPoly.get("top") + miny;
+    this.fabricPoly.set({
+        left: l,
+        top: t,
+        fill: '#222222'
+    });
+
+    // adjust points's positions
+    var pCenter = this.fabricPoly.getCenterPoint();
+    var adjPoints = points.map(function(p) {
+        return {
+            x: p.x - pCenter.x + l - minx,
+            y: p.y - pCenter.y + t - miny
+        };
+    });
+    this.fabricPoly.set({points: adjPoints});
+
     // add circles
     this.addCornersCircles(makeCircleCallback);
     return 1;
@@ -335,20 +360,22 @@ PolygonExtended.prototype.remove = function (canvas) {
  * Convert some data of this object to a JSON string.
 */
 PolygonExtended.prototype.toJson = function () {
-    var polygonCenter = this.fabricPoly.getCenterPoint();
+    var l = this.fabricPoly.get("left");
+    var t = this.fabricPoly.get("top");
     var room = {
         id: this.id,
         name: this.name,
         pos: {
-            left: this.fabricPoly.get("left"),
-            top: this.fabricPoly.get("top")
+            left: l,
+            top: t
         },
-        points: this.fabricPoly.get("points").map(function(p) {
-                    return {
-                        x: polygonCenter.x + p.x,
-                        y: polygonCenter.y + p.y
-                    };
-                }),
+        points: this.fabricPoly.get("points").map(
+            function(p) {
+                return {
+                    x: l + p.x,
+                    y: t + p.y
+                };
+            }),
         shutters: []
     };
     for (var i=0; i< this.shutters.length; ++i) {
@@ -421,6 +448,7 @@ PolygonExtended.prototype.addShutter = function(pos, id, angle) {
     this.shutters.push(shutter);
     // add to Html
 
+
     return shutter;
 };
 /*
@@ -483,9 +511,9 @@ function distance(x1,y1,x2,y2) {
  * others poygons.
 */
 function processPosition(pos) {
-    if (showGridLines) {// follow grid lines
-        pos.x = Math.round(pos.x/gridSpaces.x)*gridSpaces.x;
-        pos.y = Math.round(pos.y/gridSpaces.y)*gridSpaces.y;
+    if (lockGrid && showGridLines) {// follow grid lines
+        pos.x = Math.round(pos.x/gridSpaces[currentGridIndex].x)*gridSpaces[currentGridIndex].x;
+        pos.y = Math.round(pos.y/gridSpaces[currentGridIndex].y)*gridSpaces[currentGridIndex].y;
     } else  {// no grid lines
         var closest = getClosestCornerPoint(pos, 20);
         if (closest != null) {// closest
@@ -566,7 +594,6 @@ function changeMode(status) {
         mode = 0;
         edit = false;
     }
-    $('#mode').html("current mode:"+status);
     checkActiveButton();
 }
 /**/
@@ -618,9 +645,10 @@ function makeCircle(left, top, radius) {
 /**/
 function draw_grid() {
     remove_grid();
-    for(var i = 1; i < Math.ceil(canvas.width/gridSpaces.x); i++) {
+    var g = gridSpaces[currentGridIndex];
+    for(var i = 1; i < Math.ceil(canvas.width/g.x); i++) {
         var h = new fabric.Line(
-            [gridSpaces.x*i, 0, gridSpaces.x*i, canvas.height],
+            [g.x*i, 0, g.x*i, canvas.height],
             {
                 stroke: "rgba(0,0,0,0.3)",
                 strokeWidth: 1,
@@ -633,9 +661,9 @@ function draw_grid() {
         gridLines.push(h);
         canvas.add(h);
     }
-    for(i = 1; i < Math.ceil(canvas.height/gridSpaces.y); i++) {
+    for(i = 1; i < Math.ceil(canvas.height/g.y); i++) {
         var v = new fabric.Line(
-            [0, gridSpaces.x*i, canvas.width, gridSpaces.x*i],
+            [0, g.x*i, canvas.width, g.x*i],
             {
                 stroke: "rgba(0,0,0,0.3)",
                 strokeWidth: 1,
@@ -659,23 +687,36 @@ function remove_grid() {
     canvas.renderAll();
 }
 /**/
-function changeShowGridLines() {
+function toggleShowGridLines() {
     showGridLines = !showGridLines;
-    $('#guidelines').html("showGridLines:"+showGridLines);
+    if (showGridLines) {draw_grid();}
+    else {remove_grid();}
+    return showGridLines;
+}
+function changeShowGrid(val) {
+    showGridLines = val;
+    if (showGridLines) {draw_grid();}
+    else {remove_grid();}
     return showGridLines;
 }
 /**/
-function changeGridSpaces(type) {
-    if(type=='-') {
-        if (gridSpaces.x < 80 ) {
-            gridSpaces.x = (gridSpaces.y *= 2);
-        }
-    } else if(type=='+') {
-        if (gridSpaces.x > 20 ) {
-            gridSpaces.x = (gridSpaces.y /= 2);
-        }
+function zoomGridSpaces(type) {
+    if (showGridLines) {
+        type == '-' ? currentGridIndex-- : currentGridIndex++;
+        if (currentGridIndex==-1) {currentGridIndex++}
+        else if (currentGridIndex==gridSpaces.length) {currentGridIndex--;}
+        draw_grid();
     }
-    draw_grid();
+}
+function changeGridSpaces(index) {
+    if (showGridLines) {
+        currentGridIndex = index;
+        draw_grid();
+    }
+}
+/**/
+function changeLockGrid(val) {
+    lockGrid = val;
 }
 
 
@@ -694,7 +735,7 @@ function removePoly(num) {
     // remove from canvas and remake the list
     polys[num].remove(canvas);
     polys.splice(num, 1);
-    rewritePolysListToHtml();
+    removePolyHtml(num);
     canvas.renderAll();
 }
 
@@ -703,12 +744,36 @@ function cleanCurrentPoly() {
     canvas.renderAll();
     edit=false;
 }
+function editPolyHtml(num, name) {
+    var sel = $('#room'+num);
+    sel.find(".collapsible-header").html(name);
+    sel.find('input[name="room-name"]').val(name);
+}
+function removePolyHtml(num) {
+    $('#room'+num).remove();
+}
 function addPolyToHtml(num, name){
     var str =
-        '<li class="list-el" id="room'+num+'">' +
-        '<div>'+name+'</div>' +
-        '<div onclick="removePoly('+num+');" class="item-icon"><i class="mdi-navigation-cancel"></i></div>' +
-        '<div onclick="editRoom('+num+');" class="item-icon"><i class="mdi-content-create"></i></div>' +
+        '<li id="room'+num+'">' +
+            '<div class="collapsible-header" data-toggle="'+num+'">'+name+'</div>' +
+            '<div class="collapsible-body">' +
+                '<div class="row col s12">' +
+                    '<div class="row input-field col s12">' +
+                        '<i class="mdi-action-account-circle prefix"></i>' +
+                        '<input ' +
+                            'name="room-name" ' +
+                            'class="validate" ' +
+                            'id="room-name'+num+'" ' +
+                            'type="text" ' +
+                            'value="'+name+'" ' +
+                            'onchange="confirmName('+num+');">' +
+                        '<label for="room-name'+num+'">Room\'s name</label>' +
+                    '</div>' +
+                    '<div class="row col s12">' +
+                        '<ul class="shutters-list"></ul>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
         '</li>';
     $('#rooms-list').append(str);
 }
@@ -718,32 +783,35 @@ function rewritePolysListToHtml() {
     for (var i = 0; i < polys.length; ++i) {
         addPolyToHtml(i, polys[i].name);
     }
+    $('.collapsible').collapsible();
 }
 
-function editRoom(index) {
-    if (canvas.getActiveObject()!==polys[index].fabricPoly) {
-        canvas.setActiveObject(polys[index].fabricPoly);
+function editRoom(index, noclick) {
+    if (currentEdit!=index) {
+        currentEdit = index;
+        if (canvas.getActiveObject()!==polys[index].fabricPoly) {
+            canvas.setActiveObject(polys[index].fabricPoly);
+        }
+        editPolyHtml(index, polys[index].name);
+        var sel =$('#room'+index);
+        if (!sel.hasClass("active") && !noclick) {
+            sel.find('.collapsible-header').click();
+        }
     }
-    currentEdit = index;
-    $('#rooms-list .active').removeClass("active");
-    $('#room'+index).addClass("active");
-    $("#room-name").removeAttr('placeholder');
-    $("input[name='room-name']").val(polys[index].name);
-    $('#room-edit .panel-body').show();
+    $('#room-name'+index).focusin();
 }
 
 function removeEditRoom(){
     currentEdit = null;
-    $('#rooms-list .active').removeClass("active");
-    $("#room-name").attr('placeholder', 'Room\'s name');
-    $("input[name='room-name']").val("");
-    $('#room-edit .panel-body').hide();
+    console.log("removeEditRoom");
+    $('#rooms-list').find('.active').removeClass("active");
+    $('.collapsible').collapsible();
 }
 
-function confirmName() {
-    polys[currentEdit].name = $("input[name='room-name']").val();
-    polys[currentEdit].modified = true;
-    rewritePolysListToHtml();
+function confirmName(index) {
+    polys[index].name = $('#room'+index).find('input[name="room-name"]').val();
+    polys[index].modified = true;
+    editPolyHtml(index, polys[index].name);
 }
 /*
 function cancelName() {
@@ -760,15 +828,16 @@ function removeShutter(indexPoly, indexShutter) {
 }
 
 function refreshShuttersList(index){
-    $('#shutters-list').empty();
+    clearShuttersList(index);
+    var shuttersList = $('#room'+index).find('.shutters-list');
     var shutters = polys[index].shutters;
     for (var i=0; i<shutters.length; ++i) {
         var str =
-            '<li class="list-el" id="shutter'+i+'">' +
-            '<div>Shutter'+shutters[i].id+'</div>' +
-            '<div onclick="removeShutter('+index+','+i+');" class="item-icon"><i class="mdi-navigation-cancel"></i></div>' +
+            '<li class="shutter'+i+'">' +
+                '<div>Shutter'+shutters[i].id+'</div>' +
+                '<div onclick="removeShutter('+index+','+i+');" class="item-icon"><i class="mdi-navigation-cancel"></i></div>' +
             '</li>';
-        $('#shutters-list').append(str);
+        shuttersList.append(str);
     }
 }
 
@@ -785,13 +854,14 @@ function getIndexOfShutter(shutter) {
     return {poly:polys.length, shutter:null};
 }
 
-function clearShuttersList() {
-    $('#shutters-list').empty();
+function clearShuttersList(index) {
+    $('#room'+index).find('.shutters-list').empty();
 }
 
 
 /* ## SAVE CANVAS ## */
 function saveCanvas() {//TODO
+
     saveRoomsDataToForm();
     alert("done");
 }
@@ -809,22 +879,24 @@ function saveRoomsDataToForm() {
 }
 
 function addRemovedRoomToInput(id) {
-    var val = $('[name=roomsRemoved]').val();
+    var sel = $('[name="roomsRemoved"]');
+    var val = sel.val();
     if (val == "") {
-        $('[name=roomsRemoved]').val(id);
+        sel.val(id);
     } else {
-        $('[name=roomsRemoved]').val(val+','+id);
+        sel.val(val+','+id);
     }
 }
 
 function addModifiedRoomToInput(indexPoly) {
     // add id to the input
     var id = polys[indexPoly].id;
-    var val = $('[name=roomsModified]').val();
+    var sel = $('[name="roomsModified"]');
+    var val = sel.val();
     if (val == "") {
-        $('[name=roomsModified]').val(id);
+        sel.val(id);
     } else {
-        $('[name=roomsModified]').val(val+','+id);
+        sel.val(val+','+id);
     }
     // add inputs for the room's data
     var jsondata = polys[indexPoly].toJson();
@@ -834,11 +906,12 @@ function addModifiedRoomToInput(indexPoly) {
 function addNewRoomToInput(indexPoly) {
     // add id to the input
     var id = polys[indexPoly].id;
-    var val = $('[name=roomsAdded]').val();
+    var sel =$('[name="roomsAdded"]');
+    var val = sel.val();
     if (val == "") {
-        $('[name=roomsAdded]').val(id);
+        sel.val(id);
     } else {
-        $('[name=roomsAdded]').val(val+','+id);
+        sel.val(val+','+id);
     }
     // add inputs for the room's data
     var jsondata = polys[indexPoly].toJson();
@@ -860,59 +933,15 @@ function drawRoomFromJson(json){
         canvas.add(c);
         return c;
     }, false);
-    addPoly(poly);
+    var index = addPoly(poly);
     canvas.add(poly.fabricPoly);
     // load shutters
     for (var i=0; i<poly.shutters.length; ++i) {
         canvas.add(poly.shutters[i].fabricRect);
     }
+    refreshShuttersList(index);
     canvas.renderAll();
 }
-
-
-/* ## TODO: TO REMOVE ## */
-/*
-function drawSomePolygons() {
-    var startX = 10;
-    var startY = 10;
-    var w = 40;
-    var h = 40;
-    var dx = 60;
-    for(var i=0; i<8; ++i) {
-        var poly = new PolygonExtended({x:startX+dx*i, y:startY}, i, "room"+i);
-        poly.addPoint({x:startX+w+dx*i, y:startY});
-        poly.addPoint({x:startX+dx*i, y:startY+h});
-        poly.addPoint({x:startX+w+dx*i, y:startY+h});
-        poly.confirm(function(x, y){
-            var c = makeCircle(x, y, 4);
-            canvas.add(c);
-            return c;
-        }, false);
-        addPoly(poly);
-        canvas.add(poly.fabricPoly);
-    }
-    canvas.renderAll();
-}
-
-function drawBigCenterPoly() {
-    var startX = 200;
-    var startY = 200;
-    var w = 100;
-    var h = 100;
-    var poly = new PolygonExtended({x:startX, y:startY}, 0, "room0");
-    poly.setAddLastPoint({x:startX+w, y:startY});
-    poly.setAddLastPoint({x:startX+w, y:startY+h});
-    poly.setAddLastPoint({x:startX, y:startY+h});
-    poly.confirm(function(x, y){
-        var c = makeCircle(x, y, 4);
-        canvas.add(c);
-        return c;
-    }, true);
-    addPoly(poly);
-    canvas.add(poly.fabricPoly);
-    canvas.renderAll();
-}
-*/
 
 (function() {
     if(showGridLines) {
@@ -955,6 +984,7 @@ function drawBigCenterPoly() {
     });
 
     canvas.observe("mouse:down", function (event) {
+        var obj;
         var pos = canvas.getPointer(event.e);
         var realPos = {};
         if (mode == 1) {// add/edit room
@@ -968,12 +998,11 @@ function drawBigCenterPoly() {
             }
 
         } else if (mode==2) {//remove poly
-            var obj = canvas.getActiveObject();
+            obj = canvas.getActiveObject();
             if (obj instanceof fabric.Polygon) {
                 var indexPoly = getIndexOfPoly(obj);
                 if (indexPoly != polys.length) {
                     removePoly(indexPoly);
-                    clearShuttersList();
                 }
             }
 
@@ -985,35 +1014,37 @@ function drawBigCenterPoly() {
                 realPos.y = closest.y;
                 var polyIndex = closest.poly;
                 var shutter = polys[polyIndex].addShutter(realPos, null);
-                canvas.add(shutter.fabricRect);
-                editRoom(polyIndex);
-                canvas.setActiveObject(shutter.fabricRect);
                 refreshShuttersList(polyIndex);
+                canvas.add(shutter.fabricRect);
+                editRoom(polyIndex, false);
+                canvas.setActiveObject(shutter.fabricRect);
             }
         } else if (mode==6) {//remove shutter
-            var obj = canvas.getActiveObject();
+            obj = canvas.getActiveObject();
             if (obj instanceof fabric.Rect) {
                 var indexes = getIndexOfShutter(obj);
                 if (indexes.poly != polys.length) {
                     removeShutter(indexes.poly, indexes.shutter);
-                    editRoom(indexes.poly);
+                    editRoom(indexes.poly, false);
+                    canvas.setActiveObject(polys[indexes.poly].fabricPoly);
                 }
             }
         }
-        canvas.renderAll();
     });
 
-    canvas.observe("object:selected", function(event) {
+    canvas.observe("object:selected", function() {
         var index;
         if (mode < 5) {// rooms
             index = getIndexOfPoly(canvas.getActiveObject());
             if (index != polys.length) {
                 if (mode == 2) { // remove poly
                     removePoly(index);
-                    clearShuttersList();
+                    //clearShuttersList();
                 } else {
-                    editRoom(index);
-                    refreshShuttersList(index);
+                    if (currentEdit!=index) {
+                        editRoom(index, false);
+                    }
+                    //refreshShuttersList(index);
                 }
             }
         } else {// shutters
@@ -1021,16 +1052,16 @@ function drawBigCenterPoly() {
             if (index.poly != polys.length) {
                 if (mode == 6) { // remove shutter
                     removeShutter(index.poly, index.shutter);
-                    editRoom(index.poly);
+                    editRoom(index.poly, false);
                 }
             }
         }
     });
 
-    canvas.observe("selection:cleared", function(event) {
+    canvas.observe("selection:cleared", function() {
         if (mode < 5) {// rooms
             removeEditRoom();
-            clearShuttersList()
+            //clearShuttersList()
         }
     });
 
@@ -1047,7 +1078,8 @@ function drawBigCenterPoly() {
                     cleanCurrentPoly();
                 } else {
                     var i = addPoly(currentPoly);
-                    editRoom(i);
+                    $('.collapsible').collapsible();
+                    editRoom(i, false);
                     edit = false;
                 }
                 canvas.renderAll();
@@ -1061,15 +1093,11 @@ function drawBigCenterPoly() {
             }
             currentPoly = null;
         } else if (e.keyCode == 81 || e.keyCode == 113) {// Q or q
-            if (changeShowGridLines()) {
-                draw_grid();
-            } else {
-                remove_grid();
-            }
+            toggleShowGridLines();
         } else if (e.keyCode == 107 || e.keyCode == 187) {// + numpad or + keyboard
-            changeGridSpaces('+');
+            zoomGridSpaces('+');
         } else if (e.keyCode == 109 || e.keyCode == 189) {// - numpad or - keyboard
-            changeGridSpaces('-');
+            zoomGridSpaces('-');
         } else if (e.keyCode == 88) {// x or X
             if (currentPoly) {
                 currentPoly.removeLastPoint();
@@ -1088,7 +1116,7 @@ function drawBigCenterPoly() {
                 index = getIndexOfShutter(obj);
                 if (index.poly != polys.length) {
                     removeShutter(index.poly, index.shutter);
-                    editRoom(index.poly);
+                    editRoom(index.poly, false);
                 }
             }
         }

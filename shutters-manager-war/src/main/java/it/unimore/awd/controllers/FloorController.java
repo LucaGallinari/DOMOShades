@@ -1,5 +1,12 @@
 package it.unimore.awd.controllers;
 
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import it.unimore.awd.DomoWrapper;
+import it.unimore.awd.classes.Floor;
+import it.unimore.awd.classes.Home;
+import it.unimore.awd.classes.User;
+
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -7,12 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 // import com.google.appengine.api.users.User; same name as domo user
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-import it.unimore.awd.DomoWrapper;
-
-import it.unimore.awd.classes.User;
-import it.unimore.awd.classes.Home;
 
 @SuppressWarnings("serial")
 public class FloorController extends Controller {
@@ -26,7 +27,7 @@ public class FloorController extends Controller {
 
     DomoWrapper domoWrapper = new DomoWrapper();
 
-    public void root()
+    public void manage()
         throws IOException, ServletException
     {
         String error = "";
@@ -48,25 +49,46 @@ public class FloorController extends Controller {
                 );
             }
 
-            // wanted to add a home?
-            if (req.getParameter("submit")!=null) {// TODO: you can submit even with "modify"
-                error = this.add();
-            }
+            String homeIdStr = req.getParameter("home");
+            /*if (homeIdStr != null) { // check home par exists
+                try { // is it a Long?
+                    long homeId = Long.parseLong(homeIdStr);
+                    // get user's homes
+                    List<Home> hl = domoWrapper.getHomesByUser(owner);
+                    Home home = getHomeById(homeId, hl);
 
-            // get user's homes
-            List<Home> hl = domoWrapper.getHomesByUser(owner);
+                    if (home != null) {*/
 
-            // model the page
-            Map<String, Object> root = new HashMap<String, Object>();
-            root.put("error", error);
-            root.put("message", "Home!");
-            root.put("userEmail", owner);
-            root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
-            root.put("logoutURL", userService.createLogoutURL("/"));
-            root.put("homes", hl);
-            // output it
-            TemplateHelper.callTemplate(cfg, resp, ctrlName + "/home.ftl", root);
+                        // get home's floors
+                        List<Floor> fl = domoWrapper.getFloorsByHome(owner, homeIdStr);
 
+                        // wanted to add a floor?
+                        if (req.getParameter("submit")!=null) {// TODO: you can submit even with "modify" and "remove"
+                            //error = this.add();
+                        }
+
+                        // model the page
+                        Map<String, Object> root = new HashMap<String, Object>();
+                        root.put("error", error);
+                        root.put("message", "Floor!");
+                        root.put("userEmail", owner);
+                        root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
+                        root.put("logoutURL", userService.createLogoutURL("/"));
+                        root.put("floors", fl);
+                        // output it
+                        TemplateHelper.callTemplate(cfg, resp, ctrlName + "/floor.ftl", root);
+
+                    /*} else { // home not found
+                        System.out.println("Home not found!");
+                        resp.sendRedirect("/home/");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Home ID is not a Long value!");
+                    resp.sendRedirect("/home/");
+                }
+            } else { // no home selected, redirect
+                resp.sendRedirect("/home/");
+            }*/
         } else { // not logged, redirect
             resp.sendRedirect("/");
         }
@@ -80,7 +102,7 @@ public class FloorController extends Controller {
      *  If called by ajax you only need to send the form with "serialized" data.
      *
      *  @ret String Ok if successful, an error if not.
-    */
+
     public String add()
             throws IOException, ServletException
     {
@@ -121,7 +143,7 @@ public class FloorController extends Controller {
         }
         return error;
         //TODO: remake errors list in layouts
-    }
+    }*/
 
     /*
     *  Modify home.
@@ -130,7 +152,7 @@ public class FloorController extends Controller {
     *  If called by ajax you only need to send the form with "serialized" data.
     *
     *  @ret String Ok if successful, an error if not.
-   */
+
     public String modify()
             throws IOException, ServletException
     {
@@ -179,7 +201,7 @@ public class FloorController extends Controller {
             else {error="1";}
         }
         return error;
-    }
+    }*/
 
     /*
      *  Remove home.
@@ -189,7 +211,7 @@ public class FloorController extends Controller {
      *
      *  @par id Id of the home
      *  @ret String Ok if successful, an error if not.
-    */
+
     public String remove()
         throws IOException, ServletException
     {
@@ -219,12 +241,21 @@ public class FloorController extends Controller {
             else {error="1";}
         }
         return error;
-    }
+    }*/
 
     private boolean compareDomouserGaeuser(User domoUser, com.google.appengine.api.users.User gaeUser) {
         return (
             domoUser.getFirst_name().equals(gaeUser.getNickname())
             && domoUser.getLast_name().equals(gaeUser.getNickname())
         );
+    }
+
+    private Home getHomeById (long homeID, List<Home> hl){
+        for (Home h: hl) {
+            if (h.getId()==homeID) {
+                return h;
+            }
+        }
+        return null;
     }
 }

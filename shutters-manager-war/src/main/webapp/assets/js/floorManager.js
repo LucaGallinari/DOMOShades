@@ -1,53 +1,49 @@
 /**
- * Created by kalu on 03/04/15.
+ * Created by kalu on 06/04/15.
  *
- * Library of functions for handling homes management
- * with a lost of transitions and some ajax request.
+ * Library of functions for handling floors management
+ * with lots of transitions and some ajax request.
  *
  */
-var addHomeForm     = "#addHomeForm";
+var addFloor        = "#addFloor";
+var addFloorCanvas  = "#addFloorCanvas";
+var ultabs          = "ul.tabs";
 var modifyHomeForm  = "#modifyHomeForm";
-var listHomes       = "#listHomes";
+var listFloors      = "#listFloors";
 
 $(document).ready(function(){
-    /* - ADD HOME - */
-    $(addHomeForm).on('submit', function() {
-        // pre ajax request
-        var buttonsRow = $(addHomeForm).find('.buttons-row').first();
-        buttonsRow.find('button').hide();
-        buttonsRow.append(preloader_wrapper('right'));
-
-        // do an ajax req
-        $.ajax({
-            type: "POST",
-            url: "/home/add",
-            data: $(this).serialize() // serializes the form's elements.
-        })
-        .done(function( data ) {
-            data = data.toString();
-            // rollback
-            buttonsRow.find('.preloader-wrapper').remove();
-            buttonsRow.find('button').show();
-            if (data.indexOf("Ok")!=-1) { // if everything's ok
-                toast('Home added!', 3000, 'rounded');
-                var id = data.substr(4, data.length-4);
-                addListElement(id);
-                $(addHomeForm).trigger("reset");
-                // hide errors
-                if ($('.removeHome').length==1) {
-                    $(listHomes).show();
-                    $('#noHomes').hide(500);
-                }
-            } else { // display error
-                toast('Ops! An error occured.', 3000, 'rounded');
-                $('#addHomeErrors').html(data).fadeIn();
-            }
-        });
-        return false; // avoid to execute the actual submit of the form.
+    /* - ADD FLOOR - */
+    $(ultabs).on('click', addFloor, function() {
+        var floorId = $(listFloors).find('li').length;
+        if (floorId >=0 && floorId <=5) {
+            // clone list element
+            $(this).clone().hide().insertAfter(this).fadeIn();
+            $(this)
+                .removeAttr('id')
+                .find('a').attr('href', '#floor'+floorId).html('Floor '+floorId);
+            // clone canvas
+            $(addFloorCanvas).clone().hide().insertAfter(addFloorCanvas).fadeIn();
+            $(addFloorCanvas).attr('id', 'floor'+floorId).html('Canvas floor '+floorId);
+            $(ultabs).find('div.indicator').remove();
+            // redo materializecss tabs
+            $(ultabs).tabs();
+        } else if(floorId == 6) {
+            // set list element
+            $(this)
+                .removeAttr('id')
+                .find('a').attr('href', '#floor'+floorId).html('Floor '+floorId);
+            // set canvas
+            $(addFloorCanvas).attr('id', 'floor'+floorId).html('Canvas floor '+floorId);
+            $(ultabs).find('div.indicator').remove();
+            // redo materializecss tabs
+            $(ultabs).tabs();
+        } else {
+            toast('A home can have up to 6 floors!', 3000, 'rounded');
+        }
     });
 
 
-    /* - REMOVE HOME - */
+    /* - REMOVE HOME -
     $(listHomes).on('click', 'a.removeHome', function() {
         // pre ajax request
         var id = $(this).attr('data-toggle');
@@ -88,10 +84,10 @@ $(document).ready(function(){
                 $(parentId).html(data);
             }
         });
-    });
+    });*/
 
 
-    /* - MODIFY HOME - */
+    /* - MODIFY HOME -
     // set up
     $(addHomeForm).clone() // copy form for modifying
         .attr('id','modifyHomeForm') // modify id
@@ -147,10 +143,11 @@ $(document).ready(function(){
             }
         });
         return false; // avoid to execute the actual submit of the form.
-    })
+    });*/
 
 });
 
+/*
 function modifyListElement(id) {
     $(modifyHomeForm).find('input').each(function(){ // for each input fill the respective td
         $('#listHome'+id) // get the tr
@@ -221,3 +218,4 @@ function preloader_wrapper(pos) {
             </div> \
         </div>';
 }
+*/

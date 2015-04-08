@@ -23,41 +23,11 @@ div.active {
     float:left;
 }
 
-.canvas {
-    border: 1px solid #43a047;
-}
 
-.list {
-    width: 100%;
-    margin-top:20px;
-    margin-left:20px;
-    min-width: 200px;
-}
-
-.list > div {
-    width: 100%;
-    display: inline-block;
-    min-width: 200px;
-    max-width:300px;
-}
-.my-list {
-    list-style: none;
-    margin:0;
-    padding:0;
-}
-.my-list .active {
-    background-color:#bbb;
-}
-.my-list .list-el {
-    height:30px;
-}
-.my-list .list-el > div:first-child {
-    width:60%;
-    float:left;
-}
-.my-list .list-el > div {
-    float:right;
-}
+/*Rooms list*/
+.shutters-list > li {clear:both;}
+.shutters-list > li > div {float:right;}
+.shutters-list > li > div:first-child {float:left;}
 
 .buttons-row {
     width: 100%;
@@ -70,12 +40,6 @@ div.active {
 .btn-small {
     padding: 5px;
 
-}
-.right {
-    float:right;
-}
-.left {
-    float:left;
 }
 .brclear {
     margin:0;
