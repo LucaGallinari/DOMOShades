@@ -21,6 +21,7 @@
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
 <@layout.mainLayout userNick userEmail logoutURL>
+<div class="container">
     <div class="row">
         <div class="xl9 offset-xl1">
             <h4 class="amber-text">Homes list</h4>
@@ -29,12 +30,15 @@
                     <tr>
                         <th data-field="description">Brief description</th>
                         <th data-field="address">Address</th>
-                        <th class="hidden-tc-sm" data-field="city">City</th>
-                        <th class="hidden-tc-m" data-field="country">Country</th>
-                        <th class="hidden" data-field="cap">Cap</th>
+                        <th class="hidden-tc-sm" data-field="cap">Cap</th>
+                        <th class="hidden-tc-m" data-field="city">City</th>
+                        <th class="hidden-tc-sm" data-field="country">Country</th>
+                        <!--
                         <th>Modify</th>
                         <th>Remove</th>
                         <th>Manage</th>
+                        -->
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,9 +46,10 @@
                     <tr id="listHome${home.id}">
                         <td class="description">${home.description}</td>
                         <td class="address">${home.address}</td>
-                        <td class="hidden-tc-sm city">${home.city}</td>
-                        <td class="hidden-tc-m country">${home.country}</td>
-                        <td class="cap hidden">${home.cap}</td>
+                        <td class="hidden-tc-sm cap">${home.cap}</td>
+                        <td class="hidden-tc-m city">${home.city}</td>
+                        <td class="hidden-tc-sm country">${home.country}</td>
+                        <!--
                         <td id="modifyHome${home.id}">
                             <a data-toggle="${home.id}" class="medium waves-effect waves-green btn-flat modifyHome">
                                 <i class="mdi-content-create green-text"></i>
@@ -57,6 +62,18 @@
                         </td>
                         <td id="manageHome${home.id}">
                             <a href="/floor/manage?home=${home.id}" class="medium waves-effect waves-blue btn-flat manageHome">
+                                <i class="mdi-content-forward blue-text"></i>
+                            </a>
+                        </td>
+                        -->
+                        <td>
+                            <a data-toggle="${home.id}" class="small waves-effect waves-green btn-flat modifyHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Modify Home Values">
+                                <i class="mdi-content-create green-text"></i>
+                            </a>
+                            <a data-toggle="${home.id}" class="small waves-effect waves-red btn-flat removeHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Delete Home">
+                                <i class="mdi-content-clear red-text"></i>
+                            </a>
+                            <a href="/floor/manage?home=${home.id}" class="small waves-effect waves-blue btn-flat manageHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Menage Home">
                                 <i class="mdi-content-forward blue-text"></i>
                             </a>
                         </td>
@@ -156,6 +173,7 @@
             </form>
         </div>
     </div>
+</div>
 
     <script type="text/javascript" src="/assets/js/homeManager.js"></script>
 </@layout.mainLayout>
