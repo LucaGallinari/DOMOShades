@@ -14,6 +14,9 @@
 <#if !homes??>
     <#assign homes=[]/>
 </#if>
+<#if !floors??>
+    <#assign floors=[]/>
+</#if>
 <#if !error??>
     <#assign error=""/>
 </#if>
@@ -56,7 +59,7 @@
                             </a>
                         </td>
                         <td id="manageHome${home.id}">
-                            <a href="/floor/manage?home=${home.id}" class="medium waves-effect waves-blue btn-flat manageHome">
+                            <a data-toggle="${home.id}" class="medium waves-effect waves-blue btn-flat manageHome">
                                 <i class="mdi-content-forward blue-text"></i>
                             </a>
                         </td>
@@ -90,6 +93,14 @@
                     <h4>Modify home</h4>
                     <div class="card-panel red lighten-1 hidden" id="modifyHomeErrors"></div>
                     <div id="modifyHomeContainer"><!-- Form goes here --></div>
+                </div>
+            </div>
+
+            <!-- Select Floor Modal -->
+            <div id="selectFloorModal" class="modal">
+                <div class="modal-content">
+                    <h4>Select Floor</h4>
+                    <ul></ul>
                 </div>
             </div>
         </div>
@@ -156,6 +167,9 @@
             </form>
         </div>
     </div>
+    <script type="text/javascript">
+        var floors = [<#list floors as floor>${floor},</#list>];
+    </script>
 
     <script type="text/javascript" src="/assets/js/homeManager.js"></script>
 </@layout.mainLayout>

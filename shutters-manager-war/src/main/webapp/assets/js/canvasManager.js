@@ -38,12 +38,12 @@ var currentEdit = null;
 var currentPoly = null;
 
 /* Grid Lines */
-var currentGridIndex = 1;
+var currentGridIndex = 0;
 var gridLines = [];
 var gridSpaces = [{x:20, y:20},{x:30, y:30},{x:40, y:40},{x:60, y:60}];
 var dashArray = [5, 5];
-var showGridLines = false;
-var lockGrid = false;
+var showGridLines   = true;
+var lockGrid        = true;
 
 /* ######### ######### ######### ######### ######### #########
  * PolygonExtended is the extension of the Polygon object defined
@@ -78,10 +78,34 @@ function PolygonExtended(pos, id, name) {
     }
     this.name = name;
     this.modified = false;
+    this.fabricText = new fabric.Text(name, {
+        fill: 'white',
+        fontSize: 16,
+        hasControls: false,
+        selectable: false,
+        lockMovementX: true,
+        lockMovementY: true
+    });
 
     // arrays
     this.cornersCircles = [];
     this.shutters = [];
+}
+/*
+ * Create the new overlay name of this room.
+ */
+PolygonExtended.prototype.setName = function (name) {
+    this.name=name;
+    this.modified=true;
+    this.fabricText.setText(name);
+    this.adjustNamePosition();
+};
+/*
+ * Correctly align the text after it has been added to the canvas.
+ */
+PolygonExtended.prototype.adjustNamePosition = function () {
+    this.fabricText.set("left", this.fabricPoly.get("left") + this.fabricPoly.getBoundingRectWidth() / 2 - this.fabricText.getBoundingRectWidth() / 2);
+    this.fabricText.set("top", this.fabricPoly.get("top") + this.fabricPoly.getBoundingRectHeight() / 2 - this.fabricText.getBoundingRectHeight() / 2);
 }
 /*
  * Add a point to the polygon.
@@ -218,7 +242,7 @@ PolygonExtended.prototype.getLeftAndTopPoints = function () {
  * -1, not enough point to define a polygon (min: 2)
  * -2, makeCircleCallback not ok
  */
-PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
+PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast, canvas) {
     var points = this.fabricPoly.get("points");
     // some checks
     if (points.length < 4) {
@@ -260,6 +284,9 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
 
     // add circles
     this.addCornersCircles(makeCircleCallback);
+
+    // add text
+    this.setName(this.name);
     return 1;
 };
 /*
@@ -360,20 +387,21 @@ PolygonExtended.prototype.remove = function (canvas) {
  * Convert some data of this object to a JSON string.
 */
 PolygonExtended.prototype.toJson = function () {
+    var c = this.fabricPoly.getCenterPoint();
     var l = this.fabricPoly.get("left");
     var t = this.fabricPoly.get("top");
     var room = {
         id: this.id,
         name: this.name,
         pos: {
-            left: l,
-            top: t
+            left: c.x,
+            top: c.y
         },
         points: this.fabricPoly.get("points").map(
             function(p) {
                 return {
-                    x: l + p.x,
-                    y: t + p.y
+                    x: p.x ,
+                    y: p.y
                 };
             }),
         shutters: []
@@ -406,6 +434,24 @@ PolygonExtended.prototype.fromJson = function (json) {
         this.addShutter(room.shutters[i].pos, room.shutters[i].id, 0);//room.shutters[i].angle);
     }
 };
+
+/*
+ * Set given data. (called after parsing the canvas json)
+ */
+PolygonExtended.prototype.setData = function (roomData) {
+    this.id = roomData.id;
+    this.name = roomData.name;
+
+    this.fabricPoly.set("left", roomData.pos.left);
+    this.fabricPoly.set("top", roomData.pos.top);
+    this.fabricPoly.set({
+        points: roomData.points
+    });
+    for (var i=0; i< roomData.shutters.length; ++i) {
+        this.addShutter(roomData.shutters[i].pos, roomData.shutters[i].id, 0);//room.shutters[i].angle);
+    }
+};
+
 
 
 /* ######### ######### ######### ######### ######### #########
@@ -475,7 +521,7 @@ PolygonExtended.prototype.removeShutters = function (canvas) {
  *  id of the already present shutters.
 */
 PolygonExtended.prototype.getAvailableShutterID = function() {
-    var id = -1;
+    var id = 0;
     for (var i=0; i < this.shutters.length; ++i) {
         if (this.shutters[i].id > id) {
             id = this.shutters[i].id;
@@ -558,7 +604,7 @@ function getClosestShuttersPoint(point, max_dist) {
  *  id of the already present rooms.
 */
 function getAvailableRoomID() {
-    var id = -1;
+    var id = 0;
     for (var i=0; i < polys.length; ++i) {
         if (polys[i].id > id) {
             id = polys[i].id;
@@ -729,7 +775,7 @@ function addPoly(poly) {
 
 function removePoly(num) {
     // save id if it has one
-    if (polys[num].id != null) {
+    if (!polys[num].new) {
         addRemovedRoomToInput(polys[num].id);
     }
     // remove from canvas and remake the list
@@ -766,7 +812,7 @@ function addPolyToHtml(num, name){
                             'id="room-name'+num+'" ' +
                             'type="text" ' +
                             'value="'+name+'" ' +
-                            'onchange="confirmName('+num+');">' +
+                            'onchange="javascript:confirmName('+num+');">' +
                         '<label for="room-name'+num+'">Room\'s name</label>' +
                     '</div>' +
                     '<div class="row col s12">' +
@@ -809,9 +855,10 @@ function removeEditRoom(){
 }
 
 function confirmName(index) {
-    polys[index].name = $('#room'+index).find('input[name="room-name"]').val();
-    polys[index].modified = true;
+    console.log(index);
+    polys[index].setName($('#room'+index).find('input[name="room-name"]').val());
     editPolyHtml(index, polys[index].name);
+    canvas.renderAll();
 }
 /*
 function cancelName() {
@@ -860,22 +907,57 @@ function clearShuttersList(index) {
 
 
 /* ## SAVE CANVAS ## */
-function saveCanvas() {//TODO
-
-    saveRoomsDataToForm();
-    alert("done");
+function saveCanvas(form) {
+    // pre ajax request
+    var f = $(form);
+    var sel = $('#savingModal');
+    sel.leanModal({
+            dismissible: false, // Modal can be dismissed by clicking outside of the modal
+            opacity: .5, // Opacity of modal background
+            in_duration: 300, // Transition in duration
+            out_duration: 200 // Transition out duration
+        }
+    );
+    sel.openModal();
+    if (saveRoomsDataToForm()) {
+        // do an ajax req
+        $.ajax({
+            type: "POST",
+            url: f.attr('action'),
+            data: f.serialize()
+        })
+        .done(function(data) {
+            data = data.toString();
+            sel.closeModal();
+            //$('#modifyHomeErrors').html(data);
+            if (data.toString()=="Ok") { // if everything's ok
+                Materialize.toast('Floor modified!', 3000, 'rounded');
+            } else { // if not display error
+                Materialize.toast('Ops! An error occured.', 3000, 'rounded');
+                $('#saveCanvasErrors').html(data).fadeIn().delay(3000).fadeOut();
+            }
+        });
+    } else {
+        sel.closeModal();
+        Materialize.toast('Nothing changed so nothing to save!', 3000, 'rounded');
+    }
 }
 
 function saveRoomsDataToForm() {
+    var count=0;
     for (var i =0; i<polys.length; ++i) {
         if (polys[i].new) {// new room
             addNewRoomToInput(i);
         } else {// already added room
             if (polys[i].modified) {
                 addModifiedRoomToInput(i);
+            } else { // not mod room
+                addNotModRoomToInput(i);
+                count++;
             }
         }
     }
+    return count!=polys.length; // if nothing changed,don't save
 }
 
 function addRemovedRoomToInput(id) {
@@ -903,6 +985,18 @@ function addModifiedRoomToInput(indexPoly) {
     $('#canvasForm').append('<input type="hidden" name="modRoomData'+id+'" value=\''+jsondata+'\' />');
 }
 
+function addNotModRoomToInput(indexPoly) {
+    // add json to input
+    var jsondata = polys[indexPoly].toJson();
+    var sel = $('[name="notModRooms"]');
+    var val = sel.val();
+    if (val == "") {
+        sel.val(jsondata);
+    } else {
+        sel.val(val+','+jsondata);
+    }
+}
+
 function addNewRoomToInput(indexPoly) {
     // add id to the input
     var id = polys[indexPoly].id;
@@ -924,10 +1018,10 @@ function resetCanvas() {// TODO
 
 
 /* ## LOAD CANVAS ## */
-function drawRoomFromJson(json){
+function drawRoomFromJson(roomData){
     // load room
     var poly = new PolygonExtended({x:0, y:0}, 0, "room0");
-    poly.fromJson(json);
+    poly.setData(roomData);
     poly.confirm(function(x, y){
         var c = makeCircle(x, y, 4);
         canvas.add(c);
@@ -935,6 +1029,7 @@ function drawRoomFromJson(json){
     }, false);
     var index = addPoly(poly);
     canvas.add(poly.fabricPoly);
+    canvas.add(poly.fabricText);
     // load shutters
     for (var i=0; i<poly.shutters.length; ++i) {
         canvas.add(poly.shutters[i].fabricRect);
@@ -1081,6 +1176,7 @@ function drawRoomFromJson(json){
                     $('.collapsible').collapsible();
                     editRoom(i, false);
                     edit = false;
+                    canvas.add(currentPoly.fabricText);
                 }
                 canvas.renderAll();
                 changeMode(0);

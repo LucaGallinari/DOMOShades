@@ -7,15 +7,19 @@ import org.restlet.data.MediaType;
 import org.restlet.resource.ClientResource;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.List;
 
 public class DomoWrapper {
     private String uri;
     private String scope;
+    private String domain;
 
     public DomoWrapper(){
         this.uri="http://domoshades-apis.appspot.com/api";
+        this.domain="domoshades-apis.appspot.com";
         //this.uri="http://localhost:8080/api";
         this.scope="";
     }
@@ -100,22 +104,30 @@ public class DomoWrapper {
 
     /** Floor Functions **/
 
-    public List<Floor> getFloorsByHome(String owner, String home) throws IOException {
+    public List<FloorToken> getFloorsByHome(String owner, String home) throws IOException {
         this.scope=String.format("/floor?owner=%s&home=%s", owner,home);
         ClientResource cr = new ClientResource(uri+scope);
         String returnString = cr.get(MediaType.APPLICATION_JSON).getText();
         if(returnString.equals("[]"))
             return null;
         Gson gson = new Gson();
-        TypeToken<List<Floor>> token = new TypeToken<List<Floor>>(){};
-        return gson.fromJson(returnString,token.getType());
+        TypeToken<List<FloorToken>> token = new TypeToken<List<FloorToken>>(){};
+        List<FloorToken> lf = gson.fromJson(returnString,token.getType());
+        return lf;
     }
 
-
-    public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException {
-        this.scope=String.format("/floor?owner=%s&home=%s&id=%s&type=%s&canvas=%s", owner,home,id,type,canvas);
-        ClientResource cr = new ClientResource(uri+scope);
-        System.out.println(uri+scope);
+    public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException, URISyntaxException {
+        this.scope=String.format("owner=%s&home=%s&id=%s&type=%s&canvas=%s", owner,home,id,type,canvas);
+        URI uri = new URI(
+            "http",
+            this.domain,
+            "/api/floor",
+            this.scope,
+            null
+        );
+        String request = uri.toASCIIString();
+        ClientResource cr = new ClientResource(request);
+        System.out.println(request);
         String returnString = cr.put(Floor.class).getText();
         if(returnString.equals("[]"))
             return null;
@@ -148,9 +160,18 @@ public class DomoWrapper {
         return gson.fromJson(returnString,token.getType());
     }
 
-    public Room putRoom(String owner, String home, String id, String room_id, String name) throws IOException {
-        this.scope=String.format("/room?owner=%s&home=%s&id=%s&room_id=%s&name=%s", owner,home,id,room_id,name);
-        ClientResource cr = new ClientResource(uri+scope);
+    public Room putRoom(String owner, String home, String id, String room_id, String name) throws IOException, URISyntaxException {
+        this.scope=String.format("owner=%s&home=%s&id=%s&room_id=%s&name=%s", owner, home, id, room_id, name);
+        URI uri = new URI(
+                "http",
+                this.domain,
+                "/api/room",
+                this.scope,
+                null);
+        String request = uri.toASCIIString();
+
+        ClientResource cr = new ClientResource(request);
+        System.out.println(request);
         String returnString = cr.put(Room.class).getText();
         if(returnString.equals("[]"))
             return null;

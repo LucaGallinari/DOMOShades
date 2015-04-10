@@ -2,13 +2,14 @@ package it.unimore.awd.controllers;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
 import it.unimore.awd.DomoWrapper;
-import it.unimore.awd.classes.Floor;
-import it.unimore.awd.classes.Home;
-import it.unimore.awd.classes.User;
+import it.unimore.awd.classes.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,45 +51,33 @@ public class FloorController extends Controller {
             }
 
             String homeIdStr = req.getParameter("home");
-            /*if (homeIdStr != null) { // check home par exists
-                try { // is it a Long?
-                    long homeId = Long.parseLong(homeIdStr);
-                    // get user's homes
-                    List<Home> hl = domoWrapper.getHomesByUser(owner);
-                    Home home = getHomeById(homeId, hl);
+            if (homeIdStr != null && !homeIdStr.isEmpty()) { // check home par exists
 
-                    if (home != null) {*/
+                String floorIdStr = req.getParameter("floor");
+                if (floorIdStr != null && !floorIdStr.isEmpty()) { // check home par exists
 
-                        // get home's floors
-                        List<Floor> fl = domoWrapper.getFloorsByHome(owner, homeIdStr);
+                    // get floors
+                    List<FloorToken> fl = domoWrapper.getFloorsByHome(owner, homeIdStr);
 
-                        // wanted to add a floor?
-                        if (req.getParameter("submit")!=null) {// TODO: you can submit even with "modify" and "remove"
-                            //error = this.add();
-                        }
+                    // model the page
+                    Map<String, Object> root = new HashMap<String, Object>();
+                    root.put("error", error);
+                    root.put("message", "Floor!");
+                    root.put("userEmail", owner);
+                    root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
+                    root.put("logoutURL", userService.createLogoutURL("/"));
+                    root.put("home", homeIdStr);
+                    root.put("floors", fl);
+                    root.put("floorId", Integer.parseInt(floorIdStr));
+                    // output it
+                    TemplateHelper.callTemplate(cfg, resp, ctrlName + "/floor.ftl", root);
 
-                        // model the page
-                        Map<String, Object> root = new HashMap<String, Object>();
-                        root.put("error", error);
-                        root.put("message", "Floor!");
-                        root.put("userEmail", owner);
-                        root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
-                        root.put("logoutURL", userService.createLogoutURL("/"));
-                        root.put("floors", fl);
-                        // output it
-                        TemplateHelper.callTemplate(cfg, resp, ctrlName + "/floor.ftl", root);
-
-                    /*} else { // home not found
-                        System.out.println("Home not found!");
-                        resp.sendRedirect("/home/");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Home ID is not a Long value!");
+                } else { // no floor selected, redirect
                     resp.sendRedirect("/home/");
                 }
             } else { // no home selected, redirect
                 resp.sendRedirect("/home/");
-            }*/
+            }
         } else { // not logged, redirect
             resp.sendRedirect("/");
         }
@@ -96,46 +85,48 @@ public class FloorController extends Controller {
     }
 
     /*
-     *  Add home.
+     *  Add floor.
      *  If called by another function (eg: root()) you need to set ajax global variable
      *  to false.
-     *  If called by ajax you only need to send the form with "serialized" data.
+     *  If called through ajax you only need to send the form with "serialized" data.
      *
-     *  @ret String Ok if successful, an error if not.
-
+     *  @ret String Ok if succes+sful, an error if not.
+    */
     public String add()
             throws IOException, ServletException
     {
         String error="";
-
         if (gaeUser != null) { // already logged
-            // retrieve parameters
-            String descr = req.getParameter("description");
-            String country = req.getParameter("country");
-            String city = req.getParameter("city");
-            int cap;
-            try {cap = Integer.parseInt(req.getParameter("cap"));}
-            catch (NumberFormatException e) {cap = 0;}
-            String address = req.getParameter("address");
-            if(city==null) city="";
-            if(country==null) country="";
-            // check manadatory inputs
-            if (!(descr.isEmpty() || address.isEmpty())) {// add home
-                System.out.println("Form inviato.");
-                try {
-                    Home h = domoWrapper.putHome(gaeUser.getEmail(),descr,city,cap,country,address);
-                    System.out.println("Casa inserita.");
-                    if (this.ajax) {
-                        resp.getWriter().write("Ok: "+h.getId());
+
+            String homeIdStr = req.getParameter("home");
+            if (homeIdStr != null && !homeIdStr.isEmpty()) { // check home par exists
+
+                // retrieve parameters
+                String canvas = req.getParameter("canvas");
+                String floorId = req.getParameter("id");
+                String type = req.getParameter("type");
+                if (!(floorId.isEmpty())) {// add floor
+                    try {
+                        Floor f = domoWrapper.putFloor(gaeUser.getEmail(), homeIdStr, floorId, type, canvas);
+                        System.out.println("Piano inserito.");
+                        if (this.ajax) {
+                            resp.getWriter().write("Ok: "+f.getId());
+                        } else {
+                            resp.sendRedirect("/floor?home="+homeIdStr+"&floor="+f.getId()); //TODO: change to correct URL
+                        }
+                    } catch (Exception e) {
+                        // TODO: not sure about this error msg
+                        System.out.println("Piano non inserito perchè già presente!");
+                        if (this.ajax) {resp.getWriter().write("Error: this floor for this home already exists!");}
+                        else {error = "4";}
                     }
-                } catch (Exception e) {
-                    System.out.println("Casa non inserita perchè già presente!");
-                    if (this.ajax) {resp.getWriter().write("Error: this same home already exists!");}
+                } else {// error
+                    if (this.ajax) { resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
                     else {error = "3";}
                 }
-            } else {// error
-                if (this.ajax) { resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
-                else {error = "2";}
+            } else { // no home selected, redirect
+                if (this.ajax) {resp.getWriter().write("Error: home parameter not specified.");}
+                else {error="2";}
             }
         } else { // not logged, error
             if (this.ajax) {resp.getWriter().write("Error: you are not logged in.");}
@@ -143,65 +134,122 @@ public class FloorController extends Controller {
         }
         return error;
         //TODO: remake errors list in layouts
-    }*/
+    }
 
     /*
-    *  Modify home.
+    *  Modify floor.
     *  If called by another function (eg: root()) you need to set ajax global variable
     *  to false.
     *  If called by ajax you only need to send the form with "serialized" data.
     *
     *  @ret String Ok if successful, an error if not.
-
+    */
     public String modify()
-            throws IOException, ServletException
+            throws IOException, ServletException, URISyntaxException
     {
         String error="";
-
         if (gaeUser != null) { // already logged
-            try {
-                Long id = Long.parseLong(req.getParameter("id"));
-                //if (id != 0) {
-                    // retrieve parameters
-                    String descr = req.getParameter("description");
-                    String country = req.getParameter("country");
-                    String city = req.getParameter("city");
-                    int cap;
-                    try {cap = Integer.parseInt(req.getParameter("cap"));}
-                    catch (NumberFormatException e) {cap = 0;}
-                    String address = req.getParameter("address");
-                    if(city==null) city="";
-                    if(country==null) country="";
+            String owner = gaeUser.getEmail();
 
-                    // check manadatory inputs
-                    if (!(descr.isEmpty() || address.isEmpty())) {// add home
-                        System.out.println("Form inviato.");
-                        try {
-                            Home h = domoWrapper.updateHome(gaeUser.getEmail(),id,descr,city,cap,country,address);
-                            System.out.println("Casa modificata.");
-                            if (this.ajax) {
-                                resp.getWriter().write("Ok");
+            String homeIdStr = req.getParameter("home");
+            if (homeIdStr != null && !homeIdStr.isEmpty()) { // check home par exists
+
+                String floorIdStr = req.getParameter("floor");
+                if (floorIdStr != null && !floorIdStr.isEmpty()) { // check home par exists
+
+                    // init
+                    Gson gson = new Gson();
+
+                    // retrieve parameters
+                    String roomsRemovedStr  = req.getParameter("roomsRemoved");
+                    String roomsAddedStr    = req.getParameter("roomsAdded");
+                    String roomsModifiedStr = req.getParameter("roomsModified");
+                    String floorCanvas      = req.getParameter("notModRooms");
+                    String type             = req.getParameter("floorType");
+
+                    // split parameters
+                    String[] toRem = processStringArrInput(roomsRemovedStr);
+                    String[] toAdd = processStringArrInput(roomsAddedStr);
+                    String[] toMod = processStringArrInput(roomsModifiedStr);
+
+                    // 1- Remove rooms
+                    if (toRem != null) {
+                        for (String idRoom : toRem) {
+                            List<Room> rl = domoWrapper.deleteRoom(owner, homeIdStr, floorIdStr, idRoom);
+                            if (rl == null) {
+                                System.out.println("Error: room not removed, id:"+idRoom);
                             }
-                        } catch (Exception e) {
-                            System.out.println("Casa non modificata perchè non è stata apportata alcuna modifica!");
-                            if (this.ajax) {resp.getWriter().write("Error: you didn't make any changes to this house!");}
-                            else {error = "4";}
                         }
-                    } else {// error
-                        if (this.ajax) {resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
-                        else {error = "3";}
                     }
-                //} TODO: number empty?
-            } catch (NumberFormatException e) {
-                if (this.ajax) {resp.getWriter().write("Error: expected and id parameter.");}
-                else {error="2"; }
+
+                    // 2- Add rooms
+                    if (toAdd != null) {
+                        for (String idRoom : toAdd) {
+                            String roomJson = req.getParameter("addRoomData"+idRoom);
+                            if (roomJson!=null && !roomJson.isEmpty()) {
+                                roomData room = gson.fromJson(roomJson, roomData.class);
+
+                                //List<Room> rl = domoWrapper.deleteRoom(owner, homeIdStr, floorIdStr, idRoom);
+                                Room r = domoWrapper.putRoom(owner, homeIdStr, floorIdStr, idRoom, room.name/*, roomJson*/);
+                                if (r == null) {
+                                    System.out.println("Error: room not added, id:"+idRoom);
+                                } else {
+                                    floorCanvas += ((floorCanvas.isEmpty()) ? roomJson : ","+roomJson);
+                                }
+                            }
+                        }
+                    }
+
+                    // 3- Mod rooms
+                    if (toMod != null) {
+                        for (String idRoom : toMod) {
+                            String roomJson = req.getParameter("modRoomData"+idRoom);
+                            if (roomJson!=null && !roomJson.isEmpty()) {
+                                roomData room = gson.fromJson(roomJson, roomData.class);
+
+                                //List<Room> rl = domoWrapper.deleteRoom(owner, homeIdStr, floorIdStr, idRoom);
+                                Room r = domoWrapper.putRoom(owner, homeIdStr, floorIdStr, idRoom, room.name/*, roomJson*/);
+                                if (r == null) {
+                                    System.out.println("Error: room not modified (added), id:"+idRoom);
+                                } else {
+                                    floorCanvas += ((floorCanvas.isEmpty()) ? roomJson : ","+roomJson);
+                                }
+                            }
+                        }
+                    }
+
+                    // 4- Not mod rooms
+                    floorCanvas="{\"rooms\": ["+floorCanvas+"]}";
+
+                    // 5- Update floor canvas
+                    // List<Floor> fa = domoWrapper.deleteFloor(owner, homeIdStr, floorIdStr);
+                    Floor f = domoWrapper.putFloor(owner, homeIdStr, floorIdStr, type, floorCanvas);
+                    if (f != null) {
+
+                        System.out.println("Piano.");
+                        if (this.ajax) {
+                            resp.getWriter().write("Ok");
+                        } else {
+                            resp.sendRedirect("/floor?home=" + homeIdStr + "&floor=" + f.getId()); //TODO: change to correct URL
+                        }
+                    } else { // floor not modified
+                        if (this.ajax) {resp.getWriter().write("Error: floor not modified (maybe this floor does not exists).");}
+                        else {error="4";}
+                    }
+                } else { // no home selected, redirect
+                    if (this.ajax) {resp.getWriter().write("Error: floor parameter not specified.");}
+                    else {error="3";}
+                }
+            } else { // no home selected, redirect
+                if (this.ajax) {resp.getWriter().write("Error: home parameter not specified.");}
+                else {error="2";}
             }
         } else { // not logged, error
             if (this.ajax) {resp.getWriter().write("Error: you are not logged in.");}
             else {error="1";}
         }
         return error;
-    }*/
+    }
 
     /*
      *  Remove home.
@@ -250,12 +298,63 @@ public class FloorController extends Controller {
         );
     }
 
-    private Home getHomeById (long homeID, List<Home> hl){
-        for (Home h: hl) {
-            if (h.getId()==homeID) {
-                return h;
+    private Floor getFloorById (long floorID, List<Floor> fl){
+        for (Floor f: fl) {
+            if (f.getId()==floorID) {
+                return f;
             }
         }
         return null;
     }
+
+    /**
+     * @param strArr array of strings
+     * @return String[]
+     */
+    private String[] processStringArrInput(String strArr) {
+        if (strArr!=null) {
+            if (strArr.contains(",")) { // more than one
+                return strArr.split(",");
+            } else { // one or none
+                if (strArr.isEmpty()) {
+                    return null;
+                } else {
+                    return new String[]{strArr};
+                }
+            }
+        } else {
+            return null;
+        }
+    }
+
+    static private class roomData {
+        private Long id;
+        private String name;
+        private posData pos;
+        private List<coordData> points;
+        private List<shutterData> shutters;
+
+        public roomData(){}
+    }
+
+    static private class shutterData {
+        Long id;
+        Long angle;
+        private posData p;
+
+        public shutterData(){}
+    }
+    static private class posData {
+        String left;
+        String top;
+
+        public posData(){}
+    }
+    static private class coordData {
+        String x;
+        String y;
+
+        public coordData(){}
+    }
+
 }

@@ -10,6 +10,7 @@ var modifyHomeForm  = "#modifyHomeForm";
 var listHomes       = "#listHomes";
 
 $(document).ready(function(){
+
     /* - ADD HOME - */
     $(addHomeForm).on('submit', function() {
         // pre ajax request
@@ -29,7 +30,7 @@ $(document).ready(function(){
             buttonsRow.find('.preloader-wrapper').remove();
             buttonsRow.find('button').show();
             if (data.indexOf("Ok")!=-1) { // if everything's ok
-                toast('Home added!', 3000, 'rounded');
+                Materialize.toast('Home added!', 3000, 'rounded');
                 var id = data.substr(4, data.length-4);
                 addListElement(id);
                 $(addHomeForm).trigger("reset");
@@ -39,7 +40,7 @@ $(document).ready(function(){
                     $('#noHomes').hide(500);
                 }
             } else { // display error
-                toast('Ops! An error occured.', 3000, 'rounded');
+                Materialize.toast('Ops! An error occured.', 3000, 'rounded');
                 $('#addHomeErrors').html(data).fadeIn();
             }
         });
@@ -69,7 +70,7 @@ $(document).ready(function(){
             console.log(2);
             data = data.toString();
             if (data=="Ok") { // if everything's ok
-                toast('Home removed!', 3000, 'rounded');
+                Materialize.toast('Home removed!', 3000, 'rounded');
                 $('#listHome'+id).hide(500, function(){
                     // some animations
                     $(this).remove();
@@ -84,7 +85,7 @@ $(document).ready(function(){
                 $(parentId).find('.removeHome').show();
                 $(parentId).find('.preloader-wrapper').remove();
                 // display error
-                toast('Ops! An error occured.', 3000, 'rounded');
+                Materialize.toast('Ops! An error occured.', 3000, 'rounded');
                 $(parentId).html(data);
             }
         });
@@ -143,18 +144,38 @@ $(document).ready(function(){
             buttonsRow.find('.preloader-wrapper').remove();
             buttonsRow.find('button').show();
             if (data.toString()=="Ok") { // if everything's ok
-                toast('Home modified!', 3000, 'rounded');
+                Materialize.toast('Home modified!', 3000, 'rounded');
                 modifyListElement(id);
                 $('#modifyModal').closeModal();
             } else { // if not display error
-                toast('Ops! An error occured.', 3000, 'rounded');
+                Materialize.toast('Ops! An error occured.', 3000, 'rounded');
                 $('#modifyHomeErrors').html(data).fadeIn().delay(3000).fadeOut();
             }
         });
         return false; // avoid to execute the actual submit of the form.
     });
 
+    /* - MANAGE HOME - */
+    $(listHomes).on('click', 'a.manageHome', function() {
+        // pre ajax request
+        var id = parseInt($(this).attr('data-toggle'));
+        //$(this).hide();
+        setupSelectFloorModal(id);
+        $('#selectFloorModal').openModal();
+    });
+
 });
+
+function setupSelectFloorModal(id) {
+    var sel = $("#selectFloorModal").find('ul').first();
+    sel.html(''); //clear
+    for (var i = 0; i < floors.length; i++) {
+        var f = floors[i];
+        if (f.house.key.raw.id==id) {
+            sel.append('<li><a href="/floor/manage?home='+id+'&floor='+ f.id +'">Floor '+ f.id +'</a></li>');
+        }
+    }
+}
 
 function modifyListElement(id) {
     $(modifyHomeForm).find('input').each(function(){ // for each input fill the respective td

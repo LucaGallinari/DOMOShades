@@ -10,7 +10,6 @@ public class Floor {
     Integer type;
 
     public Floor(){
-
     }
 
     public Floor(Long id, Home house, String canvas, Integer type){
@@ -21,34 +20,25 @@ public class Floor {
         this.type=type;
     }
 
-    public Home getHouse() {
-        return house;
-    }
-
+    public Home getHouse() {return house;}
     public void setHouse(Home house) {
         this.house = house;
     }
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public String getCanvas() {
         return canvas;
     }
-
     public void setCanvas(String canvas) {
         this.canvas = canvas;
     }
-
     public Integer getType() {
         return type;
     }
-
     public void setType(Integer type) {
         this.type = type;
     }
