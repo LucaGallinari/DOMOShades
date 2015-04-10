@@ -930,7 +930,7 @@ function saveCanvas(form) {
             data = data.toString();
             sel.closeModal();
             //$('#modifyHomeErrors').html(data);
-            if (data.toString()=="Ok") { // if everything's ok
+            if (data=="Ok") { // if everything's ok
                 Materialize.toast('Floor modified!', 3000, 'rounded');
             } else { // if not display error
                 Materialize.toast('Ops! An error occured.', 3000, 'rounded');

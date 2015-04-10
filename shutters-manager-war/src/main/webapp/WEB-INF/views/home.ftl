@@ -24,6 +24,9 @@
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
 <@layout.mainLayout userNick userEmail logoutURL>
+<div class="container">
+
+    <!-- Table + Modals -->
     <div class="row">
         <div class="xl9 offset-xl1">
             <h4 class="amber-text">Homes list</h4>
@@ -32,12 +35,10 @@
                     <tr>
                         <th data-field="description">Brief description</th>
                         <th data-field="address">Address</th>
-                        <th class="hidden-tc-sm" data-field="city">City</th>
-                        <th class="hidden-tc-m" data-field="country">Country</th>
-                        <th class="hidden" data-field="cap">Cap</th>
-                        <th>Modify</th>
-                        <th>Remove</th>
-                        <th>Manage</th>
+                        <th class="hidden-tc-sm" data-field="cap">Cap</th>
+                        <th class="hidden-tc-m" data-field="city">City</th>
+                        <th class="hidden-tc-sm" data-field="country">Country</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,21 +46,23 @@
                     <tr id="listHome${home.id}">
                         <td class="description">${home.description}</td>
                         <td class="address">${home.address}</td>
-                        <td class="hidden-tc-sm city">${home.city}</td>
-                        <td class="hidden-tc-m country">${home.country}</td>
-                        <td class="cap hidden">${home.cap}</td>
-                        <td id="modifyHome${home.id}">
-                            <a data-toggle="${home.id}" class="medium waves-effect waves-green btn-flat modifyHome">
+                        <td class="hidden-tc-sm cap">${home.cap}</td>
+                        <td class="hidden-tc-m city">${home.city}</td>
+                        <td class="hidden-tc-sm country">${home.country}</td>
+                        <td>
+                            <a data-toggle="${home.id}"
+                               class="small waves-effect waves-green btn-flat modifyHome tooltipped"
+                               data-position="bottom" data-tooltip="Modify Home Values">
                                 <i class="mdi-content-create green-text"></i>
                             </a>
-                        </td>
-                        <td id="removeHome${home.id}">
-                            <a data-toggle="${home.id}" class="medium waves-effect waves-red btn-flat removeHome">
+                            <a data-toggle="${home.id}"
+                               class="small waves-effect waves-red btn-flat removeHome tooltipped"
+                               data-position="bottom" data-tooltip="Delete Home">
                                 <i class="mdi-content-clear red-text"></i>
                             </a>
-                        </td>
-                        <td id="manageHome${home.id}">
-                            <a data-toggle="${home.id}" class="medium waves-effect waves-blue btn-flat manageHome">
+                            <a data-toggle="${home.id}"
+                               class="small waves-effect waves-blue btn-flat manageHome tooltipped"
+                               data-position="bottom" data-tooltip="Menage Home">
                                 <i class="mdi-content-forward blue-text"></i>
                             </a>
                         </td>
@@ -104,11 +107,11 @@
                 </div>
             </div>
         </div>
-    </div>
-
+    </div><!-- END Table + Modals -->
 
     <div class="divider xl9 offset-xl1"></div>
 
+    <!-- Add new Home -->
     <div class="row" style="margin-top: 20px;">
         <div class="xl9 offset-xl1" id="addHome">
 
@@ -162,14 +165,20 @@
                     </div>
                 </div>
                 <div class="row buttons-row">
-                    <button class="btn-floating btn-large waves-effect waves-light amber right" type="submit" name="submit"><i class="mdi-content-add"></i></button>
+                    <button class="btn-floating btn-large waves-effect waves-light amber right" type="submit" name="submit">
+                        <i class="mdi-content-add"></i>
+                    </button>
                 </div>
             </form>
         </div>
-    </div>
+    </div><!-- END Add new Home -->
+
+</div>
+
     <script type="text/javascript">
         var floors = [<#list floors as floor>${floor},</#list>];
+        //TODO: show no floors exist in the modal
     </script>
-
     <script type="text/javascript" src="/assets/js/homeManager.js"></script>
+
 </@layout.mainLayout>

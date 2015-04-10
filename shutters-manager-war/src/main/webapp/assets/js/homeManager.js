@@ -209,6 +209,7 @@ function addListElement(id) {
     var el = $(list_element(id, descr, addr, city, country, cap));
     el.hide();
     $(listHomes).find('tbody').append(el);
+    $('.tooltipped').tooltip({delay: 0});
     el.fadeIn();
 }
 
@@ -217,18 +218,19 @@ function list_element(id, descr, addr, city, country, cap) {
         <tr id="listHome'+(id)+'" class="new"> \
             <td class="description">'+descr+'</td> \
             <td class="address">'+addr+'</td> \
-            <td class="hidden-tc-sm city">'+city+'</td> \
-            <td class="hidden-tc-m country">'+country+'</td> \
-            <td class="cap hidden">'+cap+'</td> \
-            <td id="modifyHome'+(id)+'"> \
-                <a data-toggle="'+(id)+'" class="medium waves-effect waves-green btn-flat modifyHome"> \
-                    <i class="mdi-editor-mode-edit green-text"></i> \
+            <td class="hidden-tc-sm cap">'+cap+'</td> \
+            <td class="hidden-tc-m city">'+city+'</td> \
+            <td class="hidden-tc-sm country">'+country+'</td> \
+            <td> \
+                <a data-toggle="'+(id)+'" class="small waves-effect waves-green btn-flat modifyHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Modify Home Values"> \
+                    <i class="mdi-content-create green-text"></i> \
                 </a> \
-            </td> \
-            <td id="removeHome'+(id)+'"> \
-                <a data-toggle="'+(id)+'" class="medium waves-effect waves-red btn-flat removeHome"> \
-                <i class="mdi-action-highlight-remove red-text"></i> \
-            </a> \
+                <a data-toggle="'+(id)+'" class="small waves-effect waves-red btn-flat removeHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Delete Home"> \
+                    <i class="mdi-content-clear red-text"></i> \
+                </a> \
+                <a data-toggle="'+(id)+'" class="small waves-effect waves-blue btn-flat manageHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Menage Home"> \
+                    <i class="mdi-content-forward blue-text"></i> \
+                </a> \
             </td> \
         </tr>';
 }

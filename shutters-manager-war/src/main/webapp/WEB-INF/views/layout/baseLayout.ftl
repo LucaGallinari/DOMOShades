@@ -30,7 +30,7 @@
 
 
             <main>
-                <div class="container col s12 m10 l8 offset-l2 offset-m1">
+                <div class="col s12 m10 l8 offset-l2 offset-m1">
                     <#nested/>
                 </div>
             </main>
