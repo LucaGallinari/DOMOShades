@@ -42,7 +42,7 @@ function hoverFAB(removeFab, showFab){
 }
 
 function defaultFAB(removeFab, showFab){
-    var icon = fab.find(".mdi-content-save").first();
+    var icon = fab.find("."+removeFab).first();
 
     $({deg: 360}).animate(
         {deg: 0},
@@ -213,14 +213,21 @@ function windowActions(){
 }
 
 function back(){
-    defaultFAB(contentSave,contentAdd);
+    switch(selectionNumber){
+        case 2:
+            defaultFAB(contentSave,contentAdd);
+            break;
+        case 3:
+            defaultFAB(contentWindow,contentAdd);
+            break;
+    }
+
     oldIcon = contentAdd;
     newIcon = contentSave;
 
     fab.removeClass('yellow blue lighten-3 darken-2').addClass('red');
     selectionNumber = 1;
 
-    //TODO
     fab.attr('href', 'javascript:saveCanvas("#canvasForm")');
     fab.attr('data-tooltip','Save Floor');
 }

@@ -11,7 +11,7 @@
                 <nav class="top-nav teal">
                     <div class="container">
                         <div class="nav-wrapper">
-                            <a href="#" class="brand-logo center">DomoShades</a>
+                            <a href="/" class="brand-logo center"><img src="/assets/images/logo-white.svg" width="300px" height="40px" style="margin-top: 41px" ></a>
                             <a href="#" data-activates="nav-mobile" class="button-collapse top-nav full"><i class="mdi-navigation-menu"></i></a>
                         </div>
                     </div>

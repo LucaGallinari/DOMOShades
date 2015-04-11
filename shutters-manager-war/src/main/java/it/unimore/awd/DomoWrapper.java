@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 import java.util.List;
 
 public class DomoWrapper {
+    private static final int MAX_LENGHT = 1800;
     private String uri;
     private String scope;
     private String domain;
@@ -46,7 +47,7 @@ public class DomoWrapper {
         return gson.fromJson(returnString,User.class);
     }
 
-    public User deleteUser(String email) throws IOException {
+    public User deleintteUser(String email) throws IOException {
         this.scope="/user?email="+email;
         ClientResource cr = new ClientResource(uri+scope);
         String returnString = cr.delete().getText();
@@ -116,6 +117,7 @@ public class DomoWrapper {
         return lf;
     }
 
+    /**
     public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException, URISyntaxException {
         this.scope=String.format("owner=%s&home=%s&id=%s&type=%s&canvas=%s", owner,home,id,type,canvas);
         URI uri = new URI(
@@ -129,6 +131,35 @@ public class DomoWrapper {
         ClientResource cr = new ClientResource(request);
         System.out.println(request);
         String returnString = cr.put(Floor.class).getText();
+        if(returnString.equals("[]"))
+            return null;
+        Gson gson = new Gson();
+        return gson.fromJson(returnString,Floor.class);
+    }
+    */
+
+    public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException {
+        this.scope=String.format("/floor?owner=%s&home=%s&id=%s&type=%s&canvas=%s", owner,home,id,type,canvas);
+
+        String completeUrl = uri+scope;
+
+        String returnString;
+
+        if(completeUrl.length()>=MAX_LENGHT){
+            this.scope=String.format("/floor?owner=%s&home=%s&id=%s&type=%s", owner,home,id,type);
+            ClientResource cr = new ClientResource(uri+scope);
+            System.out.println(uri+scope);
+            returnString = cr.put(canvas).getText();
+        }
+        else{
+            ClientResource cr = new ClientResource(uri+scope);
+            System.out.println(uri+scope);
+
+            returnString = cr.put(Floor.class).getText();
+        }
+
+
+
         if(returnString.equals("[]"))
             return null;
         Gson gson = new Gson();
