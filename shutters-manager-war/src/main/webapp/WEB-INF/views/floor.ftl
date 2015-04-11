@@ -221,7 +221,6 @@
         // This command is used to initialize some elements and make them work properly
         var floorCanvas = '<#if selectedFloor.canvas?has_content>${ selectedFloor.canvas }<#else>{"rooms":[]}</#if>';
         var decJson = JSON.parse(floorCanvas);
-        console.log(decJson);
         for (var i = 0; i < decJson.rooms.length; i++) {
             var room = decJson.rooms[i];
             drawRoomFromJson(room);
@@ -257,11 +256,6 @@
         var sel = $('#rooms-list');
         sel.on('click', '.collapsible-header', function() {
             editRoom(parseInt($(this).attr('data-toggle')), true);
-        });
-        sel.find('input[name="room-name"]').keypress(function (e) {
-            if (e.which == 13) {
-                confirmName();
-            }
         });
 
     });

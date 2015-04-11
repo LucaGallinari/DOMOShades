@@ -25,6 +25,7 @@ div.active {
 
 
 /*Rooms list*/
+.collapsible-header {overflow: hidden;}
 .shutters-list > li {clear:both;}
 .shutters-list > li > div {float:right;}
 .shutters-list > li > div:first-child {float:left;}

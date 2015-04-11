@@ -188,8 +188,6 @@ public class FloorController extends Controller {
                             String roomJson = req.getParameter("addRoomData"+idRoom);
                             if (roomJson!=null && !roomJson.isEmpty()) {
                                 roomData room = gson.fromJson(roomJson, roomData.class);
-
-                                //List<Room> rl = domoWrapper.deleteRoom(owner, homeIdStr, floorIdStr, idRoom);
                                 Room r = domoWrapper.putRoom(owner, homeIdStr, floorIdStr, idRoom, room.name/*, roomJson*/);
                                 if (r == null) {
                                     System.out.println("Error: room not added, id:"+idRoom);
@@ -206,8 +204,6 @@ public class FloorController extends Controller {
                             String roomJson = req.getParameter("modRoomData"+idRoom);
                             if (roomJson!=null && !roomJson.isEmpty()) {
                                 roomData room = gson.fromJson(roomJson, roomData.class);
-
-                                //List<Room> rl = domoWrapper.deleteRoom(owner, homeIdStr, floorIdStr, idRoom);
                                 Room r = domoWrapper.putRoom(owner, homeIdStr, floorIdStr, idRoom, room.name/*, roomJson*/);
                                 if (r == null) {
                                     System.out.println("Error: room not modified (added), id:"+idRoom);
@@ -218,15 +214,16 @@ public class FloorController extends Controller {
                         }
                     }
 
-                    // 4- Not mod rooms
+                    // 4- Not mod rooms and escape \ character so JSON
+                    // won't given error about unexpected token
                     floorCanvas="{\"rooms\": ["+floorCanvas+"]}";
+                    floorCanvas = floorCanvas.replace("\\", "\\\\");
 
                     // 5- Update floor canvas
-                    // List<Floor> fa = domoWrapper.deleteFloor(owner, homeIdStr, floorIdStr);
                     Floor f = domoWrapper.putFloor(owner, homeIdStr, floorIdStr, type, floorCanvas);
                     if (f != null) {
 
-                        System.out.println("Piano.");
+                        System.out.println("Piano modificato.");
                         if (this.ajax) {
                             resp.getWriter().write("Ok");
                         } else {

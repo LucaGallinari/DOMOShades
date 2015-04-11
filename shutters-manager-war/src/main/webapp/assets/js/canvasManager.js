@@ -37,6 +37,13 @@ var polys = [];
 var currentEdit = null;
 var currentPoly = null;
 
+/* Save Canvas */
+var countRemoved = 0;
+
+/* Long Click */
+var longClickPolyTimeout;
+var longClickPoly = false;
+
 /* Grid Lines */
 var currentGridIndex = 0;
 var gridLines = [];
@@ -97,16 +104,38 @@ function PolygonExtended(pos, id, name) {
 PolygonExtended.prototype.setName = function (name) {
     this.name=name;
     this.modified=true;
-    this.fabricText.setText(name);
+    this.fabricText.setText(this.name);
+    this.adjustNameLines();
     this.adjustNamePosition();
 };
+/*
+ * Put some '\n' if the text is out of poly's bounds.
+ */
+PolygonExtended.prototype.adjustNameLines = function () {
+    var len = this.name.length;
+    var delta = 10; // px to subtract to actual Poly's width so lines are not close to bounds
+    var ratio = this.fabricText.getBoundingRectWidth()/(this.fabricPoly.getBoundingRectWidth()-delta);
+    var numOfCharsPerLine = Math.floor(len/ratio);
+    var i = 0;
+    var str="";
+    while (i<len) {
+        if (i+numOfCharsPerLine>=len) { // last line
+            str += this.name.substr(i, len-i);
+        } else { // all others
+            str += this.name.substr(i, numOfCharsPerLine) + String('\n');
+        }
+        i += numOfCharsPerLine;
+    }
+    this.fabricText.setText(str);
+};
+
 /*
  * Correctly align the text after it has been added to the canvas.
  */
 PolygonExtended.prototype.adjustNamePosition = function () {
     this.fabricText.set("left", this.fabricPoly.get("left") + this.fabricPoly.getBoundingRectWidth() / 2 - this.fabricText.getBoundingRectWidth() / 2);
     this.fabricText.set("top", this.fabricPoly.get("top") + this.fabricPoly.getBoundingRectHeight() / 2 - this.fabricText.getBoundingRectHeight() / 2);
-}
+};
 /*
  * Add a point to the polygon.
  * @pos Object with x and y variables
@@ -118,6 +147,13 @@ PolygonExtended.prototype.addPoint = function (pos) {
         y: pos.y - this.fabricPoly.get("top")
     });
     this.fabricPoly.set({points: points});
+};
+/*
+ * Get integer central point.
+ */
+PolygonExtended.prototype.getIntCenterPoint = function () {
+    var pc = this.fabricPoly.getCenterPoint();
+    return {'x':Math.round(pc.x), 'y':Math.round(pc.y)};
 };
 /*
  * Set coords of points.
@@ -133,16 +169,16 @@ PolygonExtended.prototype.setPoints = function (points) {
 /*
  * Set coords of points.
  * @points Object with x and y variables
- */
+
 PolygonExtended.prototype.logPoints = function () {
-    var polygonCenter = this.fabricPoly.getCenterPoint();
+    var polygonCenter = this.getIntCenterPoint();
     var points = this.fabricPoly.get("points");
     for(var i=0; i < points.length; ++i) {
         console.log("->point "+i+", x:"+points[i].x+" y:"+points[i].y);
     }
     console.log("->point "+i+", l:"+polygonCenter.x+" t:"+polygonCenter.y);
     //this.fabricPoly.set({points: points});
-};
+}; */
 /*
  * Set coords of the last added point.
  * @point Object with x and y variables
@@ -151,20 +187,6 @@ PolygonExtended.prototype.setLastPoint = function (point) {
     var points = this.fabricPoly.get("points");
     points[points.length - 1].x = point.x - this.fabricPoly.get("left");
     points[points.length - 1].y = point.y - this.fabricPoly.get("top");
-    this.fabricPoly.set({points: points});
-};
-/*
- * Set last point position and add one.
- * @pos Object with x and y variables
- */
-PolygonExtended.prototype.setAddLastPoint = function (pos) {
-    var points = this.fabricPoly.get("points");
-    points[points.length - 1].x = pos.x - this.fabricPoly.get("left");
-    points[points.length - 1].y = pos.y - this.fabricPoly.get("top");
-    points.push({
-        x: pos.x - this.fabricPoly.get("left"),
-        y: pos.y - this.fabricPoly.get("top")
-    });
     this.fabricPoly.set({points: points});
 };
 /*
@@ -188,7 +210,7 @@ PolygonExtended.prototype.addCornersCircles = function(makeCircleCallback) {
         return;
     }
     var points = this.fabricPoly.get("points");
-    var polygonCenter = this.fabricPoly.getCenterPoint();
+    var polygonCenter = this.getIntCenterPoint();
     for (var i=0; i<points.length; ++i) {
         var x = points[i].x + polygonCenter.x;
         var y = points[i].y + polygonCenter.y;
@@ -205,34 +227,6 @@ PolygonExtended.prototype.removeCornersCircles = function(canvas) {
     this.cornersCircles = [];
 };
 /*
- * Calculate the left-most and top-most points of the polygon.
- * @return Object with left and top points or Null if no points are found.
-
-PolygonExtended.prototype.getLeftAndTopPoints = function () {
-    var points = this.fabricPoly.get("points");
-    if (points.length == 0) {
-        return null;
-    }
-    var min_left = points[0].x;
-    var min_top = points[0].y;
-    if (points.length > 1) {
-        for (var i=1; i<points.length; ++i) {
-            // left
-            if (points[i].x < min_left) {
-                min_left = points[i].x;
-            }
-            //top
-            if (points[i].y < min_top) {
-                min_top = points[i].y;
-            }
-        }
-    }
-    return {
-        left:   this.fabricPoly.get("minX") + min_left,
-        top:    this.fabricPoly.get("minY") + min_top
-    };
-};*/
-/*
  * Clean the poly and set up on the canvas
  * @makeCircleCallback function Callback for drawing corners' circles
  * @removelast boolean Remove last added point
@@ -242,7 +236,7 @@ PolygonExtended.prototype.getLeftAndTopPoints = function () {
  * -1, not enough point to define a polygon (min: 2)
  * -2, makeCircleCallback not ok
  */
-PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast, canvas) {
+PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
     var points = this.fabricPoly.get("points");
     // some checks
     if (points.length < 4) {
@@ -261,23 +255,22 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast, ca
     this.fabricPoly.setCoords();
 
     // place the polygon correctly
-    //var pos = this.getLeftAndTopPoints();
     var minx = this.fabricPoly.get("minX");
     var miny = this.fabricPoly.get("minY");
-    var l = this.fabricPoly.get("left") + minx;
-    var t = this.fabricPoly.get("top") + miny;
+    var l = Math.round(this.fabricPoly.get("left") + minx);
+    var t = Math.round(this.fabricPoly.get("top") + miny);
     this.fabricPoly.set({
         left: l,
         top: t,
-        fill: '#222222'
+        fill: '#0053E1'
     });
 
     // adjust points's positions
-    var pCenter = this.fabricPoly.getCenterPoint();
+    var pCenter = this.getIntCenterPoint();
     var adjPoints = points.map(function(p) {
         return {
-            x: p.x - pCenter.x + l - minx,
-            y: p.y - pCenter.y + t - miny
+            x: Math.round(p.x - pCenter.x + l - minx),
+            y: Math.round(p.y - pCenter.y + t - miny)
         };
     });
     this.fabricPoly.set({points: adjPoints});
@@ -300,10 +293,10 @@ PolygonExtended.prototype.getClosestCornerPoint = function (point, max_dist) {
     var min_dist = max_dist + 1;
     var min_point = null;
     var points = this.fabricPoly.get("points");
-    var polygonCenter = this.fabricPoly.getCenterPoint();
+    var polygonCenter = this.getIntCenterPoint();
     for (var i=0; i<points.length; ++i) {
-        var realX = points[i].x+polygonCenter.x;
-        var realY = points[i].y+polygonCenter.y;
+        var realX = Math.round(points[i].x+polygonCenter.x);
+        var realY = Math.round(points[i].y+polygonCenter.y);
         var dist = distance(point.x, point.y, realX, realY);
         if (dist < max_dist && dist < min_dist) {
             min_dist = dist;
@@ -327,21 +320,21 @@ PolygonExtended.prototype.getClosestLinePoint = function (point, max_dist) {
     }
     var min_dist = max_dist + 1;
     var min_point = null;
-    var polygonCenter = this.fabricPoly.getCenterPoint();
+    var polygonCenter = this.getIntCenterPoint();
 
     for (var i=0; i<len; ++i) {
         var x, y;
         var x1, y1;
 
         if(i==0) {
-            x1 = points[len-1].x + polygonCenter.x;
-            y1 = points[len-1].y + polygonCenter.y;
+            x1 = Math.round(points[len-1].x + polygonCenter.x);
+            y1 = Math.round(points[len-1].y + polygonCenter.y);
         } else {
-            x1 = points[i-1].x + polygonCenter.x;
-            y1 = points[i-1].y + polygonCenter.y;
+            x1 = Math.round(points[i-1].x + polygonCenter.x);
+            y1 = Math.round(points[i-1].y + polygonCenter.y);
         }
-        var x2 = points[i].x + polygonCenter.x;
-        var y2 = points[i].y + polygonCenter.y;
+        var x2 = Math.round(points[i].x + polygonCenter.x);
+        var y2 = Math.round(points[i].y + polygonCenter.y);
 
         // calculate coefficients of "y = mx + q"
         var deltaX = x2-x1;
@@ -381,15 +374,14 @@ PolygonExtended.prototype.getClosestLinePoint = function (point, max_dist) {
 PolygonExtended.prototype.remove = function (canvas) {
     this.removeCornersCircles(canvas);
     this.removeShutters(canvas);
+    canvas.remove(this.fabricText);
     canvas.remove(this.fabricPoly);
 };
 /*
  * Convert some data of this object to a JSON string.
 */
 PolygonExtended.prototype.toJson = function () {
-    var c = this.fabricPoly.getCenterPoint();
-    var l = this.fabricPoly.get("left");
-    var t = this.fabricPoly.get("top");
+    var c = this.getIntCenterPoint();
     var room = {
         id: this.id,
         name: this.name,
@@ -410,7 +402,7 @@ PolygonExtended.prototype.toJson = function () {
         var shutter = {
             id: this.shutters[i].id,
             angle: this.shutters[i].fabricRect.get("angle"),
-            pos:  this.shutters[i].fabricRect.getCenterPoint()
+            pos:  this.shutters[i].getIntCenterPoint()
         };
         room.shutters.push(shutter);
     }
@@ -419,7 +411,7 @@ PolygonExtended.prototype.toJson = function () {
 
 /*
  * Save json data into the object.
-*/
+
 PolygonExtended.prototype.fromJson = function (json) {
     var room = JSON.parse(json);
     this.id = room.id;
@@ -433,7 +425,7 @@ PolygonExtended.prototype.fromJson = function (json) {
     for (var i=0; i< room.shutters.length; ++i) {
         this.addShutter(room.shutters[i].pos, room.shutters[i].id, 0);//room.shutters[i].angle);
     }
-};
+};*/
 
 /*
  * Set given data. (called after parsing the canvas json)
@@ -462,8 +454,8 @@ function RectangleExtended(pos, id, angle) {
     var w = 20;
     var h = 20;
     this.fabricRect = new fabric.Rect({
-        left: pos.x - w/2,
-        top: pos.y - h/2,
+        left: Math.round(pos.x - w/2),
+        top: Math.round(pos.y - h/2),
         width: w,
         height: h,
         angle: angle,
@@ -477,6 +469,13 @@ function RectangleExtended(pos, id, angle) {
     });
     this.id = id;
 }
+/*
+ * Get integer central point.
+ */
+RectangleExtended.prototype.getIntCenterPoint = function () {
+    var pc = this.fabricRect.getCenterPoint();
+    return {'x':Math.round(pc.x), 'y':Math.round(pc.y)};
+};
 /*
  * Add a shutter with id (id) to the polygon centered in the given position (pos)
  * and with a certain angle (angle).
@@ -824,14 +823,6 @@ function addPolyToHtml(num, name){
     $('#rooms-list').append(str);
 }
 
-function rewritePolysListToHtml() {
-    $('#rooms-list').empty();
-    for (var i = 0; i < polys.length; ++i) {
-        addPolyToHtml(i, polys[i].name);
-    }
-    $('.collapsible').collapsible();
-}
-
 function editRoom(index, noclick) {
     if (currentEdit!=index) {
         currentEdit = index;
@@ -849,23 +840,15 @@ function editRoom(index, noclick) {
 
 function removeEditRoom(){
     currentEdit = null;
-    console.log("removeEditRoom");
     $('#rooms-list').find('.active').removeClass("active");
     $('.collapsible').collapsible();
 }
 
 function confirmName(index) {
-    console.log(index);
     polys[index].setName($('#room'+index).find('input[name="room-name"]').val());
     editPolyHtml(index, polys[index].name);
     canvas.renderAll();
 }
-/*
-function cancelName() {
-    $("input[name='room-name']").val(polys[currentEdit].name);
-}
-*/
-
 
 /* ## SHUTTER MANAGERS ## */
 function removeShutter(indexPoly, indexShutter) {
@@ -957,7 +940,7 @@ function saveRoomsDataToForm() {
             }
         }
     }
-    return count!=polys.length; // if nothing changed,don't save
+    return (count+countRemoved)!=polys.length; // if nothing changed,don't save
 }
 
 function addRemovedRoomToInput(id) {
@@ -968,6 +951,7 @@ function addRemovedRoomToInput(id) {
     } else {
         sel.val(val+','+id);
     }
+    countRemoved++;
 }
 
 function addModifiedRoomToInput(indexPoly) {
@@ -1011,11 +995,6 @@ function addNewRoomToInput(indexPoly) {
     var jsondata = polys[indexPoly].toJson();
     $('#canvasForm').append('<input type="hidden" name="addRoomData'+id+'" value=\''+jsondata+'\' />');
 }
-
-function resetCanvas() {// TODO
-    console.log(0);
-}
-
 
 /* ## LOAD CANVAS ## */
 function drawRoomFromJson(roomData){
@@ -1083,15 +1062,33 @@ function drawRoomFromJson(roomData){
         var pos = canvas.getPointer(event.e);
         var realPos = {};
         if (mode == 1) {// add/edit room
-            realPos = processPosition(pos);
-            if (edit) {// edit polygon
-                currentPoly.addPoint(realPos);
-            } else {// add polygon
-                currentPoly = new PolygonExtended(realPos, null, "New room");
-                canvas.add(currentPoly.fabricPoly);
-                edit = true;
-            }
+            longClickPolyTimeout = setTimeout(function(pos){
+                longClickPoly = true;
 
+                var realPos = processPosition(pos);
+                currentPoly.addPoint(realPos);
+
+                // confirm poly
+                removePointerCircle();
+                var ret = currentPoly.confirm(function(x, y){
+                    var c = makeCircle(x, y, 4);
+                    canvas.add(c);
+                    return c;
+                }, true);
+                if (ret != 1) { // not ok
+                    cleanCurrentPoly();
+                } else {
+                    var i = addPoly(currentPoly);
+                    $('.collapsible').collapsible();
+                    editRoom(i, false);
+                    edit = false;
+                    canvas.add(currentPoly.fabricText);
+                }
+                canvas.renderAll();
+                changeMode(0);
+                currentPoly=null;
+
+            }, 500, pos);
         } else if (mode==2) {//remove poly
             obj = canvas.getActiveObject();
             if (obj instanceof fabric.Polygon) {
@@ -1123,6 +1120,24 @@ function drawRoomFromJson(roomData){
                     editRoom(indexes.poly, false);
                     canvas.setActiveObject(polys[indexes.poly].fabricPoly);
                 }
+            }
+        }
+    });
+
+    canvas.observe("mouse:up", function (event) {
+        if(mode==1) {
+            clearTimeout(longClickPolyTimeout);
+            var pos = canvas.getPointer(event.e);
+            var realPos = processPosition(pos);
+            if (edit) {// edit polygon
+                currentPoly.addPoint(realPos);
+            } else {// add polygon
+                if (longClickPoly) {
+                    longClickPoly=false;
+                }
+                currentPoly = new PolygonExtended(realPos, null, "New room");
+                canvas.add(currentPoly.fabricPoly);
+                edit = true;
             }
         }
     });

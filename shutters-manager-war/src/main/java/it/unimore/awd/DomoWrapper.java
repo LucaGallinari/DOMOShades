@@ -119,7 +119,7 @@ public class DomoWrapper {
 
     /**
     public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException, URISyntaxException {
-        this.scope=String.format("owner=%s&home=%s&id=%s&type=%s&canvas=%s", owner,home,id,type,canvas);
+        this.scope=String.format("owner=%s&home=%s&id=%s&type=%s&canvas=%s",owner,home,id,type,canvas);
         URI uri = new URI(
             "http",
             this.domain,
@@ -138,29 +138,32 @@ public class DomoWrapper {
     }
     */
 
-    public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException {
+    public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException, URISyntaxException {
         this.scope=String.format("/floor?owner=%s&home=%s&id=%s&type=%s&canvas=%s", owner,home,id,type,canvas);
-
         String completeUrl = uri+scope;
-
         String returnString;
 
-        if(completeUrl.length()>=MAX_LENGHT){
+        if (completeUrl.length() >= MAX_LENGHT) {
             this.scope=String.format("/floor?owner=%s&home=%s&id=%s&type=%s", owner,home,id,type);
             ClientResource cr = new ClientResource(uri+scope);
             System.out.println(uri+scope);
             returnString = cr.put(canvas).getText();
-        }
-        else{
-            ClientResource cr = new ClientResource(uri+scope);
-            System.out.println(uri+scope);
-
+        } else {
+            this.scope=String.format("owner=%s&home=%s&id=%s&type=%s&canvas=%s",owner,home,id,type,canvas);
+            URI uri = new URI(
+                "http",
+                this.domain,
+                "/api/floor",
+                this.scope,
+                null
+            );
+            String request = uri.toASCIIString();
+            System.out.println(request);
+            ClientResource cr = new ClientResource(request);
             returnString = cr.put(Floor.class).getText();
         }
 
-
-
-        if(returnString.equals("[]"))
+        if (returnString.equals("[]"))
             return null;
         Gson gson = new Gson();
         return gson.fromJson(returnString,Floor.class);
