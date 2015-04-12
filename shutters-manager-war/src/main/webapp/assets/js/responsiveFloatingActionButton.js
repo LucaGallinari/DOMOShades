@@ -12,9 +12,9 @@ var contentRoom = "mdi-maps-layers";
 var contentWindow = "mdi-image-crop-portrait";
 var duration = 200;
 
-var selectionNumber = 1;
+var selectionNumber = 2;
 
-var oldIcon = contentAdd;
+var oldIcon = contentRoom;
 var newIcon = contentSave;
 
 /** Over and Back custom creators */
@@ -58,7 +58,32 @@ function defaultFAB(removeFab, showFab){
 function showOther(icon, removeFab, showFab, mouseOver){
     icon.removeClass(removeFab).addClass(showFab);
 
+    if(mouseOver){
+        $({deg: 0}).animate(
+            {deg: 360},
+            {
+                duration: duration,
+                queue: false,
+                step: function(now){rotate(icon, now)},
+                complete: showSelector()
+            }
+        )
+    }
+    else{
+        $({deg: 0}).animate(
+            {deg: 360},
+            {
+                duration: duration,
+                queue: false,
+                step: function(now){rotate(icon, now)},
+                complete: hideSelector()
+            }
+        )
+    }
+
+    /*
     switch(selectionNumber){
+
         case 1:
             if(mouseOver){
                 $({deg: 0}).animate(
@@ -109,6 +134,7 @@ function showOther(icon, removeFab, showFab, mouseOver){
             }
             break;
     }
+    */
 }
 
 function rotate(icon, now){
@@ -117,6 +143,7 @@ function rotate(icon, now){
     });
 }
 
+/*
 function showFirstSelector(){
     var room="<div id='room-fab' class='center hidden' style='margin-bottom: 5px'><a href='javascript:roomActions()' class='new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='left' data-delay='0' data-tooltip='New Room' ><i class='mdi-maps-layers'></i></a></div>";
     var window="<div id='window-fab' class='center hidden' style='margin-bottom: 5px'><a href='javascript:windowActions()' class='new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='left' data-delay='0' data-tooltip='New Window' ><i class='mdi-image-crop-portrait'></i></a></div>";
@@ -145,33 +172,48 @@ function hideFirstSelector(){
     windowFAB.remove();
 }
 
+*/
 function showSelector(){
     var undo="<div id='undo-fab' class='center hidden' style='margin-bottom: 5px'><a href='javascript:undoFab()' class='btn-floating btn-medium waves-effect waves-light purple lighten-1 tooltipped' data-position='left' data-delay='0' data-tooltip='Undo' ><i class='mdi-content-undo'></i></a></div>";
     var remove="<div id='remove-fab' class='center hidden' style='margin-bottom: 5px'><a href='javascript:removeFab()' class='btn-floating btn-medium waves-effect waves-light deep-orange lighten-1 tooltipped' data-position='left' data-delay='0' data-tooltip='Remove' ><i class='mdi-navigation-close'></i></a></div>";
-    var back = "<div id='back-fab' class='center hidden' style='margin-bottom: 5px'><a href='javascript:back()' class='btn-floating btn-medium waves-effect waves-light indigo lighten-1 tooltipped' data-position='left' data-delay='0' data-tooltip='Back' ><i class='mdi-navigation-arrow-back'></i></a></div>"
+    //var back = "<div id='back-fab' class='center hidden' style='margin-bottom: 5px'><a href='javascript:back()' class='btn-floating btn-medium waves-effect waves-light indigo lighten-1 tooltipped' data-position='left' data-delay='0' data-tooltip='Back' ><i class='mdi-navigation-arrow-back'></i></a></div>"
 
-    fab.before(back, undo, remove);
+    var toggle;
+
+    switch(selectionNumber){
+        case 2: //Room -> Window button
+            toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:windowActions()' class='new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a></div>";
+            break;
+        case 3: //Window -> Room button
+            toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:roomActions()' class='new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a></div>";
+            break;
+    }
+
+    fab.before(undo, remove);
+    fab.after(toggle);
 
     $('.tooltipped').tooltip();
 
     undoFAB = $('#undo-fab');
     removeFAB = $('#remove-fab');
-    backFAB = $('#back-fab');
+    //backFAB = $('#back-fab');
+    toggleFAB = $('#toggle-fab');
 
     removeFAB.show(duration, function(){
         undoFAB.show(duration, function(){
-            backFAB.show(duration);
+            //backFAB.show(duration);
+            toggleFAB.show(duration);
         })
     });
 }
 
 function hideSelector(){
-
     undoFAB = $('#undo-fab');
     removeFAB = $('#remove-fab');
-    backFAB = $('#back-fab');
+    //backFAB = $('#back-fab');
+    toggleFAB = $('#toggle-fab');
 
-    backFAB.hide(duration, function(){
+    toggleFAB.hide(duration, function(){
         undoFAB.hide(duration, function(){
             removeFAB.hide(duration);
         })
@@ -179,7 +221,8 @@ function hideSelector(){
 
     undoFAB.remove();
     removeFAB.remove();
-    backFAB.remove();
+    //backFAB.remove();
+    toggleFAB.remove();
 }
 
 function roomActions(){
@@ -187,12 +230,12 @@ function roomActions(){
     oldIcon = contentRoom;
     newIcon = contentSave;
 
-    fab.removeClass('red').addClass('yellow darken-2');
+    fab.removeClass('blue lighten-3').addClass('yellow darken-2');
     selectionNumber = 2;
 
     //TODO
-    fab.attr('href', 'javascript:saveRoom()');
-    fab.attr('data-tooltip','Save Room');
+    //fab.attr('href', 'javascript:saveRoom()');
+    //fab.attr('data-tooltip','Save Room');
 
     changeMode(1);
 }
@@ -200,18 +243,19 @@ function roomActions(){
 function windowActions(){
     defaultFAB(contentSave,contentWindow);
     oldIcon = contentWindow;
-    newIcon = contentWindow;
+    newIcon = contentSave;
 
-    fab.removeClass('red').addClass('blue lighten-3');
+    fab.removeClass('yellow darken-2').addClass('blue lighten-3');
     selectionNumber = 3;
 
     //TODO
-    fab.attr('href', '');
-    fab.attr('data-tooltip','Window');
+    //fab.attr('href', '');
+    //fab.attr('data-tooltip','Save Window');
 
     changeMode(5);
 }
 
+/*
 function back(){
     switch(selectionNumber){
         case 2:
@@ -232,7 +276,7 @@ function back(){
     fab.attr('data-tooltip','Save Floor');
 }
 
-
+*/
 function undoFab(){
     switch(selectionNumber) {
         case 2:   if (currentPoly) {

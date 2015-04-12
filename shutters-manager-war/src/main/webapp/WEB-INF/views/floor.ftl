@@ -100,7 +100,7 @@
 
             <div class="col l1 m1 s1 right right-align" style="height: 500px; margin-bottom: 10px; position: relative">
                 <div class="fab-container" style="position: absolute; bottom: 0">
-                    <a href="javascript:saveCanvas('#canvasForm');" id="fancy-fab" class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="left" data-delay="0" data-tooltip="Save Floor" ><i class="mdi-content-add"></i></a>
+                    <a href="javascript:saveCanvas('#canvasForm');" id="fancy-fab" class="btn-floating btn-large waves-effect waves-light yellow darken-2 tooltipped" data-position="left" data-delay="0" data-tooltip="Save Floor" ><i class="mdi-maps-layers"></i></a>
                 </div>
             </div>
 
