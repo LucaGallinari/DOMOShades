@@ -182,10 +182,12 @@ function showSelector(){
 
     switch(selectionNumber){
         case 2: //Room -> Window button
-            toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:windowActions()' class='new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a></div>";
+            //            toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:windowActions()' class='new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a></div>";
+            toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:windowActions()' class='center hidden new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a>";
             break;
         case 3: //Window -> Room button
-            toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:roomActions()' class='new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a></div>";
+            //             toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:roomActions()' class='new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a></div>";
+            toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:roomActions()' class='center hidden new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a>";
             break;
     }
 
