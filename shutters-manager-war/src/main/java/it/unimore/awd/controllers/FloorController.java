@@ -206,7 +206,7 @@ public class FloorController extends Controller {
                                 roomData room = gson.fromJson(roomJson, roomData.class);
                                 Room r = domoWrapper.putRoom(owner, homeIdStr, floorIdStr, idRoom, room.name/*, roomJson*/);
                                 if (r == null) {
-                                    System.out.println("Error: room not modified (added), id:"+idRoom);
+                                    System.out.println("Error: room not modified, id:"+idRoom);
                                 } else {
                                     floorCanvas += ((floorCanvas.isEmpty()) ? roomJson : ","+roomJson);
                                 }
@@ -222,7 +222,6 @@ public class FloorController extends Controller {
                     // 5- Update floor canvas
                     Floor f = domoWrapper.putFloor(owner, homeIdStr, floorIdStr, type, floorCanvas);
                     if (f != null) {
-
                         System.out.println("Piano modificato.");
                         if (this.ajax) {
                             resp.getWriter().write("Ok");

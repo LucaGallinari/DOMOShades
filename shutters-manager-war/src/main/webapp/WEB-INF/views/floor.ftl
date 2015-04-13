@@ -38,56 +38,17 @@
 
         <!-- Tools + Canvas -->
         <div class="xl12">
-            <h4 class="amber-text center">Draw Floor ${ selectedFloor.id } Layout</h4>
+            <div class="row l10 offset-l1 m10 offset-m1 s10 offset-s1">
+                <h4 class="col l10 m10 s10 amber-text center">Draw Floor ${ selectedFloor.id } Layout</h4>
 
-				<!-- Tools -->
-                <div class="row container">
+                <div class="col l2 m2 s2">
+                    <a class="waves-effect waves-light small btn-flat modal-trigger shortcuts-modal" href="#shortcutsModal"><i class="mdi-action-info light-blue-text"></i></a>
+                    <a class="waves-effect waves-light small btn-flat modal-trigger canvas-modal" href="#canvasSettings"><i class="mdi-action-settings blue-grey-text"></i></a>
+                </div>
+            </div>
 
-                    <div class="card-panel red lighten-1 hidden" id="saveCanvasErrors"></div>
-
-                    <div class="col l11 m12 s12 left">
-                        <p class="flow-text">
-                            <iframe width="560" height="315" src="https://www.youtube.com/embed/WqXHLHGfS98" frameborder="0" allowfullscreen></iframe>
-                        </p>
-                    </div>
-                    <div class="col l1 m12 s12 right">
-                        <a class="waves-effect waves-light small btn-flat modal-trigger shortcuts-modal" href="#shortcutsModal"><i class="mdi-action-info light-blue-text"></i></a>
-                        <a class="waves-effect waves-light small btn-flat modal-trigger canvas-modal" href="#canvasSettings"><i class="mdi-action-settings blue-grey-text"></i></a>
-                    </div>
-                    <!-- Tools of rooms ->
-                    <div class="col l7 m7 s7 left">
-                        <div class="col l4 m6 s12">
-                            <p>Manage rooms</p>
-                            <div>
-                                <div class="item-icon" id="addRoom">
-                                    <i class="mdi-content-add-circle-outline"></i>
-                                    <h6 class="nomargin"><small>New Room</small></h6>
-                                </div>
-                                <div class="item-icon" id="undoLastPoint">
-                                    <i class="mdi-content-undo"></i>
-                                    <h6 class="nomargin"><small>Undo</small></h6>
-                                </div>
-                                <div class="item-icon" id="removeRoom">
-                                    <i class="mdi-content-remove-circle-outline"></i>
-                                    <h6 class="nomargin"><small>Delete Room</small></h6>
-                                </div>
-                                <br class="brclear" />
-                            </div>
-                        </div>
-                        <!-- Tools of shutters ->
-                        <div class="col l4 m6 s12">
-                            <p>Manage shutters</p>
-                            <div class="item-icon" id="addShutter">
-                                <i class="mdi-content-add-circle-outline"></i>
-                                <h6 class="nomargin"><small>New Shutter</small></h6>
-                            </div>
-                            <div class="item-icon" id="removeShutter">
-                                <i class="mdi-content-remove-circle-outline"></i>
-                                <h6 class="nomargin"><small>Remove Shutter</small></h6>
-                            </div>
-                        </div>
-                    </div><!--END Tool of rooms -->
-                </div><!-- END Tools -->
+            <!-- Errors -->
+            <div class="card-panel red lighten-1 row container hidden" id="saveCanvasErrors"></div>
 
             <!-- This is necessary to create fancy alignment -->
             <div class="col l10 offset-l1 m10 offset-m1 s10 offset-s1">
@@ -226,20 +187,6 @@
             drawRoomFromJson(room);
         }
         changeMode(1);
-
-        /*Bind tools' buttons to events*/
-        /*
-        $('#addRoom').on('click', function() {changeMode(1);});
-        $('#removeRoom').on('click', function() {changeMode(2);});
-        $('#addShutter').on('click', function() {changeMode(5);});
-        $('#removeShutter').on('click', function() {changeMode(6);});
-        $('#undoLastPoint').on('click', function() {
-            if (currentPoly) {
-                currentPoly.removeLastPoint();
-            }
-            canvas.renderAll();
-        });
-        */
 
         // TODO: when keyboard buttons pressed change visualization
         $('#showGrid').on('click', function() {
