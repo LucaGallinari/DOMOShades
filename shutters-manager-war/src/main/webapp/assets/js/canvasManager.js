@@ -922,6 +922,7 @@ function saveCanvas(form) {
 
 function saveRoomsDataToForm() {
     var count=0;
+    // process rooms
     for (var i =0; i<polys.length; ++i) {
         if (polys[i].new) {// new room
             addNewRoomToInput(i);
@@ -934,6 +935,8 @@ function saveRoomsDataToForm() {
             }
         }
     }
+    // copy floorType
+    $('#floorType').val($('#typef').val());
     return ((countRemoved > 0) || (count != polys.length)); // if nothing changed,don't save
 }
 

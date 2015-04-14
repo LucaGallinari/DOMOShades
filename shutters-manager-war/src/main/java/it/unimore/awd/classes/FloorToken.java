@@ -70,6 +70,19 @@ public class FloorToken {
                     this.id=id;
                 }
 
+                public String getKind() {return kind;}
+                public void setKind(String kind) {this.kind = kind;}
+                public Long getId() {return id;}
+                public void setId(Long id) {this.id = id;}
+
+                public ParentKeyToken getParentKey() {
+                    return parentKey;
+                }
+
+                public void setParentKey(ParentKeyToken parentKey) {
+                    this.parentKey = parentKey;
+                }
+
                 static public class ParentKeyToken {
 
                     String kind;

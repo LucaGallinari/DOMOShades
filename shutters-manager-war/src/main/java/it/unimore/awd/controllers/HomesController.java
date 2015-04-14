@@ -12,13 +12,12 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import it.unimore.awd.DomoWrapper;
 
-import it.unimore.awd.classes.Floor;
 import it.unimore.awd.classes.FloorToken;
 import it.unimore.awd.classes.User;
 import it.unimore.awd.classes.Home;
 
 @SuppressWarnings("serial")
-public class HomeController extends Controller {
+public class HomesController extends Controller {
 
     public static final String ctrlName = "";
 
@@ -58,13 +57,6 @@ public class HomeController extends Controller {
 
             // get user's homes
             List<Home> hl = domoWrapper.getHomesByUser(owner);
-            List<FloorToken> fl = new ArrayList<FloorToken>();
-            for (Home home: hl) {
-                List<FloorToken> floors = domoWrapper.getFloorsByHome(owner, home.getId().toString());
-                if (floors != null) {
-                    fl.addAll(floors);
-                }
-            }
 
             // model the page
             Map<String, Object> root = new HashMap<String, Object>();
@@ -74,9 +66,8 @@ public class HomeController extends Controller {
             root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
             root.put("logoutURL", userService.createLogoutURL("/"));
             root.put("homes", hl);
-            root.put("floors", fl);
             // output it
-            TemplateHelper.callTemplate(cfg, resp, ctrlName + "/home.ftl", root);
+            TemplateHelper.callTemplate(cfg, resp, ctrlName + "/homes.ftl", root);
 
         } else { // not logged, redirect
             resp.sendRedirect("/");
@@ -86,8 +77,7 @@ public class HomeController extends Controller {
 
     /*
      *  Add home.
-     *  If called by another function (eg: root()) you need to set ajax global variable
-     *  to false.
+     *  If called by another function (eg: root()) you need to set ajax global variable to false.
      *  If called by ajax you only need to send the form with "serialized" data.
      *
      *  @ret String Ok if successful, an error if not.
@@ -136,8 +126,7 @@ public class HomeController extends Controller {
 
     /*
     *  Modify home.
-    *  If called by another function (eg: root()) you need to set ajax global variable
-    *  to false.
+    *  If called by another function (eg: root()) you need to set ajax global variable to false.
     *  If called by ajax you only need to send the form with "serialized" data.
     *
     *  @ret String Ok if successful, an error if not.
@@ -194,8 +183,7 @@ public class HomeController extends Controller {
 
     /*
      *  Remove home.
-     *  If called by another function (eg: root()) you need to set ajax global variable
-     *  to false.
+     *  If called by another function (eg: root()) you need to set ajax global variable to false.
      *  If called by ajax you only need to send the form with "serialized" data.
      *
      *  @par id Id of the home

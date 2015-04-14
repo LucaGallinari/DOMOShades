@@ -60,9 +60,9 @@
                                data-position="bottom" data-tooltip="Delete Home">
                                 <i class="mdi-content-clear red-text"></i>
                             </a>
-                            <a data-toggle="${home.id}"
+                            <a href="/floors/?home=${home.id}"
                                class="small waves-effect waves-blue btn-flat manageHome tooltipped"
-                               data-position="bottom" data-tooltip="Menage Home">
+                               data-position="bottom" data-tooltip="Manage Home">
                                 <i class="mdi-content-forward blue-text"></i>
                             </a>
                         </td>
@@ -99,13 +99,6 @@
                 </div>
             </div>
 
-            <!-- Select Floor Modal -->
-            <div id="selectFloorModal" class="modal">
-                <div class="modal-content">
-                    <h4>Select Floor</h4>
-                    <ul></ul>
-                </div>
-            </div>
         </div>
     </div><!-- END Table + Modals -->
 
@@ -175,10 +168,6 @@
 
 </div>
 
-    <script type="text/javascript">
-        var floors = [<#list floors as floor>${floor},</#list>];
-        //TODO: show no floors exist in the modal
-    </script>
     <script type="text/javascript" src="/assets/js/homeManager.js"></script>
 
 </@layout.mainLayout>

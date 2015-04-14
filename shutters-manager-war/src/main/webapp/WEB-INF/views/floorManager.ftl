@@ -42,8 +42,8 @@
                 <h4 class="col l10 m10 s10 amber-text center">Draw Floor ${ selectedFloor.id } Layout</h4>
 
                 <div class="col l2 m2 s2">
-                    <a class="waves-effect waves-light small btn-flat modal-trigger shortcuts-modal" href="#shortcutsModal"><i class="mdi-action-info light-blue-text"></i></a>
-                    <a class="waves-effect waves-light small btn-flat modal-trigger canvas-modal" href="#canvasSettings"><i class="mdi-action-settings blue-grey-text"></i></a>
+                    <a class="waves-effect waves-light small btn-flat modal-trigger shortcuts-modal" href="#"><i class="mdi-action-info light-blue-text"></i></a>
+                    <a class="waves-effect waves-light small btn-flat modal-trigger canvas-modal" href="#"><i class="mdi-action-settings blue-grey-text"></i></a>
                 </div>
             </div>
 
@@ -73,14 +73,14 @@
                     <input type="hidden" name="roomsAdded" value="">
                     <input type="hidden" name="roomsModified" value="">
                     <input type="hidden" name="notModRooms" value="">
-                    <input type="hidden" name="floorType" value="${floorId-1}">
+                    <input type="hidden" name="floorType" value="${selectedFloor.type}">
                 </form>
             </div>
         </div><!-- END Tools + Canvas -->
 
         <div class="row">
             <!-- List of rooms -->
-            <div class="col l5 m5 s5 offset-l1 offset-m1 offset-s1 left ">
+            <div class="col l5 m5 s10 offset-l1 offset-m1 offset-s1">
                 <h5>Rooms list</h5>
                 <div class="row">
                     <ul id="rooms-list" class="collapsible" data-collapsible="accordion"></ul>
@@ -171,6 +171,7 @@
 
 <script>
     $(document).ready(function() {
+
         $('.canvas-modal').click(function(){
             $('#settingsModal').openModal();
         });

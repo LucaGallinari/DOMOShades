@@ -17,7 +17,7 @@ import java.util.Map;
 // import com.google.appengine.api.users.User; same name as domo user
 
 @SuppressWarnings("serial")
-public class FloorController extends Controller {
+public class FloorManagerController extends Controller {
 
     public static final String ctrlName = "";
 
@@ -70,13 +70,13 @@ public class FloorController extends Controller {
                     root.put("floors", fl);
                     root.put("floorId", Integer.parseInt(floorIdStr));
                     // output it
-                    TemplateHelper.callTemplate(cfg, resp, ctrlName + "/floor.ftl", root);
+                    TemplateHelper.callTemplate(cfg, resp, ctrlName + "/floorManager.ftl", root);
 
                 } else { // no floor selected, redirect
-                    resp.sendRedirect("/home/");
+                    resp.sendRedirect("/floors/?home="+homeIdStr);
                 }
             } else { // no home selected, redirect
-                resp.sendRedirect("/home/");
+                resp.sendRedirect("/homes/");
             }
         } else { // not logged, redirect
             resp.sendRedirect("/");
@@ -85,61 +85,8 @@ public class FloorController extends Controller {
     }
 
     /*
-     *  Add floor.
-     *  If called by another function (eg: root()) you need to set ajax global variable
-     *  to false.
-     *  If called through ajax you only need to send the form with "serialized" data.
-     *
-     *  @ret String Ok if succes+sful, an error if not.
-    */
-    public String add()
-            throws IOException, ServletException
-    {
-        String error="";
-        if (gaeUser != null) { // already logged
-
-            String homeIdStr = req.getParameter("home");
-            if (homeIdStr != null && !homeIdStr.isEmpty()) { // check home par exists
-
-                // retrieve parameters
-                String canvas = req.getParameter("canvas");
-                String floorId = req.getParameter("id");
-                String type = req.getParameter("type");
-                if (!(floorId.isEmpty())) {// add floor
-                    try {
-                        Floor f = domoWrapper.putFloor(gaeUser.getEmail(), homeIdStr, floorId, type, canvas);
-                        System.out.println("Piano inserito.");
-                        if (this.ajax) {
-                            resp.getWriter().write("Ok: "+f.getId());
-                        } else {
-                            resp.sendRedirect("/floor?home="+homeIdStr+"&floor="+f.getId()); //TODO: change to correct URL
-                        }
-                    } catch (Exception e) {
-                        // TODO: not sure about this error msg
-                        System.out.println("Piano non inserito perchè già presente!");
-                        if (this.ajax) {resp.getWriter().write("Error: this floor for this home already exists!");}
-                        else {error = "4";}
-                    }
-                } else {// error
-                    if (this.ajax) { resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
-                    else {error = "3";}
-                }
-            } else { // no home selected, redirect
-                if (this.ajax) {resp.getWriter().write("Error: home parameter not specified.");}
-                else {error="2";}
-            }
-        } else { // not logged, error
-            if (this.ajax) {resp.getWriter().write("Error: you are not logged in.");}
-            else {error="1";}
-        }
-        return error;
-        //TODO: remake errors list in layouts
-    }
-
-    /*
     *  Modify floor.
-    *  If called by another function (eg: root()) you need to set ajax global variable
-    *  to false.
+    *  If called by another function (eg: root()) you need to set ajax global variable to false.
     *  If called by ajax you only need to send the form with "serialized" data.
     *
     *  @ret String Ok if successful, an error if not.
@@ -247,60 +194,12 @@ public class FloorController extends Controller {
         return error;
     }
 
-    /*
-     *  Remove home.
-     *  If called by another function (eg: root()) you need to set ajax global variable
-     *  to false.
-     *  If called by ajax you only need to send the form with "serialized" data.
-     *
-     *  @par id Id of the home
-     *  @ret String Ok if successful, an error if not.
-
-    public String remove()
-        throws IOException, ServletException
-    {
-        String error="";
-
-        if (gaeUser != null) { // already logged
-            String owner = gaeUser.getEmail();
-            String id = req.getParameter("id");
-
-            if (id != null) {
-                try {
-                    domoWrapper.deleteHome(owner, id);
-                    if (this.ajax) {
-                        resp.getWriter().write("Ok");
-                    }
-                } catch (Exception e) { // home not found
-                    System.out.println("Casa non cancellata perchè non trovata!");
-                    if (this.ajax) {resp.getWriter().write("Error: this house has already been deleted!");}
-                    else {error = "3";}
-                }
-            } else {
-                if (this.ajax) {resp.getWriter().write("Error: expected and id parameter.");}
-                else {error="2";}
-            }
-        } else { // not logged, error
-            if (this.ajax) {resp.getWriter().write("Error: you are not logged in.");}
-            else {error="1";}
-        }
-        return error;
-    }*/
 
     private boolean compareDomouserGaeuser(User domoUser, com.google.appengine.api.users.User gaeUser) {
         return (
             domoUser.getFirst_name().equals(gaeUser.getNickname())
             && domoUser.getLast_name().equals(gaeUser.getNickname())
         );
-    }
-
-    private Floor getFloorById (long floorID, List<Floor> fl){
-        for (Floor f: fl) {
-            if (f.getId()==floorID) {
-                return f;
-            }
-        }
-        return null;
     }
 
     /**

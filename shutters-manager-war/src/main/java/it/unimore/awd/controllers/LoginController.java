@@ -22,7 +22,7 @@ public class LoginController extends Controller {
         User user = userService.getCurrentUser();
 
         if (user != null) { // already logged, redirect
-            resp.sendRedirect("/home/");
+            resp.sendRedirect("/homes/");
         } else { // not logged,show
             Map<String, Object> root = new HashMap<String, Object>();
             root.put("loginURL", userService.createLoginURL(req.getRequestURI()));

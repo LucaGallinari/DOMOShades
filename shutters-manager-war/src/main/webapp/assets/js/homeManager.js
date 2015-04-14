@@ -21,7 +21,7 @@ $(document).ready(function(){
         // do an ajax req
         $.ajax({
             type: "POST",
-            url: "/home/add",
+            url: "/homes/add",
             data: $(this).serialize() // serializes the form's elements.
         })
         .done(function( data ) {
@@ -59,15 +59,13 @@ $(document).ready(function(){
     $('.modal-footer').on('click', '#agreeRemove', function() {
         var id = $(this).attr('data-toggle');
         var parentId = "#removeHome" + id;
-        console.log(1);
         $(parentId).find('.removeHome').hide();
         $(parentId).append(preloader_wrapper('center'));
         // do an ajax req
         $.ajax({
-            url: '/home/remove?id='+id
+            url: '/homes/remove?id='+id
         })
         .done(function( data ) {
-            console.log(2);
             data = data.toString();
             if (data=="Ok") { // if everything's ok
                 Materialize.toast('Home removed!', 3000, 'rounded');
@@ -135,7 +133,7 @@ $(document).ready(function(){
         // do an ajax req
         $.ajax({
             type: "POST",
-            url: '/home/modify?id='+id,
+            url: '/homes/modify?id='+id,
             data: $(this).serialize() // serializes the form's elements.
         })
         .done(function(data) {
@@ -155,27 +153,7 @@ $(document).ready(function(){
         return false; // avoid to execute the actual submit of the form.
     });
 
-    /* - MANAGE HOME - */
-    $(listHomes).on('click', 'a.manageHome', function() {
-        // pre ajax request
-        var id = parseInt($(this).attr('data-toggle'));
-        //$(this).hide();
-        setupSelectFloorModal(id);
-        $('#selectFloorModal').openModal();
-    });
-
 });
-
-function setupSelectFloorModal(id) {
-    var sel = $("#selectFloorModal").find('ul').first();
-    sel.html(''); //clear
-    for (var i = 0; i < floors.length; i++) {
-        var f = floors[i];
-        if (f.house.key.raw.id==id) {
-            sel.append('<li><a href="/floor/manage?home='+id+'&floor='+ f.id +'">Floor '+ f.id +'</a></li>');
-        }
-    }
-}
 
 function modifyListElement(id) {
     $(modifyHomeForm).find('input').each(function(){ // for each input fill the respective td
@@ -228,7 +206,7 @@ function list_element(id, descr, addr, city, country, cap) {
                 <a data-toggle="'+(id)+'" class="small waves-effect waves-red btn-flat removeHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Delete Home"> \
                     <i class="mdi-content-clear red-text"></i> \
                 </a> \
-                <a data-toggle="'+(id)+'" class="small waves-effect waves-blue btn-flat manageHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Menage Home"> \
+                <a href="/floors/?home='+(id)+'" class="small waves-effect waves-blue btn-flat manageHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Manage Home"> \
                     <i class="mdi-content-forward blue-text"></i> \
                 </a> \
             </td> \

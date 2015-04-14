@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
+    <!-- Login -->
     <servlet>
         <servlet-name>LoginController</servlet-name>
         <servlet-class>
@@ -12,33 +13,47 @@
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
+    <!-- Homes -->
     <servlet>
-        <servlet-name>HomeController</servlet-name>
+        <servlet-name>HomesController</servlet-name>
         <servlet-class>
-            it.unimore.awd.controllers.HomeController
+            it.unimore.awd.controllers.HomesController
         </servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>HomeController</servlet-name>
-        <url-pattern>/home/*</url-pattern>
+        <servlet-name>HomesController</servlet-name>
+        <url-pattern>/homes/*</url-pattern>
     </servlet-mapping>
 
-
+    <!-- Floors -->
     <servlet>
-        <servlet-name>FloorController</servlet-name>
+        <servlet-name>FloorsController</servlet-name>
         <servlet-class>
-            it.unimore.awd.controllers.FloorController
+            it.unimore.awd.controllers.FloorsController
         </servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>FloorController</servlet-name>
+        <servlet-name>FloorsController</servlet-name>
+        <url-pattern>/floors/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- FloorManager -->
+    <servlet>
+        <servlet-name>FloorManagerController</servlet-name>
+        <servlet-class>
+            it.unimore.awd.controllers.FloorManagerController
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>FloorManagerController</servlet-name>
         <url-pattern>/floor/*</url-pattern>
     </servlet-mapping>
 
+    <!-- TODO: update security constraints -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>home</web-resource-name>
-            <url-pattern>/home/*</url-pattern>
+            <url-pattern>/homes/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>*</role-name>
