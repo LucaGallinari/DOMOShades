@@ -48,10 +48,6 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
     font-size: 12px;
 }
 
-.removeHome > i {
-    font-size:20pt;
-}
-
 .spaced-r-20 {margin-right:20px;}
 .spaced-r-10 {margin-right:10px;}
 .spaced-l-20 {margin-left:20px;}

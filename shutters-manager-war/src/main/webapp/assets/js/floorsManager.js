@@ -10,6 +10,8 @@ var modifyFloorForm  = "#modifyFloorForm";
 var listFloors       = "#listFloors";
 var typef            = "#typef";
 
+var close = 0;
+
 $(document).ready(function(){
 
     /* - ADD FLOOR - */
@@ -28,10 +30,14 @@ $(document).ready(function(){
             data: $(this).serialize() // serializes the form's elements.
         })
         .done(function( data ) {
+            //$('#addModal').closeModal();
+
             data = data.toString();
             // rollback
             buttonsRow.find('.preloader-wrapper').remove();
             buttonsRow.find('button').show();
+            hideBottomCard();
+
             if (data.indexOf("Ok")!=-1) { // if everything's ok
                 Materialize.toast('Floor added!', 3000, 'rounded');
                 data.substr(4, data.length-4);
@@ -48,6 +54,7 @@ $(document).ready(function(){
                 $('#addFloorErrors').html(data).fadeIn();
             }
         });
+
         return false; // avoid to execute the actual submit of the form.
     });
 
@@ -162,6 +169,66 @@ $(document).ready(function(){
 
 });
 
+function toggleBottomCard(){
+    switch(close){
+        case 0: showBottomCard();
+            break;
+        case 1: hideBottomCard();
+            break;
+    }
+}
+
+function showBottomCard() {
+    Materialize.showStaggeredList('#new-floor');
+
+    $({deg: 0}).animate(
+        {deg: 45},
+        {
+            duration: 90,
+            queue: false,
+            step: function(now){rotate($('#add-new-floor:first i'), now)}
+        }
+    );
+
+    close = 1;
+}
+
+function hideBottomCard() {
+    hideStaggeredList('#new-floor');
+
+
+    $({deg: 45}).animate(
+        {deg: 0},
+        {
+            duration: 90,
+            queue: false,
+            step: function(now){rotate($('#add-new-floor:first i'), now)}
+        }
+    );
+
+    close = 0;
+}
+
+function rotate(icon, now){
+    icon.css({
+        transform: "rotate(" + now + "deg)"
+    });
+}
+
+function hideStaggeredList(selector) {
+    var time = 0;
+    $(selector).find('li').velocity(
+        { translateX: "0px"},
+        { duration: 0 });
+
+    $(selector).find('li').each(function() {
+        $(this).velocity(
+            { opacity: "0", translateX: "-100"},
+            { duration: 800, delay: time, easing: [60, 10] });
+        time += 120;
+    });
+};
+
 function updateTypesList() {
     $(typef).empty();
     for (var i = 0; i < floorTypes.length; i++) {
@@ -236,12 +303,16 @@ function addListElement(id) {
     // add element
     var el = $(list_element(id,type,homeId));
     el.hide();
-    $(listFloors).find('tbody').append(el);
+    //$(listFloors).find('tbody').append(el);
+    $(listFloors).append(el);
     $('.tooltipped').tooltip({delay: 0});
     el.fadeIn();
 }
 
+
+
 function list_element(id, type, homeId) {
+/*
     return ' \
         <tr id="listFloor'+(id)+'" class="new"> \
             <td class="type">'+floorTypes[type].str+'</td> \
@@ -257,6 +328,25 @@ function list_element(id, type, homeId) {
                 </a> \
             </td> \
         </tr>';
+*/
+    return '    \
+            <li id="listFloor'+(id)+'" class="collection-item new">' + floorTypes[type].str +'  \
+                <a href="/floor/manage?home='+(homeId)+'&floor='+(id)+'"    \
+                    class="tiny waves-effect waves-blue manageFloor tooltipped right" \
+                    data-position="bottom" data-tooltip="Manage Floor"> \
+                        <i class="mdi-content-forward blue-text"></i> \
+                </a> \
+                <a data-toggle="'+(id)+'" \
+                    class="tiny waves-effect waves-red removeFloor tooltipped right" \
+                    data-position="bottom" data-tooltip="Delete Floor"> \
+                        <i class="mdi-content-clear red-text"></i> \
+                </a> \
+                <a data-toggle="'+(id)+'" \
+                    class="tiny waves-effect waves-green modifyFloor tooltipped right" \
+                    data-position="bottom" data-tooltip="Modify Floor Values"> \
+                        <i class="mdi-content-create green-text"></i> \
+                </a> \
+            </li>';
 }
 
 function preloader_wrapper(pos) {

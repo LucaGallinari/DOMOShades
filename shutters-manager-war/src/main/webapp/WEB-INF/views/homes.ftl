@@ -50,20 +50,20 @@
                         <td class="hidden-tc-m city">${home.city}</td>
                         <td class="hidden-tc-sm country">${home.country}</td>
                         <td>
-                            <a data-toggle="${home.id}"
-                               class="small waves-effect waves-green btn-flat modifyHome tooltipped"
-                               data-position="bottom" data-tooltip="Modify Home Values">
-                                <i class="mdi-content-create green-text"></i>
+                            <a href="/floors/?home=${home.id}"
+                               class="tiny waves-effect waves-blue manageHome tooltipped right"
+                               data-position="bottom" data-tooltip="Manage Home">
+                                <i class="mdi-content-forward blue-text"></i>
                             </a>
                             <a data-toggle="${home.id}"
-                               class="small waves-effect waves-red btn-flat removeHome tooltipped"
+                               class="tiny waves-effect waves-red removeHome tooltipped right"
                                data-position="bottom" data-tooltip="Delete Home">
                                 <i class="mdi-content-clear red-text"></i>
                             </a>
-                            <a href="/floors/?home=${home.id}"
-                               class="small waves-effect waves-blue btn-flat manageHome tooltipped"
-                               data-position="bottom" data-tooltip="Manage Home">
-                                <i class="mdi-content-forward blue-text"></i>
+                            <a data-toggle="${home.id}"
+                               class="tiny waves-effect waves-green modifyHome tooltipped right"
+                               data-position="bottom" data-tooltip="Modify Home Values">
+                                <i class="mdi-content-create green-text"></i>
                             </a>
                         </td>
                     </tr>
