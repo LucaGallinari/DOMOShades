@@ -17,6 +17,8 @@ var selectionNumber = 2;
 var oldIcon = contentRoom;
 var newIcon = contentSave;
 
+var ammadio = 0;
+
 /** Over and Back custom creators */
 $(function(){
     fabC.hover(function(){
@@ -182,12 +184,12 @@ function showSelector(){
 
     switch(selectionNumber){
         case 2: //Room -> Window button
-            //            toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:windowActions()' class='new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a></div>";
-            toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:windowActions()' class='center hidden new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a>";
+            toggle="<div id='toggle-fab' class='center hidden' style='margin-top: -37px;'><a href='javascript:windowActions()' class='new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='left' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a></div>";
+            //toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:windowActions()' class='center hidden new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a>";
             break;
         case 3: //Window -> Room button
-            //             toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:roomActions()' class='new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a></div>";
-            toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:roomActions()' class='center hidden new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a>";
+            toggle="<div id='toggle-fab' class='center hidden' style='margin-top: -37px;'><a href='javascript:roomActions()' class='new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='left' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a></div>";
+            //toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:roomActions()' class='center hidden new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a>";
             break;
     }
 
@@ -228,6 +230,8 @@ function hideSelector(){
 }
 
 function roomActions(){
+    checkAmmadio();
+
     defaultFAB(contentSave,contentRoom);
     oldIcon = contentRoom;
     newIcon = contentSave;
@@ -243,6 +247,8 @@ function roomActions(){
 }
 
 function windowActions(){
+    checkAmmadio();
+
     defaultFAB(contentSave,contentWindow);
     oldIcon = contentWindow;
     newIcon = contentSave;
@@ -304,4 +310,20 @@ function removeFab(){
 
 function saveRoom(){
     // TODO
+}
+
+function checkAmmadio(){
+    ammadio++;
+    if(ammadio%7==0){
+        var sel = $('#ammadioModal');
+        sel.leanModal({
+                dismissible: false, // Modal can be dismissed by clicking outside of the modal
+                opacity: .5, // Opacity of modal background
+                in_duration: 300, // Transition in duration
+                out_duration: 200 // Transition out duration
+            }
+        );
+        sel.openModal().delay(1000).closeModal();
+
+    }
 }
