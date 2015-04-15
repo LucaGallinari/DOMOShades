@@ -52,13 +52,13 @@
                 <h5>Plant Drawing Area</h5>
             </div>
 
-            <div class="canvas col l9 offset-l1 m10 offset-m1 s10 offset-s1 left">
+            <div class="canvas col l10 offset-l1 m10 offset-m1 s10 offset-s1 left">
                 <canvas id="fabric" height="500" class="z-depth-1"></canvas>
             </div>
 
-            <div class="col l2 m1 s1 right right-align" style="height: 500px; margin-bottom: 10px; position: relative">
-                <div class="fab-container" style="position: absolute; bottom: 0">
-                    <a href="javascript:saveCanvas('#canvasForm');" id="fancy-fab" class="btn-floating btn-large waves-effect waves-light yellow darken-2 tooltipped" data-position="left" data-delay="0" data-tooltip="Save Floor" ><i class="mdi-maps-layers"></i></a>
+            <div class="col l1 m1 s1 right right-align" style="height: 500px; margin-bottom: 10px; position: relative">
+                <div class="fab-container" style="position: absolute; bottom: -42px">
+                    <a style="margin-bottom: 42px;" href="javascript:saveCanvas('#canvasForm');" id="fancy-fab" class="btn-floating btn-large waves-effect waves-light yellow darken-2 tooltipped" data-position="left" data-delay="0" data-tooltip="Save Floor" ><i class="mdi-maps-layers"></i></a>
                 </div>
             </div>
 
@@ -88,6 +88,21 @@
 
         <!-- Modals -->
         <div class="container">
+            <!-- Ammadio Modal -->
+            <div id="ammadioModal" class="modal">
+                <div class="modal-content">
+                    <h4 class="teal-text">No Room or Window</h4>
+                    <div class="col l3 m3 s3 left">
+                        <img src="/assets/images/easter_2.gif" height="180px">
+                    </div>
+                    <div class="col l9 m9 s9 right">
+                        <p class="flow-text" style="font-size: 2em;">
+                            Vuoi forse aggiungere un AMMADIO?
+                        </p>
+                    </div>
+                </div>
+            </div>
+
 			<!-- Save canvas modal -->
 			<div id="savingModal" class="modal">
 				<div class="modal-content">

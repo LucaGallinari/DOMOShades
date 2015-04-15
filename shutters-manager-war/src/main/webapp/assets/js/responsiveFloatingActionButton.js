@@ -17,6 +17,8 @@ var selectionNumber = 2;
 var oldIcon = contentRoom;
 var newIcon = contentSave;
 
+var ammadio = 0;
+
 /** Over and Back custom creators */
 $(function(){
     fabC.hover(function(){
@@ -182,12 +184,12 @@ function showSelector(){
 
     switch(selectionNumber){
         case 2: //Room -> Window button
-            //            toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:windowActions()' class='new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a></div>";
-            toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:windowActions()' class='center hidden new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a>";
+            toggle="<div id='toggle-fab' class='center hidden' style='margin-top: -37px;'><a href='javascript:windowActions()' class='new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='left' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a></div>";
+            //toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:windowActions()' class='center hidden new-window btn-floating btn-medium waves-effect waves-light blue lighten-3 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Window Men&ugrave;' ><i class='mdi-image-crop-portrait'></i></a>";
             break;
         case 3: //Window -> Room button
-            //             toggle="<div id='toggle-fab' class='center hidden' style='margin-right: -100px; margin-top: -45px;'><a href='javascript:roomActions()' class='new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a></div>";
-            toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:roomActions()' class='center hidden new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a>";
+            toggle="<div id='toggle-fab' class='center hidden' style='margin-top: -37px;'><a href='javascript:roomActions()' class='new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='left' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a></div>";
+            //toggle = "<a id='toggle-fab' style='margin-right: -37px; margin-left: 5px' href='javascript:roomActions()' class='center hidden new-room btn-floating btn-medium waves-effect waves-light yellow darken-2 tooltipped' data-position='bottom' data-delay='0' data-tooltip='Room Men&ugrave;' ><i class='mdi-maps-layers'></i></a>";
             break;
     }
 
@@ -228,33 +230,92 @@ function hideSelector(){
 }
 
 function roomActions(){
-    defaultFAB(contentSave,contentRoom);
+/*
+    var icon = fab.find("."+contentWindow);
+    icon.removeClass(contentWindow).addClass(contentRoom);
+
+    $({deg: 0}).animate(
+        {deg: 360},
+        {
+            duration: duration,
+            queue: false,
+            step: function(now){rotate(icon, now)}
+        }
+    );
+*/
+    //defaultFAB(contentSave,contentRoom);
     oldIcon = contentRoom;
     newIcon = contentSave;
 
     fab.removeClass('blue lighten-3').addClass('yellow darken-2');
-    selectionNumber = 2;
-
-    //TODO
-    //fab.attr('href', 'javascript:saveRoom()');
-    //fab.attr('data-tooltip','Save Room');
 
     changeMode(1);
+
+    var toggleFABIcon = $('#toggle-fab').find("."+contentRoom);
+    var toggleFAB = $('#toggle-fab:first a');
+    toggleFABIcon.removeClass(contentRoom).addClass(contentWindow);
+
+    $({deg: 0}).animate(
+        {deg: 360},
+        {
+            duration: duration,
+            queue: false,
+            step: function(now){rotate(toggleFABIcon, now)}
+        }
+    );
+
+    toggleFAB.removeClass('yellow darken-2').addClass('blue lighten-3');
+    toggleFAB.attr('href','javascript:windowActions()');
+    toggleFAB.attr("data-tooltip","Window Menù");
+
+    selectionNumber = 2;
+    checkAmmadio();
 }
 
 function windowActions(){
-    defaultFAB(contentSave,contentWindow);
+/*    var icon = fab.find("."+contentSave);
+    icon.removeClass(contentSave).addClass(contentWindow);
+
+
+    $({deg: 0}).animate(
+        {deg: 360},
+        {
+            duration: duration,
+            queue: false,
+            step: function(now){rotate(icon, now)}
+        }
+    );
+*/
+    //defaultFAB(contentSave,contentWindow);
     oldIcon = contentWindow;
     newIcon = contentSave;
 
     fab.removeClass('yellow darken-2').addClass('blue lighten-3');
-    selectionNumber = 3;
-
-    //TODO
-    //fab.attr('href', '');
-    //fab.attr('data-tooltip','Save Window');
+    selectionNumber = 2;
 
     changeMode(5);
+
+    var toggleFABIcon = $('#toggle-fab').find("."+contentWindow);
+    var toggleFAB = $('#toggle-fab:first a');
+
+    toggleFABIcon.removeClass(contentWindow).addClass(contentRoom);
+
+    $({deg: 0}).animate(
+        {deg: 360},
+        {
+            duration: duration,
+            queue: false,
+            step: function(now){rotate(toggleFABIcon, now)}
+        }
+    );
+
+    toggleFAB.removeClass('blue lighten-3').addClass('yellow darken-2');
+    toggleFAB.attr("href","javascript:roomActions()");
+    toggleFAB.attr("data-tooltip","Room Menù");
+
+
+    selectionNumber = 3;
+    checkAmmadio();
 }
 
 /*
@@ -304,4 +365,20 @@ function removeFab(){
 
 function saveRoom(){
     // TODO
+}
+
+function checkAmmadio(){
+    ammadio++;
+    if(ammadio%7==0){
+        var sel = $('#ammadioModal');
+        sel.leanModal({
+                dismissible: false, // Modal can be dismissed by clicking outside of the modal
+                opacity: .5, // Opacity of modal background
+                in_duration: 300, // Transition in duration
+                out_duration: 200 // Transition out duration
+            }
+        );
+        sel.openModal().delay(1000).closeModal();
+
+    }
 }
