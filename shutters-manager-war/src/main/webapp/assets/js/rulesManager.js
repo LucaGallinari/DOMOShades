@@ -489,9 +489,9 @@ function rules_table_element(rule, index) {
         <tr data-toggle="'+(index)+'"> \
             <td class="null"></td>\
             <td class="name"><strong>'+rule.name+'</strong></td> \
-            <td class="starttime"> starts at <strong>'+rule.startTime.hour+':'+rule.startTime.minutes+'</strong></td> \
-            <td class="endtime"> ends at <strong>'+rule.endTime.hour+':'+rule.endTime.minutes+'</strong></td> \
-            <td class="closedPerc"> shutters closed at <strong>'+rule.closedPercentage+'</strong></td> \
+            <td class="starttime"> starts at <strong>'+rule.startTime.hour+':'+ (rule.startTime.minutes == '0' ? rule.startTime.minutes+'0' : rule.startTime.minutes) +'</strong></td> \
+            <td class="endtime"> ends at <strong>'+rule.endTime.hour+':'+ (rule.endTime.minutes == '0' ? rule.endTime.minutes+'0' : rule.endTime.minutes) +'</strong></td> \
+            <td class="closedPerc"> shutters closed at <strong>'+rule.closedPercentage+'&#37;</strong></td> \
             <td>';
     if (rule.priority != 0) {
         str += '<a data-toggle="'+(index)+'" class="small waves-effect waves-red btn-flat removeRule tooltipped right" data-position="bottom" data-delay="50" data-tooltip="Remove Rule"> \
