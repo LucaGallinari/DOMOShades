@@ -230,37 +230,92 @@ function hideSelector(){
 }
 
 function roomActions(){
-    checkAmmadio();
+/*
+    var icon = fab.find("."+contentWindow);
+    icon.removeClass(contentWindow).addClass(contentRoom);
 
-    defaultFAB(contentSave,contentRoom);
+    $({deg: 0}).animate(
+        {deg: 360},
+        {
+            duration: duration,
+            queue: false,
+            step: function(now){rotate(icon, now)}
+        }
+    );
+*/
+    //defaultFAB(contentSave,contentRoom);
     oldIcon = contentRoom;
     newIcon = contentSave;
 
     fab.removeClass('blue lighten-3').addClass('yellow darken-2');
-    selectionNumber = 2;
-
-    //TODO
-    //fab.attr('href', 'javascript:saveRoom()');
-    //fab.attr('data-tooltip','Save Room');
 
     changeMode(1);
+
+    var toggleFABIcon = $('#toggle-fab').find("."+contentRoom);
+    var toggleFAB = $('#toggle-fab:first a');
+    toggleFABIcon.removeClass(contentRoom).addClass(contentWindow);
+
+    $({deg: 0}).animate(
+        {deg: 360},
+        {
+            duration: duration,
+            queue: false,
+            step: function(now){rotate(toggleFABIcon, now)}
+        }
+    );
+
+    toggleFAB.removeClass('yellow darken-2').addClass('blue lighten-3');
+    toggleFAB.attr('href','javascript:windowActions()');
+    toggleFAB.attr("data-tooltip","Window Menù");
+
+    selectionNumber = 2;
+    checkAmmadio();
 }
 
 function windowActions(){
-    checkAmmadio();
+/*    var icon = fab.find("."+contentSave);
+    icon.removeClass(contentSave).addClass(contentWindow);
 
-    defaultFAB(contentSave,contentWindow);
+
+    $({deg: 0}).animate(
+        {deg: 360},
+        {
+            duration: duration,
+            queue: false,
+            step: function(now){rotate(icon, now)}
+        }
+    );
+*/
+    //defaultFAB(contentSave,contentWindow);
     oldIcon = contentWindow;
     newIcon = contentSave;
 
     fab.removeClass('yellow darken-2').addClass('blue lighten-3');
-    selectionNumber = 3;
-
-    //TODO
-    //fab.attr('href', '');
-    //fab.attr('data-tooltip','Save Window');
+    selectionNumber = 2;
 
     changeMode(5);
+
+    var toggleFABIcon = $('#toggle-fab').find("."+contentWindow);
+    var toggleFAB = $('#toggle-fab:first a');
+
+    toggleFABIcon.removeClass(contentWindow).addClass(contentRoom);
+
+    $({deg: 0}).animate(
+        {deg: 360},
+        {
+            duration: duration,
+            queue: false,
+            step: function(now){rotate(toggleFABIcon, now)}
+        }
+    );
+
+    toggleFAB.removeClass('blue lighten-3').addClass('yellow darken-2');
+    toggleFAB.attr("href","javascript:roomActions()");
+    toggleFAB.attr("data-tooltip","Room Menù");
+
+
+    selectionNumber = 3;
+    checkAmmadio();
 }
 
 /*
