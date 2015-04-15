@@ -47,9 +47,6 @@
                 </div>
             </div>
 
-            <!-- Errors -->
-            <div class="card-panel red lighten-1 row container hidden" id="saveCanvasErrors"></div>
-
             <!-- This is necessary to create fancy alignment -->
             <div class="col l10 offset-l1 m10 offset-m1 s10 offset-s1">
                 <h5>Plant Drawing Area</h5>
@@ -95,15 +92,16 @@
 			<div id="savingModal" class="modal">
 				<div class="modal-content">
 					<h4>Saving floor..</h4>
-					<p>Don't close this page! The floor is being processed, it can take a while (10/20 seconds) based on the complexity of the floor.</p>
-					<p>
-						<div class="progress">
-						    <div class="indeterminate"></div>
-						</div>
-					</p>
+					<p>Don't close this page! The floor is being processed, it can take a while (5/10 seconds) based on the complexity of the floor.</p>
+                    <!-- Errors -->
+                    <div class="card-panel red lighten-1 row container hidden" id="saveCanvasErrors"></div>
+                    <div class="progress">
+                        <div class="indeterminate"></div>
+                    </div>
 				</div>
 			</div>
 
+            <!-- Shortcuts modal -->
             <div id="shortcutsModal" class="modal">
                 <div class="modal-content">
                     <h4>Keyboard Shortcuts</h4>
@@ -125,6 +123,7 @@
                 </div>
             </div>
 
+            <!-- Settings modal -->
             <div id="settingsModal" class="modal">
                 <div class="modal-content">
                     <h4>Canvas Settings</h4>

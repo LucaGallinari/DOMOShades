@@ -5,8 +5,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.restlet.data.MediaType;
 import org.restlet.resource.ClientResource;
+import org.restlet.resource.ResourceException;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -139,25 +141,26 @@ public class DomoWrapper {
     */
 
     public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException, URISyntaxException {
-        this.scope=String.format("/floor?owner=%s&home=%s&id=%s&type=%s&canvas=%s", owner,home,id,type,canvas);
-        String completeUrl = uri+scope;
+        // calculate string len after encoding the string
+        this.scope=String.format("owner=%s&home=%s&id=%s&type=%s&canvas=%s",owner,home,id,type,canvas);
         String returnString;
-
-        if (completeUrl.length() >= MAX_LENGHT) {
-            this.scope=String.format("/floor?owner=%s&home=%s&id=%s&type=%s", owner,home,id,type);
-            ClientResource cr = new ClientResource(uri+scope);
-            System.out.println(uri+scope);
-            returnString = cr.put(canvas).getText();
-        } else {
-            this.scope=String.format("owner=%s&home=%s&id=%s&type=%s&canvas=%s",owner,home,id,type,canvas);
-            URI uri = new URI(
+        URI uri = new URI(
                 "http",
                 this.domain,
                 "/api/floor",
                 this.scope,
                 null
-            );
-            String request = uri.toASCIIString();
+        );
+        String request = uri.toASCIIString();
+        Integer len = request.length();
+
+        // if too long for a normal url
+        if (len >= MAX_LENGHT) {// put the canvas in the body of the msg
+            this.scope=String.format("/floor?owner=%s&home=%s&id=%s&type=%s", owner,home,id,type);
+            ClientResource cr = new ClientResource(this.uri+scope);
+            System.out.println(this.uri+scope);
+            returnString = cr.put(canvas).getText();
+        } else {// put the canvas in the url with other params
             System.out.println(request);
             ClientResource cr = new ClientResource(request);
             returnString = cr.put(Floor.class).getText();
@@ -237,9 +240,12 @@ public class DomoWrapper {
         return gson.fromJson(returnString,token.getType());
     }
 
-    public Window putWindow(String owner, String home, String id, String room_id, String window_id) throws IOException {
+    public Window putWindow(String owner, String home, String id, String room_id, String window_id)
+        throws IOException, ResourceException
+    {
         this.scope=String.format("/window?owner=%s&home=%s&id=%s&room_id=%s&window_id=%s", owner,home,id,room_id,window_id);
         ClientResource cr = new ClientResource(uri+scope);
+        System.out.println(uri+scope);
         String returnString = cr.put(Window.class).getText();
         if(returnString.equals("[]"))
             return null;
@@ -247,7 +253,9 @@ public class DomoWrapper {
         return gson.fromJson(returnString,Window.class);
     }
 
-    public List<Window> deleteWindow(String owner, String home, String id, String room_id, String window_id) throws IOException {
+    public List<Window> deleteWindow(String owner, String home, String id, String room_id, String window_id)
+        throws IOException, ResourceException
+    {
         this.scope=String.format("/window?owner=%s&home=%s&id=%s&room_id=%s&window_id=%s", owner,home,id,room_id,window_id);
         ClientResource cr = new ClientResource(uri+scope);
         String returnString = cr.delete().getText();

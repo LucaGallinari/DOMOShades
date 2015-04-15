@@ -255,6 +255,9 @@ function list_element(id, type, homeId) {
                 <a href="/floor/manage?home='+(homeId)+'&floor='+(id)+'" class="small waves-effect waves-blue btn-flat manageFloor tooltipped" data-position="bottom" data-delay="50" data-tooltip="Manage Floor"> \
                     <i class="mdi-content-forward blue-text"></i> \
                 </a> \
+                <a href="/rules/?home='+(homeId)+'&floor='+(id)+'" class="small waves-effect waves-blue btn-flat manageFloor tooltipped" data-position="bottom" data-delay="50" data-tooltip="Manage Rules"> \
+                    <i class="mdi-content-content-paste orange-text"></i> \
+                </a> \
             </td> \
         </tr>';
 }

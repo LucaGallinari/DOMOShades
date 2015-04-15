@@ -5,9 +5,11 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import it.unimore.awd.DomoWrapper;
 import it.unimore.awd.classes.*;
+import org.restlet.resource.ResourceException;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,7 +94,7 @@ public class FloorManagerController extends Controller {
     *  @ret String Ok if successful, an error if not.
     */
     public String modify()
-            throws IOException, ServletException, URISyntaxException
+            throws IOException, ServletException, URISyntaxException, ResourceException
     {
         String error="";
         if (gaeUser != null) { // already logged
@@ -134,12 +136,28 @@ public class FloorManagerController extends Controller {
                         for (String idRoom : toAdd) {
                             String roomJson = req.getParameter("addRoomData"+idRoom);
                             if (roomJson!=null && !roomJson.isEmpty()) {
+                                // 2a- Add room
                                 roomData room = gson.fromJson(roomJson, roomData.class);
-                                Room r = domoWrapper.putRoom(owner, homeIdStr, floorIdStr, idRoom, room.name/*, roomJson*/);
+                                Room r = domoWrapper.putRoom(owner, homeIdStr, floorIdStr, idRoom, room.name);
                                 if (r == null) {
                                     System.out.println("Error: room not added, id:"+idRoom);
                                 } else {
+                                    // add roomJson to the floor's canvas
                                     floorCanvas += ((floorCanvas.isEmpty()) ? roomJson : ","+roomJson);
+                                    // 2b- Add shutters of the room
+                                    List<shutterData> lsd = room.getShutters();
+                                    for (shutterData sd : lsd) {
+                                        Window w;
+                                        try {
+                                            w = domoWrapper.putWindow(owner, homeIdStr, floorIdStr, idRoom, sd.getId().toString());
+                                        } catch(ResourceException e) {// maybe this window is a "zombie"
+                                            List<Window> wl = domoWrapper.deleteWindow(owner, homeIdStr, floorIdStr, idRoom, sd.getId().toString());
+                                            w = domoWrapper.putWindow(owner, homeIdStr, floorIdStr, idRoom, sd.getId().toString());
+                                        }
+                                        if (w == null) {
+                                            System.out.println("Error: window not added, room:" + idRoom + " id:" + sd.getId());
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -155,7 +173,30 @@ public class FloorManagerController extends Controller {
                                 if (r == null) {
                                     System.out.println("Error: room not modified, id:"+idRoom);
                                 } else {
+                                    // add roomJson to the floor's canvas
                                     floorCanvas += ((floorCanvas.isEmpty()) ? roomJson : ","+roomJson);
+                                    // 2b- Add new shutters of the room
+                                    for (shutterData sd : room.getShutters()) {
+                                        if (sd.isNews()) {
+                                            Window w;
+                                            try {
+                                                w = domoWrapper.putWindow(owner, homeIdStr, floorIdStr, idRoom, sd.getId().toString());
+                                            } catch(ResourceException e) {// maybe this window is a "zombie"
+                                                List<Window> wl = domoWrapper.deleteWindow(owner, homeIdStr, floorIdStr, idRoom, sd.getId().toString());
+                                                w = domoWrapper.putWindow(owner, homeIdStr, floorIdStr, idRoom, sd.getId().toString());
+                                            }
+                                            if (w == null) {
+                                                System.out.println("Error: window not added, room:" + idRoom + " id:" + sd.getId());
+                                            }
+                                        }
+                                    }
+                                    // 2c- Delete removed shutters
+                                    for (Long idShutt : room.getRemovedShutters()) {
+                                        List<Window> wl = domoWrapper.deleteWindow(owner, homeIdStr, floorIdStr, idRoom, idShutt.toString());
+                                        if (wl == null) {
+                                            System.out.println("Error: window not deleted, room:" + idRoom + " id:" + idShutt);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -222,34 +263,177 @@ public class FloorManagerController extends Controller {
         }
     }
 
-    static private class roomData {
+    /*
+     * Helper classes for reading JSON data from the canvas
+     * and write them into the db.
+    */
+    static public class roomData {
         private Long id;
         private String name;
         private posData pos;
         private List<coordData> points;
         private List<shutterData> shutters;
+        private List<Long> removedShutters;
 
         public roomData(){}
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public posData getPos() {
+            return pos;
+        }
+
+        public void setPos(posData pos) {
+            this.pos = pos;
+        }
+
+        public List<coordData> getPoints() {
+            return points;
+        }
+
+        public void setPoints(List<coordData> points) {
+            this.points = points;
+        }
+
+        public List<shutterData> getShutters() {
+            return shutters;
+        }
+
+        public void setShutters(List<shutterData> shutters) {
+            this.shutters = shutters;
+        }
+
+        public List<Long> getRemovedShutters() {
+            return removedShutters;
+        }
+
+        public void setRemovedShutters(List<Long> removedShutters) {
+            this.removedShutters = removedShutters;
+        }
     }
 
-    static private class shutterData {
+    static public class shutterData {
         Long id;
         Long angle;
-        private posData p;
+        posData2 pos;
+        boolean news;
 
         public shutterData(){}
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+        public Long getAngle() {
+            return angle;
+        }
+
+        public void setAngle(Long angle) {
+            this.angle = angle;
+        }
+
+        public posData2 getPos() {
+            return pos;
+        }
+
+        public void setPos(posData2 pos) {
+            this.pos = pos;
+        }
+
+        public boolean isNews() {
+            return news;
+        }
+
+        public void setNews(boolean news) {
+            this.news = news;
+        }
     }
-    static private class posData {
+
+    static public class posData {
         String left;
         String top;
 
         public posData(){}
+
+        public String getLeft() {
+            return left;
+        }
+
+        public void setLeft(String left) {
+            this.left = left;
+        }
+
+        public String getTop() {
+            return top;
+        }
+
+        public void setTop(String top) {
+            this.top = top;
+        }
     }
-    static private class coordData {
+
+    static public class posData2 {
+        String x;
+        String y;
+
+        public posData2(){}
+
+        public String getX() {
+            return x;
+        }
+
+        public void setX(String x) {
+            this.x = x;
+        }
+
+        public String getY() {
+            return y;
+        }
+
+        public void setY(String y) {
+            this.y = y;
+        }
+    }
+
+    static public class coordData {
         String x;
         String y;
 
         public coordData(){}
+
+        public String getX() {
+            return x;
+        }
+
+        public void setX(String x) {
+            this.x = x;
+        }
+
+        public String getY() {
+            return y;
+        }
+
+        public void setY(String y) {
+            this.y = y;
+        }
     }
 
 }

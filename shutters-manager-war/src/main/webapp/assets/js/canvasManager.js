@@ -10,6 +10,7 @@ $('#fabric').attr('width', $('#fabric').parent().width());
 
 var canvas = new fabric.Canvas('fabric');
 canvas.tabIndex=1000;
+canvas.selection = false;
 
 /*
 * mode: 0, normal
@@ -97,6 +98,7 @@ function PolygonExtended(pos, id, name) {
     // arrays
     this.cornersCircles = [];
     this.shutters = [];
+    this.shuttersRemoved = [];
 }
 /*
  * Create the new overlay name of this room.
@@ -387,7 +389,8 @@ PolygonExtended.prototype.toJson = function () {
                 y: Math.round(p.y)
             };
         }),
-        shutters: []
+        shutters: [],
+        removedShutters: this.shuttersRemoved
     };
     strokeCorrection = Math.round(1/2); //TODO: change with RectangleEntende strokeWidth
     for (var i=0; i< this.shutters.length; ++i) {
@@ -398,30 +401,13 @@ PolygonExtended.prototype.toJson = function () {
             pos: {
                 x: Math.round(c.x - strokeCorrection),
                 y: Math.round(c.y - strokeCorrection)
-            }
+            },
+            news: this.shutters[i].news
         };
         room.shutters.push(shutter);
     }
     return JSON.stringify(room);
 };
-
-/*
- * Save json data into the object.
-
-PolygonExtended.prototype.fromJson = function (json) {
-    var room = JSON.parse(json);
-    this.id = room.id;
-    this.name = room.name;
-
-    this.fabricPoly.set("left", room.pos.left);
-    this.fabricPoly.set("top", room.pos.top);
-    this.fabricPoly.set({
-        points: room.points
-    });
-    for (var i=0; i< room.shutters.length; ++i) {
-        this.addShutter(room.shutters[i].pos, room.shutters[i].id, 0);//room.shutters[i].angle);
-    }
-};*/
 
 /*
  * Set given data. (called after parsing the canvas json)
@@ -436,7 +422,7 @@ PolygonExtended.prototype.setData = function (roomData) {
         points: roomData.points
     });
     for (var i=0; i< roomData.shutters.length; ++i) {
-        this.addShutter(roomData.shutters[i].pos, roomData.shutters[i].id, 0);//room.shutters[i].angle);
+        this.addShutter(roomData.shutters[i].pos, roomData.shutters[i].id, 0, false);//room.shutters[i].angle, false);
     }
 };
 
@@ -446,7 +432,7 @@ PolygonExtended.prototype.setData = function (roomData) {
  * RectangleExtended is the extension of the Rectangle object defined
  * by fabricjs. Doing this i can add some useful methods for the app.
  */
-function RectangleExtended(pos, id, angle) {
+function RectangleExtended(pos, id, angle, news) {
     var w = 20;
     var h = 20;
     this.fabricRect = new fabric.Rect({
@@ -463,6 +449,7 @@ function RectangleExtended(pos, id, angle) {
         lockMovementX: true,
         lockMovementY: true
     });
+    this.news=news;
     this.id = id;
 }
 /*
@@ -476,16 +463,15 @@ RectangleExtended.prototype.getIntCenterPoint = function () {
  * Add a shutter with id (id) to the polygon centered in the given position (pos)
  * and with a certain angle (angle).
 */
-PolygonExtended.prototype.addShutter = function(pos, id, angle) {
+PolygonExtended.prototype.addShutter = function(pos, id, angle, news) {
     if (id == null) {
         this.modified = true;
         id = this.getAvailableShutterID();
     }
-    if (angle == null) {
-        angle = 0;
-    }
+    if (angle == null) {angle = 0;}
+    if (news == null) {news=true;}
     // create a rectangle with angle=45
-    var shutter = new RectangleExtended(pos, id, angle);
+    var shutter = new RectangleExtended(pos, id, angle, news);
     this.shutters.push(shutter);
 
     return shutter;
@@ -495,6 +481,7 @@ PolygonExtended.prototype.addShutter = function(pos, id, angle) {
 */
 PolygonExtended.prototype.removeShutter = function(canvas, index) {
     this.modified = true;
+    this.shuttersRemoved.push(this.shutters[index].id);
     // remove from canvas and remake the list
     canvas.remove(this.shutters[index].fabricRect);
     this.shutters.splice(index, 1);
@@ -505,6 +492,7 @@ PolygonExtended.prototype.removeShutter = function(canvas, index) {
 PolygonExtended.prototype.removeShutters = function (canvas) {
     this.modified = true;
     for (var i=0; i<this.shutters.length; ++i) {
+        this.shuttersRemoved.push(this.shutters[i].id);
         canvas.remove(this.shutters[i].fabricRect);
     }
     this.shutters = [];
@@ -759,7 +747,7 @@ function changeLockGrid(val) {
 }
 
 
-/* ## POLY MANAGERS ## */
+/* ## POLYS MANAGERS ## */
 function addPoly(poly) {
     var index = polys.push(poly) - 1;
     addPolyToHtml(index, poly.name);
@@ -776,6 +764,18 @@ function removePoly(num) {
     polys.splice(num, 1);
     removePolyHtml(num);
     canvas.renderAll();
+}
+
+function resetPolysStatusVars(){
+    countRemoved=0;
+    for (var i=0; i<polys.length; ++i) {
+        var p = polys[i];
+        p.modified = false;
+        p.new = false;
+        for (var k=0; k < p.shutters.length; ++k) {
+            p.shutters[k].news = false;
+        }
+    }
 }
 
 function cleanCurrentPoly() {
@@ -908,13 +908,23 @@ function saveCanvas(form) {
             sel.closeModal();
             //$('#modifyHomeErrors').html(data);
             if (data=="Ok") { // if everything's ok
+                resetPolysStatusVars();
+                resetRoomsForm(form);
                 Materialize.toast('Floor modified!', 3000, 'rounded');
             } else { // if not display error
                 Materialize.toast('Ops! An error occured.', 3000, 'rounded');
-                $('#saveCanvasErrors').html(data).fadeIn().delay(3000).fadeOut();
+                $('#saveCanvasErrors')
+                    .html(
+                        'An error occured while saving the floor. Some changes may have been lost.<br>' +
+                        'This page will be reloaded within 3 seconds.')
+                    .fadeIn();
+                setTimeout(function(){
+                    location.reload();
+                }, 4000);
             }
         });
     } else {
+        resetRoomsForm(form);
         sel.closeModal();
         Materialize.toast('Nothing changed so nothing to save!', 3000, 'rounded');
     }
@@ -940,8 +950,16 @@ function saveRoomsDataToForm() {
     return ((countRemoved > 0) || (count != polys.length)); // if nothing changed,don't save
 }
 
+function resetRoomsForm(form){
+    resetNewRoomInput(form);
+    resetModifiedRoomInput(form);
+    resetRemovedRoomInput();
+    resetNotModRoomInput();
+}
+
+
 function addRemovedRoomToInput(id) {
-    var sel = $('[name="roomsRemoved"]');
+    var sel = $('input[name="roomsRemoved"]');
     var val = sel.val();
     if (val == "") {
         sel.val(id);
@@ -950,11 +968,14 @@ function addRemovedRoomToInput(id) {
     }
     countRemoved++;
 }
+function resetRemovedRoomInput() {
+    $('input[name="roomsRemoved"]').val('');
+}
 
 function addModifiedRoomToInput(indexPoly) {
     // add id to the input
     var id = polys[indexPoly].id;
-    var sel = $('[name="roomsModified"]');
+    var sel = $('input[name="roomsModified"]');
     var val = sel.val();
     if (val == "") {
         sel.val(id);
@@ -963,13 +984,17 @@ function addModifiedRoomToInput(indexPoly) {
     }
     // add inputs for the room's data
     var jsondata = polys[indexPoly].toJson();
-    $('#canvasForm').append('<input type="hidden" name="modRoomData'+id+'" value=\''+jsondata+'\' />');
+    $('#canvasForm').append('<input type="hidden" name="modRoomData'+id+'" value=\''+jsondata+'\' class="modRoom" />');
+}
+function resetModifiedRoomInput(form) {
+    $('input[name="roomsModified"]').val('');
+    $(form).find('.modRoom').remove();
 }
 
 function addNotModRoomToInput(indexPoly) {
     // add json to input
     var jsondata = polys[indexPoly].toJson();
-    var sel = $('[name="notModRooms"]');
+    var sel = $('input[name="notModRooms"]');
     var val = sel.val();
     if (val == "") {
         sel.val(jsondata);
@@ -977,11 +1002,14 @@ function addNotModRoomToInput(indexPoly) {
         sel.val(val+','+jsondata);
     }
 }
+function resetNotModRoomInput() {
+    $('input[name="notModRooms"]').val('');
+}
 
 function addNewRoomToInput(indexPoly) {
     // add id to the input
     var id = polys[indexPoly].id;
-    var sel =$('[name="roomsAdded"]');
+    var sel =$('input[name="roomsAdded"]');
     var val = sel.val();
     if (val == "") {
         sel.val(id);
@@ -990,7 +1018,11 @@ function addNewRoomToInput(indexPoly) {
     }
     // add inputs for the room's data
     var jsondata = polys[indexPoly].toJson();
-    $('#canvasForm').append('<input type="hidden" name="addRoomData'+id+'" value=\''+jsondata+'\' />');
+    $('#canvasForm').append('<input type="hidden" name="addRoomData'+id+'" value=\''+jsondata+'\' class="newRoom" />');
+}
+function resetNewRoomInput(form) {
+    $('input[name="roomsAdded"]').val('');
+    $(form).find('.newRoom').remove();
 }
 
 /* ## LOAD CANVAS ## */
@@ -1103,7 +1135,7 @@ function drawRoomFromJson(roomData){
                 realPos.x = closest.x;
                 realPos.y = closest.y;
                 var polyIndex = closest.poly;
-                var shutter = polys[polyIndex].addShutter(realPos, null);
+                var shutter = polys[polyIndex].addShutter(realPos, null, null, true);
                 refreshShuttersList(polyIndex);
                 canvas.add(shutter.fabricRect);
                 editRoom(polyIndex, false);

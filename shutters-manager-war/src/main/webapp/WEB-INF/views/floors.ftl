@@ -60,6 +60,11 @@
                                data-position="bottom" data-tooltip="Manage Floor">
                                 <i class="mdi-content-forward blue-text"></i>
                             </a>
+                            <a href="/rules/?home=${home}&floor=${floor.id}"
+                               class="small waves-effect waves-blue btn-flat manageRules tooltipped"
+                               data-position="bottom" data-tooltip="Manage Rules">
+                                <i class="mdi-content-content-paste orange-text"></i>
+                            </a>
                         </td>
                     </tr>
                     </#list>
