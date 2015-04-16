@@ -36,8 +36,12 @@
             <ul class="collection" id="listFloors" class="hoverable <#if !floors?has_content>hidden</#if>">
                 <#list floors as floor>
                     <li id="listFloor${floor.id}" class="collection-item">
-                        ${floorTypes[floor.type].str}
-
+                        <span>${floorTypes[floor.type].str}</span>
+                        <a href="/rules/?home=${home}&floor=${floor.id}"
+                           class="tiny waves-effect waves-orange manageRules tooltipped right"
+                           data-position="bottom" data-tooltip="Manage Rules">
+                            <i class="mdi-content-content-paste orange-text"></i>
+                        </a>
                         <a href="/floor/manage?home=${home}&floor=${floor.id}"
                            class="tiny waves-effect waves-blue manageFloor tooltipped right"
                            data-position="bottom" data-tooltip="Manage Floor">
@@ -58,45 +62,6 @@
                 </#list>
             </ul>
 
-            <!--
-            <table id="listFloors" class="hoverable <#if !floors?has_content>hidden</#if>">
-                <thead>
-                <tr>
-                    <th data-field="description">Type</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                    <#list floors as floor>
-                    <tr id="listFloor${floor.id}">
-                        <td class="type">${floorTypes[floor.type].str}</td>
-                        <td>
-                            <a data-toggle="${floor.id}"
-                               class="small waves-effect waves-green btn-flat modifyFloor tooltipped"
-                               data-position="bottom" data-tooltip="Modify Floor Values">
-                                <i class="mdi-content-create green-text"></i>
-                            </a>
-                            <a data-toggle="${floor.id}"
-                               class="small waves-effect waves-red btn-flat removeFloor tooltipped"
-                               data-position="bottom" data-tooltip="Delete Floor">
-                                <i class="mdi-content-clear red-text"></i>
-                            </a>
-                            <a href="/floor/manage?home=${home}&floor=${floor.id}"
-                               class="small waves-effect waves-blue btn-flat manageFloor tooltipped"
-                               data-position="bottom" data-tooltip="Manage Floor">
-                                <i class="mdi-content-forward blue-text"></i>
-                            </a>
-                            <a href="/rules/?home=${home}&floor=${floor.id}"
-                               class="small waves-effect waves-blue btn-flat manageRules tooltipped"
-                               data-position="bottom" data-tooltip="Manage Rules">
-                                <i class="mdi-content-content-paste orange-text"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    </#list>
-                </tbody>
-            </table>
-            -->
             <div id="noFloors" class="card-panel red lighten-1 <#if floors?has_content>hidden</#if>">
                 No floors saved! <br />
                 Insert add one using the button.

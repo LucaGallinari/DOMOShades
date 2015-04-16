@@ -69,9 +69,10 @@ function PolygonExtended(pos, id, name) {
         strokeWidth: 2,
         stroke: '#222222',
         fill: null,
-        opacity: 0.5,
+        opacity: 0.75,
         selectable: true,
         hasControls: false,
+        hasBorders: false,
         lockMovementX: true,
         lockMovementY: true
     });
@@ -254,9 +255,9 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
     var t = Math.round(this.fabricPoly.get("top") + miny);
     this.fabricPoly.set({
         left: l,
-        top: t,
-        fill: '#0053E1'
+        top: t
     });
+    this.changeFillColor(false);
 
     // adjust points's positions
     var pCenter = this.getIntCenterPoint();
@@ -274,6 +275,19 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
     // add text
     this.setName(this.name, true);
     return 1;
+};
+/*
+ * Change the fill color of the polygon
+ * @var sel Selected obj or not
+ */
+PolygonExtended.prototype.changeFillColor = function(sel) {
+    if (sel) {
+        this.fabricPoly.set({fill: '#ff6f00'});
+    } else {
+        this.fabricPoly.set({fill: '#0277bd'});
+    }
+    canvas.renderAll();
+
 };
 /*
  * Calculate the closest corner point to the given one (point) but
@@ -441,11 +455,12 @@ function RectangleExtended(pos, id, angle, news) {
         width: w,
         height: h,
         angle: angle,
-        fill: 'red',
+        fill: '#64dd17',
         strokeWidth: 1,
-        stroke: '#222222',
+        stroke: '#004d40',
         selectable: true,
         hasControls: false,
+        hasBorders: false,
         lockMovementX: true,
         lockMovementY: true
     });
@@ -778,6 +793,16 @@ function resetPolysStatusVars(){
     }
 }
 
+function changePolysFillColor(index) {
+    for (var i=0; i<polys.length; ++i) {
+        if (i==index) {
+            polys[i].changeFillColor(true);
+        } else {
+            polys[i].changeFillColor(false);
+        }
+    }
+}
+
 function cleanCurrentPoly() {
     currentPoly.remove(canvas);
     canvas.renderAll();
@@ -819,6 +844,7 @@ function addPolyToHtml(num, name){
 
 function editRoom(index, noclick) {
     if (currentEdit!=index) {
+        changePolysFillColor(index);
         currentEdit = index;
         if (canvas.getActiveObject()!==polys[index].fabricPoly) {
             canvas.setActiveObject(polys[index].fabricPoly);
@@ -833,6 +859,7 @@ function editRoom(index, noclick) {
 }
 
 function removeEditRoom(){
+    polys[currentEdit].changeFillColor(false);
     currentEdit = null;
     $('#rooms-list').find('.active').removeClass("active");
     $('.collapsible').collapsible();
@@ -1114,10 +1141,8 @@ function drawRoomFromJson(roomData){
                     edit = false;
                     canvas.add(currentPoly.fabricText);
                 }
-                canvas.renderAll();
                 changeMode(0);
                 currentPoly=null;
-
             }, 500, pos);
         } else if (mode==2) {//remove poly
             obj = canvas.getActiveObject();
@@ -1127,7 +1152,6 @@ function drawRoomFromJson(roomData){
                     removePoly(indexPoly);
                 }
             }
-
         } else if (mode==5) {// add shutter
 
             var closest = getClosestShuttersPoint(pos, 30);
@@ -1152,6 +1176,7 @@ function drawRoomFromJson(roomData){
                 }
             }
         }
+        canvas.renderAll();
     });
 
     canvas.observe("mouse:up", function (event) {
@@ -1179,12 +1204,10 @@ function drawRoomFromJson(roomData){
             if (index != polys.length) {
                 if (mode == 2) { // remove poly
                     removePoly(index);
-                    //clearShuttersList();
                 } else {
                     if (currentEdit!=index) {
                         editRoom(index, false);
                     }
-                    //refreshShuttersList(index);
                 }
             }
         } else {// shutters
@@ -1201,7 +1224,6 @@ function drawRoomFromJson(roomData){
     canvas.observe("selection:cleared", function() {
         if (mode < 5) {// rooms
             removeEditRoom();
-            //clearShuttersList()
         }
     });
 

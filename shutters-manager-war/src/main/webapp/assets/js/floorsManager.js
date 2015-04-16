@@ -104,7 +104,7 @@ $(document).ready(function(){
     });
 
 
-    /* - MODIFY HOME -
+    /* - MODIFY FLOOR -
     // set up
     $(addFloorForm).clone() // copy form for modifying
         .attr('id','modifyFloorForm') // modify id
@@ -333,23 +333,28 @@ function list_element(id, type, homeId) {
         </tr>';
 */
     return '    \
-            <li id="listFloor'+(id)+'" class="collection-item new">' + floorTypes[type].str +'  \
-                <a href="/floor/manage?home='+(homeId)+'&floor='+(id)+'"    \
-                    class="tiny waves-effect waves-blue manageFloor tooltipped right" \
-                    data-position="bottom" data-tooltip="Manage Floor"> \
-                        <i class="mdi-content-forward blue-text"></i> \
-                </a> \
-                <a data-toggle="'+(id)+'" \
-                    class="tiny waves-effect waves-red removeFloor tooltipped right" \
-                    data-position="bottom" data-tooltip="Delete Floor"> \
-                        <i class="mdi-content-clear red-text"></i> \
-                </a> \
-                <a data-toggle="'+(id)+'" \
-                    class="tiny waves-effect waves-green modifyFloor tooltipped right" \
-                    data-position="bottom" data-tooltip="Modify Floor Values"> \
-                        <i class="mdi-content-create green-text"></i> \
-                </a> \
-            </li>';
+        <li id="listFloor'+(id)+'" class="collection-item new">' + floorTypes[type].str +'  \
+            <a href="/rules/?home='+(homeId)+'&floor='+(id)+'"    \
+                class="tiny waves-effect waves-orange manageRules tooltipped right" \
+                data-position="bottom" data-tooltip="Manage Rules"> \
+                    <i class="mdi-content-paste orange-text"></i> \
+            </a> \
+            <a href="/floor/manage?home='+(homeId)+'&floor='+(id)+'"    \
+                class="tiny waves-effect waves-blue manageFloor tooltipped right" \
+                data-position="bottom" data-tooltip="Manage Floor"> \
+                    <i class="mdi-content-forward blue-text"></i> \
+            </a> \
+            <a data-toggle="'+(id)+'" \
+                class="tiny waves-effect waves-red removeFloor tooltipped right" \
+                data-position="bottom" data-tooltip="Delete Floor"> \
+                    <i class="mdi-content-clear red-text"></i> \
+            </a> \
+            <a data-toggle="'+(id)+'" \
+                class="tiny waves-effect waves-green modifyFloor tooltipped right" \
+                data-position="bottom" data-tooltip="Modify Floor Values"> \
+                    <i class="mdi-content-create green-text"></i> \
+            </a> \
+        </li>';
 }
 
 function preloader_wrapper(pos) {

@@ -103,12 +103,10 @@ $(document).ready(function(){
     });
 
 	$(modifyHomeForm).find('button').attr('class', 'btn-floating btn-flat btn-large waves-effect waves-light light-blue right'); // modify button
-    $(modifyHomeForm).find('button i').attr('class', 'mdi-navigation-check'); // modify button
-
     $(modifyHomeForm).find('button i').attr('class', 'mdi-action-done'); // modify button
     // add close modal button
     $(modifyHomeForm).find('.buttons-row').append(
-        '<button class="btn-floating btn-large btn-flat waves-effect waves-light modal-close left grey lighten-3"> ' +
+        '<button class="btn-floating btn-large btn-flat waves-effect waves-light modal-close left grey lighten-3" type="button"> ' +
             '<i class="mdi-content-clear grey-text"></i>' +
         '</button>'
     );
