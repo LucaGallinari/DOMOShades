@@ -142,7 +142,6 @@
 
 <script>
 
-
     var windows = [<#list windows as w>${w},</#list>];
     var rooms = [<#list rooms as r>${r},</#list>];
 

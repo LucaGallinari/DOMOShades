@@ -1,6 +1,6 @@
-var floorRules  = '#floorRules';
-var roomRules   = '#roomRules';
-var windowRules = '#windowRules';
+var floorRules  = 'floorRules';
+var roomRules   = 'roomRules';
+var windowRules = 'windowRules';
 
 var currEditPoly = null;
 var currEditShut = null;
@@ -43,24 +43,29 @@ function changePolysFillColor(index) {
     }
 }
 
-function editRoomRuleHtml(index) {
+function editRoomRulesHtml(index) {
     // switch tab
+    var sel = $('#'+roomRules);
     $('ul.tabs').tabs('select_tab', roomRules);
     // fill tab with rooms' rules
     var roomId = polys[index].id;
-    $(roomRules).html('');
+    sel.html('');
     var str='';
+    var c = 0;
 
     for (var r in rooms) { // search for this room
+        r = rooms[r];
         if (roomId == r.roomNum) {
             str+='<p>Regole della room '+roomId+', '+ r.name+'</p>';
             for (var w in windows) { // search for this room windows
+                w = windows[w];
                 if (w.room.key.raw.id==roomId) {
                     var rules = w.rulesLists;
-                    str+='<p>Trovate '+rules.length+' regole</p>';
                     for (var rule in rules) { //
+                        rule = rules[rule];
                         if (isRoomRule(rule.priority)) {
                             str+='<p>Nome regola: '+ rule.name+'</p>';
+                            ++c;
                         }
                     }
                 }
@@ -69,7 +74,12 @@ function editRoomRuleHtml(index) {
             break;
         }
     }
-    $(roomRules).html(str);
+    if (c != 0) {
+        str+='<p>Trovate '+c+' regole</p>';
+    } else {
+        str+='<p>No rules found for this room.</p>';
+    }
+    sel.html(str);
 }
 
 function addPolyToHtml(index){
@@ -80,29 +90,25 @@ function editRoom(index) {
     if (currEditPoly != index) {
         //reset currEditPoly shutter selection
         if (currEditPoly != null) {
-            changeShuttersFillColor(currEditPoly, -1, false);
+            changeShuttersFillColor(currEditPoly,-1,false);
         }
         currEditPoly = index;
         currEditShut = null;
+        changeShuttersFillColor(currEditPoly,-1,true);
         changePolysFillColor(index);
         if (canvas.getActiveObject()!==polys[index].fabricPoly) {
             canvas.setActiveObject(polys[index].fabricPoly);
         }
-        editRoomRuleHtml(index);
+        editRoomRulesHtml(index);
     }
-    /*
-    if (indexShutt != null) {
-        changeShuttersFillColor(currEditIndex, indexShutt, true);
-    } else {
-        changeShuttersFillColor(currEditIndex, -1, true);
-    }*/
 }
 
-function removeEditRoom(){
+function removeEdit(){
     var index = currEditPoly;
     changeShuttersFillColor(index, -1, false);
     polys[index].changeFillColor(false);
     currEditPoly = null;
+    currEditShut = null;
     $('#rooms-list').find('.active').removeClass("active");
     $('.collapsible').collapsible();
 }
@@ -111,21 +117,62 @@ function removeEditRoom(){
 /* ## SHUTTER MANAGERS ## */
 
 function editShutter(indexPoly, indexShut) {
-    /*if (currEditShut != indexShut) {
-        //reset currEditPoly shutter selection
-        if (currEditShut != null) {
-            changeShuttersFillColor(currEditPoly, -1, false);
+    if (currEditPoly != indexPoly || currEditShut != indexShut) {
+        // changed poly?
+        if (currEditPoly != indexPoly) {
+            if (currEditPoly != null) {// reset prev sel
+                changePolysFillColor(currEditPoly);
+                changeShuttersFillColor(currEditPoly, -1, false);
+            }
+            currEditPoly = indexPoly;
+            changePolysFillColor(indexPoly);
         }
-        currEditPoly = index;
-        currEditShut = null;
-        changePolysFillColor(index);
-        if (canvas.getActiveObject()!==polys[index].fabricPoly) {
-            canvas.setActiveObject(polys[index].fabricPoly);
+        // always change shutter
+        currEditShut = indexShut;
+        changeShuttersFillColor(currEditPoly, currEditShut, true);
+        if (canvas.getActiveObject()!==polys[indexPoly].shutters[indexShut].fabricRect) {
+            canvas.setActiveObject(polys[indexPoly].shutters[indexShut].fabricRect);
         }
-        editRoomRuleHtml(index);
-    }*/
+        editShutterRulesHtml(indexPoly, indexShut);
+    }
 }
 
+function editShutterRulesHtml(indexPoly, indexShut) {
+    // switch tab
+    $('ul.tabs').tabs('select_tab', windowRules);
+    // fill tab with rooms' rules
+    var roomId = polys[indexPoly].id;
+    var shutId = polys[indexPoly].shutters[indexShut].id;
+    $('#'+windowRules).html('');
+    var str='';
+    var c=0;
+
+    for (var r in rooms) { // search for this room
+        if (roomId == r.roomNum) {
+            for (var w in windows) { // search for this room windows
+                if (w.room.key.raw.id==roomId) {
+                    if (shutId == w.windowId) {
+                        str+='<p>Regole della window '+shutId+'</p>';
+                        var rules = w.rulesLists;
+                        for (var rule in rules) {
+                            if (isDefaultRule(rule.priority)) {
+                                str+='<p>Nome regola: '+ rule.name+'</p>';
+                                ++c;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    if (c != 0) {
+        str+='<p>Trovate '+c+' regole</p>';
+    } else {
+        str+='<p>No rules found for this window.</p>';
+    }
+    $('#'+windowRules).html(str);
+}
 
 function getIndexOfShutter(shutter) {
     if (shutter != null) {
@@ -172,26 +219,15 @@ function changeShuttersFillColor(indexPoly, indexShutt, selRoom) {
         } else if (obj instanceof fabric.Rect) {// shutters
             index = getIndexOfShutter(obj);
             if (index.poly != polys.length) {
-                if (currEditShut != index) {
-                    editShutter(index.shutter, index.poly);
-                }
+                editShutter(index.poly, index.shutter);
             }
         }
     });
 
     canvas.observe("selection:cleared", function() {
-        if (mode < 5) {// rooms
-            removeEditRoom();
-        }
+        removeEdit();
     });
 
-    canvas.observe("before:selection:cleared", function() {
-        var obj = canvas.getActiveObject();
-        if (obj instanceof fabric.Rect) {// shutters
-            var index = getIndexOfShutter(obj);
-            changeShuttersFillColor(index.poly, -1, false);
-        }
-    });
 
 })();
 

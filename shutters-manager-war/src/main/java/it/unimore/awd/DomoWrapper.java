@@ -229,14 +229,14 @@ public class DomoWrapper {
 
     /** Window functions **/
 
-    public List<Window> getWindowsOfRoom(String owner, String home, String id, String room_id) throws IOException {
+    public List<WindowToken> getWindowsOfRoom(String owner, String home, String id, String room_id) throws IOException {
         this.scope=String.format("/window?owner=%s&home=%s&id=%s&room_id=%s", owner,home,id,room_id);
         ClientResource cr = new ClientResource(uri+scope);
         String returnString = cr.get(MediaType.APPLICATION_JSON).getText();
         if(returnString.equals("[]"))
             return null;
         Gson gson = new Gson();
-        TypeToken<List<Window>> token = new TypeToken<List<Window>>(){};
+        TypeToken<List<WindowToken>> token = new TypeToken<List<WindowToken>>(){};
         return gson.fromJson(returnString,token.getType());
     }
 

@@ -69,10 +69,10 @@ public class RulesController extends Controller {
                         // get rooms
                         List<Room> rl = domoWrapper.getRoomsByFloor(owner, homeIdStr, floorIdStr);
 
-                        List<Window> wl = new ArrayList<Window>();
+                        List<WindowToken> wl = new ArrayList<WindowToken>();
                         if (rl != null) {
                             for (Room r : rl) {
-                                List<Window> wltemp = domoWrapper.getWindowsOfRoom(owner, homeIdStr, floorIdStr, r.getRoomNum().toString());
+                                List<WindowToken> wltemp = domoWrapper.getWindowsOfRoom(owner, homeIdStr, floorIdStr, r.getRoomNum().toString());
                                 wl.addAll(wltemp);
                             }
                         }
