@@ -49,6 +49,18 @@
         <url-pattern>/floor/*</url-pattern>
     </servlet-mapping>
 
+    <!-- Rules -->
+    <servlet>
+        <servlet-name>RulesController</servlet-name>
+        <servlet-class>
+            it.unimore.awd.controllers.RulesController
+        </servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RulesController</servlet-name>
+        <url-pattern>/rules/*</url-pattern>
+    </servlet-mapping>
+
     <!-- TODO: update security constraints -->
     <security-constraint>
         <web-resource-collection>

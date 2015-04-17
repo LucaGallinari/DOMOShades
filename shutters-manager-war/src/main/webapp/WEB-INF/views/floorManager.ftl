@@ -39,7 +39,7 @@
         <!-- Tools + Canvas -->
         <div class="xl12">
             <div class="row l10 offset-l1 m10 offset-m1 s10 offset-s1">
-                <h4 class="col l10 m10 s10 amber-text center">Draw Floor ${ selectedFloor.id } Layout</h4>
+                <h4 class="col l10 m10 s10 amber-text center">Draw Floor Layout</h4>
 
                 <div class="col l2 m2 s2">
                     <a class="waves-effect waves-light small btn-flat modal-trigger shortcuts-modal" href="#"><i class="mdi-action-info light-blue-text"></i></a>
@@ -179,12 +179,18 @@
     </div>
 
 <script type="text/javascript" src="/assets/js/fabric.min.js"></script>
+<script type="text/javascript" src="/assets/js/fabricExtended.js"></script>
 <script type="text/javascript" src="/assets/js/canvasManager.js"></script>
-<script type="text/javascript" src="/assets/js/floorManager.js"></script>
 <script type="text/javascript" src="/assets/js/responsiveFloatingActionButton.js"></script>
 
 <script>
     $(document).ready(function() {
+
+        setSettings({
+            useShortcuts: true,
+            useMouseClick: true,
+            useMode: true
+        });
 
         $('.canvas-modal').click(function(){
             $('#settingsModal').openModal();
@@ -200,6 +206,7 @@
         for (var i = 0; i < decJson.rooms.length; i++) {
             var room = decJson.rooms[i];
             drawRoomFromJson(room);
+            refreshShuttersList(room.id);
         }
         changeMode(1);
 
@@ -217,7 +224,7 @@
         // rooms-list
         var sel = $('#rooms-list');
         sel.on('click', '.collapsible-header', function() {
-            editRoom(parseInt($(this).attr('data-toggle')), true);
+            editRoom(parseInt($(this).attr('data-toggle')), true, false, null);
         });
 
     });

@@ -5,20 +5,16 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimore.awd.DomoWrapper;
-import it.unimore.awd.classes.Floor;
-import it.unimore.awd.classes.FloorToken;
-import it.unimore.awd.classes.Room;
-import it.unimore.awd.classes.User;
+import it.unimore.awd.classes.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.*;
 
 // import com.google.appengine.api.users.User; same name as domo user
 
 @SuppressWarnings("serial")
-public class FloorsController extends Controller {
+public class RulesController extends Controller {
 
     public static final String ctrlName = "";
 
@@ -41,43 +37,73 @@ public class FloorsController extends Controller {
             User domoUser = domoWrapper.getUser(owner);
             if (!compareDomouserGaeuser(domoUser, gaeUser)) {
                 System.out.println(
-                        domoWrapper.putUser(
-                                owner,
-                                gaeUser.getNickname(),
-                                gaeUser.getNickname(),
-                                "http://dummy.pic/ture"
-                        )
+                    domoWrapper.putUser(
+                        owner,
+                        gaeUser.getNickname(),
+                        gaeUser.getNickname(),
+                        "http://dummy.pic/ture"
+                    )
                 );
             }
 
             String homeIdStr = req.getParameter("home");
             if (homeIdStr != null && !homeIdStr.isEmpty()) { // check home par exists
 
-                // get floors
-                List<FloorToken> fl = domoWrapper.getFloorsByHome(owner, homeIdStr);
+                String floorIdStr = req.getParameter("floor");
+                if (floorIdStr != null && !floorIdStr.isEmpty()) { // check home par exists
 
-                List<FloorType> fk = this.getFloorTypes();
+                    // get floors
+                    FloorToken ft = null;
+                    List<FloorToken> fl = domoWrapper.getFloorsByHome(owner, homeIdStr);
+                    List<FloorType> fk = this.getFloorTypes();
+                    // TODO: extract a method
+                    for (FloorToken f : fl) {
+                        if (f.getId().toString().equals(floorIdStr)) {
+                            ft = f;
+                            //break;
+                        }
+                    }
 
-                // model the page
-                Map<String, Object> root = new HashMap<String, Object>();
-                root.put("error", error);
-                root.put("message", "Floor!");
-                root.put("userEmail", owner);
-                root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
-                root.put("logoutURL", userService.createLogoutURL("/"));
-                root.put("home", homeIdStr);
-                root.put("floorTypes", fk);
-                root.put("floors", fl);
-                // output it
-                TemplateHelper.callTemplate(cfg, resp, ctrlName + "/floors.ftl", root);
+                    if (ft != null) {
 
+                        // get rooms
+                        List<Room> rl = domoWrapper.getRoomsByFloor(owner, homeIdStr, floorIdStr);
+
+                        List<Window> wl = new ArrayList<Window>();
+                        if (rl != null) {
+                            for (Room r : rl) {
+                                List<Window> wltemp = domoWrapper.getWindowsOfRoom(owner, homeIdStr, floorIdStr, r.getRoomNum().toString());
+                                wl.addAll(wltemp);
+                            }
+                        }
+
+                        // model the page
+                        Map<String, Object> root = new HashMap<String, Object>();
+                        root.put("error", error);
+                        root.put("message", "Rules!");
+                        root.put("userEmail", owner);
+                        root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
+                        root.put("logoutURL", userService.createLogoutURL("/"));
+                        root.put("home", homeIdStr);
+                        root.put("floor", ft);
+                        root.put("rooms", rl);
+                        root.put("windows", wl);
+                        root.put("floorTypes", fk);
+                        // output it
+                        TemplateHelper.callTemplate(cfg, resp, ctrlName + "/rules.ftl", root);
+                    } else {// floor not found, redirect
+                        resp.sendRedirect("/floors/?home="+homeIdStr);
+                    }
+                } else { // no floor selected, redirect
+                    resp.sendRedirect("/floors/?home="+homeIdStr);
+                }
             } else { // no home selected, redirect
                 resp.sendRedirect("/homes/");
             }
         } else { // not logged, redirect
             resp.sendRedirect("/");
         }
-        this.ajax = true;
+        this.ajax=true;
     }
 
 
@@ -87,7 +113,7 @@ public class FloorsController extends Controller {
      *  If called through ajax you only need to send the form with "serialized" data.
      *
      *  @ret String Ok if succes+sful, an error if not.
-    */
+
     public String add()
             throws IOException, ServletException
     {
@@ -128,7 +154,7 @@ public class FloorsController extends Controller {
             else {error="1";}
         }
         return error;
-    }
+    }*/
 
 
     /*
@@ -139,7 +165,7 @@ public class FloorsController extends Controller {
      *  @par home Id of the home
      *  @par floor Id of the floor
      *  @ret String Ok if successful, an error if not.
-    */
+
     public String remove()
         throws IOException, ServletException
     {
@@ -179,7 +205,8 @@ public class FloorsController extends Controller {
             else {error="1";}
         }
         return error;
-    }
+    }*/
+
 
     private List<FloorType> getFloorTypes() {
         return Arrays.asList(

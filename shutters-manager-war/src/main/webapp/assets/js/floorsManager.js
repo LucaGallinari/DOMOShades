@@ -333,11 +333,12 @@ function list_element(id, type, homeId) {
         </tr>';
 */
     return '    \
-        <li id="listFloor'+(id)+'" class="collection-item new">' + floorTypes[type].str +'  \
-            <a href="/rules/?home='+(homeId)+'&floor='+(id)+'"    \
+        <li id="listFloor'+(id)+'" class="collection-item new">' +
+            '<span>' + floorTypes[type].str +'</span>'+
+            '<a href="/rules/?home='+(homeId)+'&floor='+(id)+'"    \
                 class="tiny waves-effect waves-orange manageRules tooltipped right" \
                 data-position="bottom" data-tooltip="Manage Rules"> \
-                    <i class="mdi-content-paste orange-text"></i> \
+                    <i class="mdi-content-content-paste orange-text"></i> \
             </a> \
             <a href="/floor/manage?home='+(homeId)+'&floor='+(id)+'"    \
                 class="tiny waves-effect waves-blue manageFloor tooltipped right" \
