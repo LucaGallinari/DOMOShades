@@ -120,8 +120,8 @@ function PolygonExtended(pos, id, name) {
 }
 /**
  * Create the new overlay name of this room.
- * @name String new name to set
- * @init boolean if this is the initial set of the name
+ * @param name String new name to set
+ * @param init if this is the initial set of the name
  */
 PolygonExtended.prototype.setName = function (name, init) {
     if (!init) {this.modified=true;}
@@ -295,7 +295,7 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
 };
 /**
  * Change the fill color of the polygon
- * @var sel Selected obj or not
+ * @param sel Selected obj or not
  */
 PolygonExtended.prototype.changeFillColor = function(sel) {
     if (sel) {

@@ -231,10 +231,7 @@
 </div>
 -->
     <script type="text/javascript">
-        $(document).ready(function() {
-            $('select').material_select();
-
-        });
+        $(document).ready(function() {$('select').material_select();});
 
         var floors = [<#list floors as floor>${floor},</#list>];
         var floorTypes = [<#list floorTypes as type>${type},</#list>];

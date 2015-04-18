@@ -1,9 +1,21 @@
 var floorRules  = 'floorRules';
 var roomRules   = 'roomRules';
 var windowRules = 'windowRules';
+var noFloorRules    = '#noFloorRules';
+var noRoomRules     = '#noRoomRules';
+var noWindowRules   = '#noWindowRules';
+
+var addRuleForm = '#addRuleForm';
 
 var currEditPoly = null;
 var currEditShut = null;
+
+var addRuleButton = jQuery('<button/>', {
+    href: '',
+    class: 'btn waves-effect waves-light amber right addRule',
+    type: 'button',
+    html: '<i class="mdi-content-add"></i> Add Rule'
+});
 
 
 /* HELPERS */
@@ -26,64 +38,52 @@ function between(x, min, max) {
     return x >= min && x <= max;
 }
 
-/* ## POLYS MANAGERS ## */
-function addPoly(poly) {
-    var index = polys.push(poly) - 1;
-    addPolyToHtml(index);
-    return index;
-}
 
-function changePolysFillColor(index) {
-    for (var i=0; i<polys.length; ++i) {
-        if (i==index) {
-            polys[i].changeFillColor(true);
-        } else {
-            polys[i].changeFillColor(false);
-        }
+/* ## FLOOR MANAGERS ## */
+
+function editFloor(){
+    if (currEditPoly!=null) {
+        changeShuttersFillColor(currEditPoly, -1, false);
+        polys[currEditPoly].changeFillColor(false);
+        currEditPoly = null;
+        currEditShut = null;
     }
+    editFloorRulesHtml();
 }
 
-function editRoomRulesHtml(index) {
-    // switch tab
-    var sel = $('#'+roomRules);
-    $('ul.tabs').tabs('select_tab', roomRules);
-    // fill tab with rooms' rules
-    var roomId = polys[index].id;
-    sel.html('');
+function editFloorRulesHtml() {
+    var sel = $('#'+floorRules);
+    // fill tab with floor's rules
     var str='';
-    var c = 0;
-
-    for (var r in rooms) { // search for this room
-        r = rooms[r];
-        if (roomId == r.roomNum) {
-            str+='<p>Regole della room '+roomId+', '+ r.name+'</p>';
-            for (var w in windows) { // search for this room windows
-                w = windows[w];
-                if (w.room.key.raw.id==roomId) {
-                    var rules = w.rulesLists;
-                    for (var rule in rules) { //
-                        rule = rules[rule];
-                        if (isRoomRule(rule.priority)) {
-                            str+='<p>Nome regola: '+ rule.name+'</p>';
-                            ++c;
-                        }
-                    }
-                }
+    var c=0;
+    for (var w in windows) { // search for this room windows
+        w = windows[w];
+        str+='<p>Regole della window '+w.windowId+'</p>';
+        var rules = w.rulesLists;
+        for (var rule in rules) {
+            if (isFloorRule(rule.priority)) {
+                str+='<p>Nome regola: '+ rule.name+'</p>';
+                ++c;
             }
-
-            break;
         }
     }
     if (c != 0) {
+        $(noFloorRules).hide();
         str+='<p>Trovate '+c+' regole</p>';
     } else {
-        str+='<p>No rules found for this room.</p>';
+        $(noFloorRules).fadeIn();
     }
-    sel.html(str);
+    sel.find('.rules-list').html(str);
+    addRuleButton.attr('data-toggle','1').appendTo(sel);
+    $('ul.tabs').tabs('select_tab', floorRules);
 }
 
-function addPolyToHtml(index){
-    //var str ='';
+
+
+/* ## ROOMS MANAGERS ## */
+function addPoly(poly) {
+    var index = polys.push(poly) - 1;
+    return index;
 }
 
 function editRoom(index) {
@@ -101,21 +101,60 @@ function editRoom(index) {
         }
         editRoomRulesHtml(index);
     }
+    if (currEditShut==null) {
+        //reset currEditPoly shutter selection
+        changeShuttersFillColor(currEditPoly,-1,true);
+        editRoomRulesHtml(index);
+
+    }
 }
 
-function removeEdit(){
-    var index = currEditPoly;
-    changeShuttersFillColor(index, -1, false);
-    polys[index].changeFillColor(false);
-    currEditPoly = null;
-    currEditShut = null;
-    $('#rooms-list').find('.active').removeClass("active");
-    $('.collapsible').collapsible();
+function editRoomRulesHtml(index) {
+    var sel = $('#'+roomRules);
+    // fill tab with room's rules
+    var roomId = polys[index].id;
+    var str='';
+    var c = 0;
+    for (var r in rooms) { // search for this room
+        r = rooms[r];
+        if (roomId == r.roomNum) {
+            str+='<p>Regole della room '+roomId+', '+ r.name+'</p>';
+            for (var w in windows) { // search for this room windows
+                w = windows[w];
+                if (w.room.key.raw.id==roomId) {
+                    var rules = w.rulesLists;
+                    for (var rule in rules) { //
+                        rule = rules[rule];
+                        if (isRoomRule(rule.priority)) {
+                            str+='<p>Nome regola: '+ rule.name+'</p>';
+                            ++c;
+                        }
+                    }
+                }
+            }
+            break;
+        }
+    }
+    if (c != 0) {
+        $(noRoomRules).hide();
+        str+='<p>Trovate '+c+' regole</p>';
+    } else {
+        $(noRoomRules).fadeIn();
+    }
+
+    sel.find('.rules-list').html(str);
+    addRuleButton.attr('data-toggle','2').appendTo(sel);
+    $('ul.tabs').tabs('select_tab', roomRules);
+}
+
+function changePolysFillColor(index) {
+    for (var i=0; i<polys.length; ++i) {
+        polys[i].changeFillColor(i==index);
+    }
 }
 
 
 /* ## SHUTTER MANAGERS ## */
-
 function editShutter(indexPoly, indexShut) {
     if (currEditPoly != indexPoly || currEditShut != indexShut) {
         // changed poly?
@@ -138,15 +177,12 @@ function editShutter(indexPoly, indexShut) {
 }
 
 function editShutterRulesHtml(indexPoly, indexShut) {
-    // switch tab
-    $('ul.tabs').tabs('select_tab', windowRules);
-    // fill tab with rooms' rules
+    var sel = $('#'+windowRules);
+    // fill tab with window's rules
     var roomId = polys[indexPoly].id;
     var shutId = polys[indexPoly].shutters[indexShut].id;
-    $('#'+windowRules).html('');
     var str='';
     var c=0;
-
     for (var r in rooms) { // search for this room
         if (roomId == r.roomNum) {
             for (var w in windows) { // search for this room windows
@@ -155,7 +191,7 @@ function editShutterRulesHtml(indexPoly, indexShut) {
                         str+='<p>Regole della window '+shutId+'</p>';
                         var rules = w.rulesLists;
                         for (var rule in rules) {
-                            if (isDefaultRule(rule.priority)) {
+                            if (isWindowRule(rule.priority)) {
                                 str+='<p>Nome regola: '+ rule.name+'</p>';
                                 ++c;
                             }
@@ -167,11 +203,21 @@ function editShutterRulesHtml(indexPoly, indexShut) {
         }
     }
     if (c != 0) {
+        $(noWindowRules).hide();
         str+='<p>Trovate '+c+' regole</p>';
     } else {
-        str+='<p>No rules found for this window.</p>';
+        $(noWindowRules).fadeIn();
     }
-    $('#'+windowRules).html(str);
+    sel.find('.rules-list').html(str);
+    addRuleButton.attr('data-toggle','3').appendTo(sel);
+    $('ul.tabs').tabs('select_tab', windowRules);
+}
+
+function changeShuttersFillColor(indexPoly, indexShutt, selRoom) {
+    var p = polys[indexPoly];
+    for (var i=0; i<p.shutters.length; ++i) {
+        p.shutters[i].changeFillColor(i==indexShutt, selRoom);
+    }
 }
 
 function getIndexOfShutter(shutter) {
@@ -188,16 +234,42 @@ function getIndexOfShutter(shutter) {
 }
 
 
-function changeShuttersFillColor(indexPoly, indexShutt, selRoom) {
-    var p = polys[indexPoly];
-    for (var i=0; i<p.shutters.length; ++i) {
-        if (i==indexShutt) {
-            p.shutters[i].changeFillColor(true, null);
-        } else {
-            p.shutters[i].changeFillColor(false, selRoom);
-        }
-    }
-}
+/* ## ADD RULE ## */
+$(addRuleForm).on('submit', function() {
+    // pre ajax request
+    var buttonsRow = $(addHomeForm).find('.buttons-row').first();
+    buttonsRow.find('button').hide();
+    buttonsRow.append(preloader_wrapper('right'));
+
+    // do an ajax req
+    $.ajax({
+        type: "POST",
+        url: "/homes/add",
+        data: $(this).serialize() // serializes the form's elements.
+    })
+        .done(function( data ) {
+            data = data.toString();
+            // rollback
+            buttonsRow.find('.preloader-wrapper').remove();
+            buttonsRow.find('button').show();
+            if (data.indexOf("Ok")!=-1) { // if everything's ok
+                Materialize.toast('Home added!', 3000, 'rounded');
+                var id = data.substr(4, data.length-4);
+                addListElement(id);
+                $(addHomeForm).trigger("reset");
+                // hide errors
+                if ($('.removeHome').length==1) {
+                    $(listHomes).show();
+                    $('#noHomes').hide(500);
+                }
+            } else { // display error
+                Materialize.toast('Ops! An error occured.', 3000, 'rounded');
+                $('#addHomeErrors').html(data).fadeIn();
+            }
+        });
+    return false; // avoid to execute the actual submit of the form.
+});
+
 
 (function() {
     if(showGridLines) {
@@ -210,11 +282,10 @@ function changeShuttersFillColor(indexPoly, indexShutt, selRoom) {
         if (obj instanceof fabric.Polygon) {// poly selected
             index = getIndexOfPoly(obj);
             if (index != polys.length) {
-                if (currEditPoly != index) {
-                    editRoom(index);
-                } else {
-                    changeShuttersFillColor(index, -1, true);
+                if (currEditPoly == index) {
+                    currEditShut = null;
                 }
+                editRoom(index);
             }
         } else if (obj instanceof fabric.Rect) {// shutters
             index = getIndexOfShutter(obj);
@@ -225,9 +296,8 @@ function changeShuttersFillColor(indexPoly, indexShutt, selRoom) {
     });
 
     canvas.observe("selection:cleared", function() {
-        removeEdit();
+        editFloor();
     });
-
 
 })();
 

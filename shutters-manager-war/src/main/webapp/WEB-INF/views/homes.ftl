@@ -128,7 +128,7 @@
                     <div class="input-field col s12">
                         <i class="mdi-editor-mode-edit prefix"></i>
                         <input id="description" type="text" class="validate" name="description" required="required">
-                        <label for="description">Brief description (EG: beach house)</label>
+                        <label for="description">Name (EG: close at night, weekend all open..)</label>
                     </div>
                 </div>
                 <div class="row">
