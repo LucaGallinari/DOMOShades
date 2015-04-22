@@ -9,7 +9,7 @@
 
     <!-- Time picker -->
     <!--<link rel="stylesheet" type="text/css" href="/assets/css/timepicki.css">-->
-    <link rel="stylesheet" type="text/css" href="/assets/css/lolliclock.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/jquery-clockpicker.min.css">
 
     <!-- jQuery is required by Materialize to function -->
     <script type="text/javascript" src="/assets/js/jquery.min.js"></script>

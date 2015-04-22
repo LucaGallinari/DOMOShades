@@ -10,7 +10,7 @@
 
   // Default options
   LolliClock.DEFAULTS = {
-    startTime: '',	      // default time, '' or 'now' or 'H:MM AM'
+    startTime: '',	        // default time, '' or 'now' or 'H:MM AM'
     autoclose: false,    	// show Cancel/OK buttons
     vibrate: true        	// vibrate the device when dragging clock hand
   };

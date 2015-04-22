@@ -225,12 +225,21 @@
 <script type="text/javascript" src="/assets/js/rulesManager.js"></script>
 <script type="text/javascript" src="/assets/js/responsiveFloatingActionButton.js"></script>
 <script type="text/javascript" src="/assets/js/timepicki.js"></script>
-<script type="text/javascript" src="/assets/js/lolliclock.js"></script>
+
+<script type="text/javascript" src="/assets/js/jquery-clockpicker.min.js"></script>
 
 <script>
-
+/*
     $('#startTime').lolliclock();
     $('#endTime').lolliclock();
+*/
+
+    $('#startTime').clockpicker({
+        donetext: 'Done'
+    });
+    $('#endTime').clockpicker({
+        donetext: 'Done'
+    });
 
     var windows = [<#list windows as w>${w},</#list>];
     var rooms = [<#list rooms as r>${r},</#list>];
