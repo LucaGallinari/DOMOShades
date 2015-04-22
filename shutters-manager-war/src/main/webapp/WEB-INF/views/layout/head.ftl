@@ -7,6 +7,9 @@
     <link type="text/css" rel="stylesheet" href="/assets/css/style.css" media="screen,projection">
     <link type="text/css" rel="stylesheet" href="/assets/css/canvasManager.css" media="screen,projection">
 
+    <!-- Time picker -->
+    <link rel="stylesheet" type="text/css" href="/assets/css/timepicki.css">
+
     <!-- jQuery is required by Materialize to function -->
     <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
     <script type="text/javascript" src="/assets/js/jquery.cookie.js"></script>

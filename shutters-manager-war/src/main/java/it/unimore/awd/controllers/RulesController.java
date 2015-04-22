@@ -143,6 +143,7 @@ public class RulesController extends Controller {
 
                     try {// retrieve parameters
 
+
                         // Integer scope = Integer.parseInt(req.getParameter("scope"));
                         String pJson = req.getParameter("priorities");
                         Gson gson = new Gson();
@@ -151,15 +152,9 @@ public class RulesController extends Controller {
                         String name = req.getParameter("name");
                         Integer closePerc = Integer.parseInt(req.getParameter("closedPercentage"));
 
-                        // start time h/m
-                        Integer startTimeH  = Integer.parseInt(req.getParameter("startTimeH"));
-                        Integer startTimeM  = Integer.parseInt(req.getParameter("startTimeM"));
-                        String startTime    = startTimeH.toString()+':'+startTimeM.toString();
-
-                        // end time h/m
-                        Integer endTimeH    = Integer.parseInt(req.getParameter("endTimeH"));
-                        Integer endTimeM    = Integer.parseInt(req.getParameter("endTimeM"));
-                        String endTime      = endTimeH.toString()+':'+endTimeM.toString();
+                        // start and end times
+                        String startTime = req.getParameter("startTime").replaceAll("\\s+", ""); // remove spaces
+                        String endTime = req.getParameter("endTime").replaceAll("\\s+", ""); // remove spaces
 
                         if (name!= null) {
                             for (RoomProp r : priorities.rooms) {

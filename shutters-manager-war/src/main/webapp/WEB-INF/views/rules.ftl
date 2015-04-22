@@ -134,40 +134,12 @@
                                     <label>Timer</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <select class="browser-default validate" id="startTimeH" name="startTimeH" required="required">
-                                        <option value="" disabled selected>Hour</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                    <label for="startTimeH" class="hidden">Start Time Hour</label>
-                                    <select class="browser-default validate" id="startTimeM" name="startTimeM" required="required">
-                                        <option value="" disabled selected>Minutes</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                    <label for="startTimeM" class="hidden">Start Time Minute</label>
+                                    <input type="text" name="startTime" id="startTime" class="time_element validate" required="required" />
+                                    <label for="startTime" class="hidden">Start Time</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <select class="browser-default validate" id="endTimeH" name="endTimeH" required="required">
-                                        <option value="" disabled selected>Hour</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                    <label for="endTimeH" class="hidden">End Time Hour</label>
-                                    <select class="browser-default validate" id="endTimeM" name="endTimeM" required="required">
-                                        <option value="" disabled selected>Minutes</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                    <label for="endTimeM" class="hidden">End Time Minute</label>
+                                    <input type="text" name="endTime" id="endTime" class="time_element validate" required="required" />
+                                    <label for="endTime" class="hidden">End Time</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -235,6 +207,7 @@
 <script type="text/javascript" src="/assets/js/fabricExtended.js"></script>
 <script type="text/javascript" src="/assets/js/rulesManager.js"></script>
 <script type="text/javascript" src="/assets/js/responsiveFloatingActionButton.js"></script>
+<script type="text/javascript" src="/assets/js/timepicki.js"></script>
 
 <script>
 
@@ -255,6 +228,12 @@
         changeMode(0);
         editFloor();
         $('select').material_select();
+        $(".time_element").timepicki({
+            show_meridian:false,
+            min_hour_value:0,
+            max_hour_value:23
+        });
+
 
         // add rule modal
         $('#rulesArea')
@@ -263,13 +242,13 @@
                 sel.find('select[name="scope"]').val(scope);
                 sel.openModal();
             })
-            .on('mouseover', 'tr', function() {
+            .on('mouseover', 'tbody tr', function() {
                 if (scope != 3) { // with windows this has no sense
                     var ruleIndex = parseInt($(this).attr('data-toggle'));
                     selectPolysAndShuttersByRule(ruleIndex);
                 }
             })
-            .on('mouseout', 'tr', function() {
+            .on('mouseout', 'tbody tr', function() {
                 if (scope != 3) { // with windows this has no sense
                     switch (scope) {
                         case 1://floor
