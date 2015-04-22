@@ -52,6 +52,14 @@ public class RulesController extends Controller {
                 String floorIdStr = req.getParameter("floor");
                 if (floorIdStr != null && !floorIdStr.isEmpty()) { // check home par exists
 
+                    String mode = req.getParameter("mode");
+
+                    if (mode != null) {// list rules
+                        if (mode.equals("remove")) {
+                            this.remove();
+                        }
+                    }
+
                     // get floors
                     FloorToken ft = null;
                     List<FloorToken> fl = domoWrapper.getFloorsByHome(owner, homeIdStr);
@@ -68,11 +76,12 @@ public class RulesController extends Controller {
 
                         // get rooms
                         List<Room> rl = domoWrapper.getRoomsByFloor(owner, homeIdStr, floorIdStr);
-
                         List<WindowToken> wl = new ArrayList<WindowToken>();
                         if (rl != null) {
                             for (Room r : rl) {
-                                List<WindowToken> wltemp = domoWrapper.getWindowsOfRoom(owner, homeIdStr, floorIdStr, r.getRoomNum().toString());
+                                List<WindowToken> wltemp = domoWrapper.getWindowsOfRoom(
+                                    owner, homeIdStr, floorIdStr, r.getRoomNum().toString()
+                                );
                                 wl.addAll(wltemp);
                             }
                         }
@@ -88,12 +97,12 @@ public class RulesController extends Controller {
                         root.put("floor", ft);
                         root.put("rooms", rl);
                         root.put("windows", wl);
-                        root.put("floorTypes", fk);
                         // output it
                         TemplateHelper.callTemplate(cfg, resp, ctrlName + "/rules.ftl", root);
                     } else {// floor not found, redirect
                         resp.sendRedirect("/floors/?home="+homeIdStr);
                     }
+
                 } else { // no floor selected, redirect
                     resp.sendRedirect("/floors/?home="+homeIdStr);
                 }
@@ -108,41 +117,72 @@ public class RulesController extends Controller {
 
 
     /*
-     *  Add floor.
+     *  Add rules.
      *  If called by another function (eg: root()) you need to set ajax global variable to false.
      *  If called through ajax you only need to send the form with "serialized" data.
      *
      *  @ret String Ok if succes+sful, an error if not.
-
+    */
     public String add()
-            throws IOException, ServletException
+        throws IOException, ServletException
     {
         String error="";
         if (gaeUser != null) { // already logged
+            String owner = gaeUser.getEmail();
 
             String homeIdStr = req.getParameter("home");
             if (homeIdStr != null && !homeIdStr.isEmpty()) { // check home par exists
 
-                // retrieve parameters
-                String canvas = req.getParameter("canvas");
-                String floorId = req.getParameter("id");
-                String type = req.getParameter("type");
-                if (!(floorId.isEmpty())) {// add floor
-                    try {
-                        Floor f = domoWrapper.putFloor(gaeUser.getEmail(), homeIdStr, floorId, type, canvas);
-                        System.out.println("Piano inserito.");
-                        if (this.ajax) {
-                            resp.getWriter().write("Ok: "+f.getId());
-                        } else {
-                            resp.sendRedirect("/floors?home="+homeIdStr);
+                String floorIdStr = req.getParameter("floor");
+                if (floorIdStr != null && !floorIdStr.isEmpty()) { // check home par exists
+
+                    try {// retrieve parameters
+
+                        // Integer scope = Integer.parseInt(req.getParameter("scope"));
+                        String pJson = req.getParameter("priorities");
+                        Gson gson = new Gson();
+                        Priorities priorities = gson.fromJson(pJson, Priorities.class);
+
+                        String name = req.getParameter("name");
+                        Integer closePerc = Integer.parseInt(req.getParameter("closedPercentage"));
+
+                        // start time h/m
+                        Integer startTimeH  = Integer.parseInt(req.getParameter("startTimeH"));
+                        Integer startTimeM  = Integer.parseInt(req.getParameter("startTimeM"));
+                        String startTime    = startTimeH.toString()+':'+startTimeM.toString();
+
+                        // end time h/m
+                        Integer endTimeH    = Integer.parseInt(req.getParameter("endTimeH"));
+                        Integer endTimeM    = Integer.parseInt(req.getParameter("endTimeM"));
+                        String endTime      = endTimeH.toString()+':'+endTimeM.toString();
+
+                        if (name!= null) {
+                            for (RoomProp r : priorities.rooms) {
+                                for (ShutProp w: r.windows) {
+                                    Window tempW = domoWrapper.putRule(
+                                        owner, homeIdStr, floorIdStr, r.id.toString(), w.id.toString(),
+                                        name, w.priority, startTime, endTime, closePerc);
+                                    if (tempW == null) {
+                                        System.out.println("ERROR: tempW is null.");
+                                    }
+                                }
+                            }
                         }
+
+                        System.out.println("Regola aggiunta.");
+                        if (this.ajax) {
+                            resp.getWriter().write("Ok");
+                        } else {
+                            resp.sendRedirect("/rule/?home=" + homeIdStr + "&floor=" + floorIdStr);
+                        }
+
                     } catch (Exception e) {
-                        System.out.println("Piano non inserito perchè già presente!");
-                        if (this.ajax) {resp.getWriter().write("Error: this floor for this home already exists!");}
+                        System.out.println("Rule non aggiunta perchè uno dei parametri era mancante o non convertibile!");
+                        if (this.ajax) {resp.getWriter().write("Error: bad parameters!");}
                         else {error = "4";}
                     }
                 } else {// error
-                    if (this.ajax) { resp.getWriter().write("Error: one or more mandatory inputs were empty!");}
+                    if (this.ajax) { resp.getWriter().write("Error: floor parameter not specified.");}
                     else {error = "3";}
                 }
             } else { // no home selected, redirect
@@ -154,18 +194,18 @@ public class RulesController extends Controller {
             else {error="1";}
         }
         return error;
-    }*/
+    }
 
 
     /*
-     *  Remove floor.
+     *  Remove rule.
      *  If called by another function (eg: root()) you need to set ajax global variable to false.
      *  If called by ajax you only need to send the form with "serialized" data.
      *
      *  @par home Id of the home
      *  @par floor Id of the floor
      *  @ret String Ok if successful, an error if not.
-
+    */
     public String remove()
         throws IOException, ServletException
     {
@@ -180,17 +220,41 @@ public class RulesController extends Controller {
                 String floorIdStr = req.getParameter("floor");
                 if (floorIdStr != null && !floorIdStr.isEmpty()) { // check home par exists
 
-                    try {
-                        domoWrapper.deleteFloor(owner, homeIdStr, floorIdStr);
+                    String tJson = req.getParameter("targets");
+                    if (tJson != null && !tJson.isEmpty()) {
+
+                        Gson gson = new Gson();
+                        Targets targets = gson.fromJson(tJson, Targets.class);
+
+                        for (RoomProp r : targets.rooms) {
+                            for (ShutProp w: r.windows) {
+                                String startTime = targets.startTime.getHour().toString()+':'+targets.startTime.getMinutes().toString();
+                                String endTime   = targets.endTime.getHour().toString()+':'+targets.endTime.getMinutes().toString();
+                                try {
+                                    Window tempW = domoWrapper.deleteRule(
+                                        owner, homeIdStr, floorIdStr, r.id.toString(), w.id.toString(),
+                                        targets.name, w.priority, startTime, endTime, targets.closedPercentage
+                                    );
+                                    if (tempW == null) {
+                                        System.out.println("ERROR: tempW is null.");
+                                    }
+                                } catch (Exception e) { // home not found
+                                    System.out.println("Regola non cancellata perchè non trovato!");
+                                    if (this.ajax) {resp.getWriter().write("Error: this floor has already been deleted!");}
+                                    else {error = "5";}
+                                }
+                            }
+                        }
+
                         if (this.ajax) {
                             resp.getWriter().write("Ok");
                         } else {
-                            resp.sendRedirect("/floors?home="+homeIdStr);
+                            error="";
                         }
-                    } catch (Exception e) { // home not found
-                        System.out.println("Piano non cancellato perchè non trovato!");
-                        if (this.ajax) {resp.getWriter().write("Error: this floor has already been deleted!");}
-                        else {error = "4";}
+
+                    } else { // no param targets
+                        if (this.ajax) {resp.getWriter().write("Error: targets parameter not specified.");}
+                        else {error="4";}
                     }
                 } else { // no home selected, redirect
                     if (this.ajax) {resp.getWriter().write("Error: floor parameter not specified.");}
@@ -205,8 +269,27 @@ public class RulesController extends Controller {
             else {error="1";}
         }
         return error;
-    }*/
+    }
 
+    /**
+     * @param strArr array of strings
+     * @return String[]
+     */
+    private String[] processStringArrInput(String strArr) {
+        if (strArr!=null) {
+            if (strArr.contains(",")) { // more than one
+                return strArr.split(",");
+            } else { // one or none
+                if (strArr.isEmpty()) {
+                    return null;
+                } else {
+                    return new String[]{strArr};
+                }
+            }
+        } else {
+            return null;
+        }
+    }
 
     private List<FloorType> getFloorTypes() {
         return Arrays.asList(
@@ -223,6 +306,44 @@ public class RulesController extends Controller {
                 new FloorType(10, "2&deg underground floor")
         );
     }
+
+    static public class Priorities {
+        public List<RoomProp> rooms;
+
+        public Priorities(List<RoomProp> rooms) {this.rooms = rooms;}
+        public Priorities() {}
+    }
+    static public class Targets {
+        public List<RoomProp> rooms;
+        public String name;
+        private Integer priority;
+        private Time startTime;
+        private Time endTime;
+        private Integer closedPercentage;
+
+        public Targets() {}
+    }
+    static public class RoomProp {
+        Integer id;
+        public List<ShutProp> windows;
+
+        public RoomProp(Integer id, List<ShutProp> windows) {
+            this.id = id;
+            this.windows = windows;
+        }
+        public RoomProp() {}
+    }
+    static public class ShutProp {
+        Integer id;
+        Integer priority;
+
+        public ShutProp(Integer priority, Integer id) {
+            this.priority = priority;
+            this.id = id;
+        }
+        public ShutProp() {}
+    }
+
 
     public class FloorType {
         public Integer id;

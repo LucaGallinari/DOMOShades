@@ -69,58 +69,35 @@
             </div>
             <div id="floorRules" class="col s12">
                 <div class="card-panel red lighten-1 hidden" id="noFloorRules">There are no rules for this floor.</div>
-                <div class="rules-list"></div>
+                <div class="row rules-list"></div>
+                <div class="row buttons-row">
+                    <button class="btn waves-effect waves-light amber right addRule" data-toggle="1">
+                        <i class="mdi-content-add"></i> Add Floor Rule
+                    </button>
+                </div>
             </div>
             <div id="roomRules" class="col s12">
                 <div class="card-panel red lighten-1 hidden" id="noRoomRules">There are no rules for this room.</div>
                 <div class="rules-list"></div>
-                <!--<div class="nosel">No room selected! Select one for managing its rules.</div>-->
+                <div class="row buttons-row">
+                    <button class="btn waves-effect waves-light amber right addRule" data-toggle="2">
+                        <i class="mdi-content-add"></i> Add Room Rule
+                    </button>
+                </div>
             </div>
             <div id="windowRules" class="col s12">
                 <div class="card-panel red lighten-1 hidden" id="noWindowRules">There are no rules for this window</div>
                 <div class="rules-list"></div>
-                <!--<div class="nosel">No window selected! Select one for managing its rules.</div>-->
-            </div>
-        </div>
-
-
-        <br><br>
-
-
-        <!-- TODO: used fordebugging, to be removed -->
-        <div class="row">
-            <!-- List of rooms -->
-            <div class="col l5 m5 s10 offset-l1 offset-m1 offset-s1">
-                <h5>Rooms list</h5>
-                <div class="row">
-                    <ul>
-                        <#list rooms as r>
-                            ${r.roomNum}
-
-                        </#list>
-                    </ul>
+                <div class="row buttons-row">
+                    <button class="btn waves-effect waves-light amber right addRule" data-toggle="3">
+                        <i class="mdi-content-add"></i> Add Window Rule
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <!-- List of windows -->
-            <div class="col l5 m5 s10 offset-l1 offset-m1 offset-s1">
-                <h5>Rooms list</h5>
-                <div class="row">
-                    <ul>
-                        <#list windows as w>
-                            ${w.windowId}
-
-                        </#list>
-                    </ul>
-                </div>
-            </div>
-        </div>
-		
 
         <!-- Modals -->
         <div class="container">
-
 
             <!-- Add Rule Modal -->
             <div id="addModal" class="modal">
@@ -133,8 +110,8 @@
                             <div class="row">
                                 <div class="input-field col s12">
                                     <i class="mdi-editor-mode-edit prefix"></i>
-                                    <input id="description" type="text" class="validate" name="description" required="required">
-                                    <label for="description">Brief description (EG: beach house)</label>
+                                    <input id="name" type="text" class="validate" name="name" required="required">
+                                    <label for="name">Brief description (EG: beach house)</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -203,6 +180,11 @@
                                     </p>
                                 </div>
                             </div>
+                            <div>
+                                <input type="hidden" name="home" value="${home}">
+                                <input type="hidden" name="floor" value="${floor.id}">
+                                <input type="hidden" name="rooms" value="">
+                            </div>
                             <div class="row buttons-row">
                                 <button class="btn-floating btn-large waves-effect waves-light amber right" type="submit" name="submit">
                                     <i class="mdi-content-add"></i>
@@ -214,6 +196,22 @@
                 </div>
             </div>
 
+            <!-- Remove Home Confirm Modal -->
+            <div id="confirmModal" class="modal">
+                <div class="modal-content">
+                    <h4>Confirm rule deleting..</h4>
+                    <p>You are removing a rule! You won't be able to undo that.</p>
+                    <input type="hidden" value="" name="targetRule" />
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat teal-text right" id="agreeRemove">
+                        Agree
+                    </a>
+                    <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat left" id="disagreeRemove">
+                        Disagree
+                    </a>
+                </div>
+            </div>
 
 			<!-- Save rules modal -->
 			<div id="savingModal" class="modal">
@@ -259,7 +257,7 @@
 
         // add rule modal
         $('#rulesArea').on('click', '.addRule', function() {
-            var scope = $(this).attr('data-toggle');
+            var scope = parseInt($(this).attr('data-toggle'));
             var sel = $('#addModal');
             sel.find('select[name="scope"]').val(scope);
             sel.openModal();
