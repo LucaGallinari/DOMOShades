@@ -60,7 +60,8 @@
         </div>
 
         <div class="col s10 offset-s1" id="rulesArea">
-            <div class="col s12">
+            <div class="col s12" style="position: relative;">
+                <div class="transp-overlay">&nbsp;</div>
                 <ul class="tabs z-depth-1">
                     <li class="tab col s4"><a class="active" href="#floorRules"><i class="mdi-maps-layers prefix"></i>&nbsp;&nbsp;Floor Rules</a></li>
                     <li class="tab col s4"><a href="#roomRules"><i class="mdi-navigation-apps prefix"></i>&nbsp;&nbsp;Room Rules</a></li>
@@ -106,7 +107,7 @@
                     <div class="card-panel red lighten-1 hidden" id="addRuleErrors"></div>
                     <div id="addRuleContainer">
 
-                        <form class="col s12" method="post" id="addRuleForm">
+                        <form class="col s12" method="post" id="addRuleForm" action="/rules/?mode=add&home=${home}&floor=${floor.id}">
                             <div class="row">
                                 <div class="input-field col s12">
                                     <i class="mdi-editor-mode-edit prefix"></i>

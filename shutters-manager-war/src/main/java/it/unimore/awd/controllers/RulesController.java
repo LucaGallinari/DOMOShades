@@ -54,9 +54,12 @@ public class RulesController extends Controller {
 
                     String mode = req.getParameter("mode");
 
+                    // TODO: gestire errori e conferme
                     if (mode != null) {// list rules
                         if (mode.equals("remove")) {
                             this.remove();
+                        } else if (mode.equals("add")) {
+                            this.add();
                         }
                     }
 
@@ -82,7 +85,9 @@ public class RulesController extends Controller {
                                 List<WindowToken> wltemp = domoWrapper.getWindowsOfRoom(
                                     owner, homeIdStr, floorIdStr, r.getRoomNum().toString()
                                 );
-                                wl.addAll(wltemp);
+                                if (wltemp!=null) {
+                                    wl.addAll(wltemp);
+                                }
                             }
                         }
 
@@ -170,11 +175,9 @@ public class RulesController extends Controller {
                         }
 
                         System.out.println("Regola aggiunta.");
-                        if (this.ajax) {
-                            resp.getWriter().write("Ok");
-                        } else {
-                            resp.sendRedirect("/rule/?home=" + homeIdStr + "&floor=" + floorIdStr);
-                        }
+
+                        if (this.ajax) resp.getWriter().write("Ok");
+                        else error = "0";
 
                     } catch (Exception e) {
                         System.out.println("Rule non aggiunta perchè uno dei parametri era mancante o non convertibile!");
@@ -246,11 +249,8 @@ public class RulesController extends Controller {
                             }
                         }
 
-                        if (this.ajax) {
-                            resp.getWriter().write("Ok");
-                        } else {
-                            error="";
-                        }
+                        if (this.ajax) resp.getWriter().write("Ok");
+                        else error="0";
 
                     } else { // no param targets
                         if (this.ajax) {resp.getWriter().write("Error: targets parameter not specified.");}

@@ -464,8 +464,8 @@ function resetNewRoomInput(form) {
         var index;
         var polyId;
         var obj = canvas.getActiveObject();
-        if (obj instanceof fabric.Polygon) {// poly selected
-            index = getIndexOfPoly(obj);
+        if (obj instanceof fabric.Polygon || obj instanceof fabric.Text) {// poly selected
+            index =  (obj instanceof fabric.Polygon) ? getIndexOfPoly(obj) : getIndexOfPolyByText(obj);
             if (index != polys.length) {
                 polyId = polys[index].id;
                 if (mode == 2) { // remove poly

@@ -75,7 +75,7 @@ function addWindowToRuleList(ruleIndex, w, priority) {
 function updateRulesList(str, selectTab, norules) {
     var sel = $('#'+selectTab);
     if (str != '') {
-        $(noFloorRules).hide();
+        $(norules).hide();
         sel.find('.rules-list').html(rules_table());
         sel.find('#listRules').html(str);
     } else {
@@ -312,35 +312,9 @@ $(addRuleForm).on('submit', function() {
     var obj = calculatePriorities();
     var objJson = JSON.stringify(obj);
     $(addRuleForm).append('<input type="hidden" name="priorities" value=\''+objJson+'\' />');
+    // $(addRuleForm).submit();
 
-    return true;
-
-    // do an ajax req
-    /*
-    $.ajax({
-        type: "POST",
-        url: "/rules/add",
-        data: $(this).serialize() // serializes the form's elements.
-    })
-    .done(function( data ) {
-        data = data.toString();
-        // rollback
-        buttonsRow.find('.preloader-wrapper').remove();
-        buttonsRow.find('button').show();
-        if (data.indexOf("Ok")!=-1) { // if everything's ok
-            Materialize.toast('Rule added!', 3000, 'rounded');
-            //var id = data.substr(4, data.length-4);
-            //addListElement(id);
-            $(addRuleForm).trigger("reset");
-            // hide errors
-        } else { // display error
-            Materialize.toast('Ops! An error occured.', 3000, 'rounded');
-            $('#addRuleErrors').html(data).fadeIn();
-        }
-        // clean
-        $(addRuleForm).find('input[name="priorities"]').remove();
-    });
-    return false; // avoid to execute the actual submit of the form.*/
+    return true; // avoid to execute the actual submit of the form.*/
 });
 
 function calculatePriorities() {
@@ -500,6 +474,14 @@ function rules_table() {
             index = getIndexOfShutter(obj);
             if (index.poly != polys.length) {
                 editShutter(index.poly, index.shutter);
+            }
+        } else if (obj instanceof fabric.Text) {// text
+            index = getIndexOfPolyByText(obj);
+            if (index != polys.length) {
+                if (currEditPoly == index) {
+                    currEditShut = null;
+                }
+                editRoom(index);
             }
         }
     });

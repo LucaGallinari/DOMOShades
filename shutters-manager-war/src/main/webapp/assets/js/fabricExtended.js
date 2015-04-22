@@ -107,7 +107,8 @@ function PolygonExtended(pos, id, name) {
         fill: 'white',
         fontSize: 16,
         hasControls: false,
-        selectable: false,
+        hasBorders: false,
+        selectable: true,
         lockMovementX: true,
         lockMovementY: true
     });
@@ -654,6 +655,20 @@ function getIndexOfPoly(poly) {
     }
     return polys.length;
 }
+/*
+ * Get the poly's index of the given text.
+ */
+function getIndexOfPolyByText(text) {
+    if (text != null) {
+        for (var i=0; i<polys.length; ++i) {
+            if(polys[i].fabricText === text) {
+                return i;
+            }
+        }
+    }
+    return polys.length;
+}
+
 
 
 /* ## MODE ## */
