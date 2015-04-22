@@ -63,6 +63,19 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
 }
 
 
+.tabs .tab a{
+    color: #039BE5;
+}
+
+.tabs .tab a:hover{
+    color: #B3E5FC;
+}
+
+
+
+.tabs .indicator{
+    background-color: #039BE5;
+}
 
 
 .spaced-r-20 {margin-right:20px;}

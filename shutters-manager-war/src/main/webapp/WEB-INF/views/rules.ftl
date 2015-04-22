@@ -59,10 +59,10 @@
             <br><br>
         </div>
 
-        <div class="col s10 offset-s1" id="rulesArea">
+        <div class="col s10 offset-s1 card" id="rulesArea">
             <div class="col s12" style="position: relative;">
-                <div class="transp-overlay">&nbsp;</div>
-                <ul class="tabs z-depth-1">
+                <!--<div class="transp-overlay">&nbsp;</div>-->
+                <ul class="tabs">
                     <li class="tab col s4"><a class="active" href="#floorRules"><i class="mdi-maps-layers prefix"></i>&nbsp;&nbsp;Floor Rules</a></li>
                     <li class="tab col s4"><a href="#roomRules"><i class="mdi-navigation-apps prefix"></i>&nbsp;&nbsp;Room Rules</a></li>
                     <li class="tab col s4"><a href="#windowRules"><i class="mdi-image-crop-portrait prefix"></i>&nbsp;&nbsp;Window Rules</a></li>
@@ -72,8 +72,13 @@
                 <div class="card-panel red lighten-1 hidden" id="noFloorRules">There are no rules for this floor.</div>
                 <div class="row rules-list"></div>
                 <div class="row buttons-row">
+                    <!--
                     <button class="btn waves-effect waves-light amber right addRule" data-toggle="1">
                         <i class="mdi-content-add"></i> Add Floor Rule
+                    </button>
+                    -->
+                    <button class="btn-large btn-floating waves-effect waves-light amber right addRule" data-toggle="1">
+                        <i class="mdi-content-add"></i>
                     </button>
                 </div>
             </div>
@@ -81,8 +86,13 @@
                 <div class="card-panel red lighten-1 hidden" id="noRoomRules">There are no rules for this room.</div>
                 <div class="rules-list"></div>
                 <div class="row buttons-row">
+                    <!--
                     <button class="btn waves-effect waves-light amber right addRule" data-toggle="2">
                         <i class="mdi-content-add"></i> Add Room Rule
+                    </button>
+                    -->
+                    <button class="btn-large btn-floating waves-effect waves-light amber right addRule" data-toggle="2">
+                        <i class="mdi-content-add"></i>
                     </button>
                 </div>
             </div>
@@ -90,8 +100,13 @@
                 <div class="card-panel red lighten-1 hidden" id="noWindowRules">There are no rules for this window</div>
                 <div class="rules-list"></div>
                 <div class="row buttons-row">
+                    <!--
                     <button class="btn waves-effect waves-light amber right addRule" data-toggle="3">
                         <i class="mdi-content-add"></i> Add Window Rule
+                    </button>
+                    -->
+                    <button class="btn-large btn-floating waves-effect waves-light amber right addRule" data-toggle="3">
+                        <i class="mdi-content-add"></i>
                     </button>
                 </div>
             </div>
@@ -112,7 +127,7 @@
                                 <div class="input-field col s12">
                                     <i class="mdi-editor-mode-edit prefix"></i>
                                     <input id="name" type="text" class="validate" name="name" required="required">
-                                    <label for="name">Brief description (EG: beach house)</label>
+                                    <label for="name">Rule Name (EG: Morning Rule)</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -121,7 +136,7 @@
                                     <label for="scope">Scope</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <select class="browser-default validate" id="scope" name="scope" required="required" disabled>
+                                    <select class="validate" id="scope" name="scope" required="required" disabled>
                                         <option value="1">Floor</option>
                                         <option value="2">Room</option>
                                         <option value="3">Window</option>
@@ -134,11 +149,13 @@
                                     <label>Timer</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <input type="text" name="startTime" id="startTime" class="time_element validate" required="required" />
+                                    <!--<input type="text" name="startTime" id="startTime" class="time_element validate" required="required" />-->
+                                    <input type="text" name="startTime" id="startTime" class="validate" required="required" />
                                     <label for="startTime" class="hidden">Start Time</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <input type="text" name="endTime" id="endTime" class="time_element validate" required="required" />
+                                    <!--<input type="text" name="endTime" id="endTime" class="time_element validate" required="required" />-->
+                                    <input type="text" name="endTime" id="endTime" class="validate" required="required" />
                                     <label for="endTime" class="hidden">End Time</label>
                                 </div>
                             </div>
@@ -208,8 +225,12 @@
 <script type="text/javascript" src="/assets/js/rulesManager.js"></script>
 <script type="text/javascript" src="/assets/js/responsiveFloatingActionButton.js"></script>
 <script type="text/javascript" src="/assets/js/timepicki.js"></script>
+<script type="text/javascript" src="/assets/js/lolliclock.js"></script>
 
 <script>
+
+    $('#startTime').lolliclock();
+    $('#endTime').lolliclock();
 
     var windows = [<#list windows as w>${w},</#list>];
     var rooms = [<#list rooms as r>${r},</#list>];
