@@ -299,11 +299,8 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
  * @param sel Selected obj or not
  */
 PolygonExtended.prototype.changeFillColor = function(sel) {
-    if (sel) {
-        this.fabricPoly.set({fill: '#ff6f00'});
-    } else {
-        this.fabricPoly.set({fill: '#0277bd'});
-    }
+    if (sel) { this.fabricPoly.set({fill: '#ff6f00'}); }
+    else { this.fabricPoly.set({fill: '#0277bd'}); }
     canvas.renderAll();
 };
 /**
@@ -545,7 +542,8 @@ PolygonExtended.prototype.getAvailableShutterID = function() {
 };
 /**
  * Change the fill color of the shutter
- * @var sel Selected obj or not
+ * @param selShutt s
+ * @param selRoom s
  */
 RectangleExtended.prototype.changeFillColor = function(selShutt, selRoom) {
     if (selShutt) {

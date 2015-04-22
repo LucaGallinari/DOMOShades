@@ -208,7 +208,7 @@
                     <a class="modal-action modal-close waves-effect waves-green btn-flat teal-text right" id="agreeRemove">
                         Agree
                     </a>
-                    <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat left" id="disagreeRemove">
+                    <a class="modal-action modal-close waves-effect waves-red btn-flat left" id="disagreeRemove">
                         Disagree
                     </a>
                 </div>
@@ -257,12 +257,30 @@
         $('select').material_select();
 
         // add rule modal
-        $('#rulesArea').on('click', '.addRule', function() {
-            var scope = parseInt($(this).attr('data-toggle'));
-            var sel = $('#addModal');
-            sel.find('select[name="scope"]').val(scope);
-            sel.openModal();
-        });
+        $('#rulesArea')
+            .on('click', '.addRule', function() {
+                var sel = $('#addModal');
+                sel.find('select[name="scope"]').val(scope);
+                sel.openModal();
+            })
+            .on('mouseover', 'tr', function() {
+                if (scope != 3) { // with windows this has no sense
+                    var ruleIndex = parseInt($(this).attr('data-toggle'));
+                    selectPolysAndShuttersByRule(ruleIndex);
+                }
+            })
+            .on('mouseout', 'tr', function() {
+                if (scope != 3) { // with windows this has no sense
+                    switch (scope) {
+                        case 1://floor
+                            resetPolysAndShutsFillColor();
+                            break;
+                        case 2:// room
+                            changeShuttersFillColor(currEditPoly, -1, true);
+                            break;
+                    }
+                }
+            });
 
     });
 </script>

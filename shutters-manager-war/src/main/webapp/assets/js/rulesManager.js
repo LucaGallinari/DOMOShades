@@ -10,6 +10,12 @@ var addRuleForm = '#addRuleForm';
 var currEditPoly = null;
 var currEditShut = null;
 var rulesList = [];
+/*
+ 1, floor
+ 2, room
+ 3, window
+ */
+var scope = 1;
 
 /* HELPERS */
 function isHomeRule(){
@@ -29,6 +35,30 @@ function isDefaultRule(){
 }
 function between(x, min, max) {
     return x >= min && x <= max;
+}
+
+
+
+function getPolyIndexById(id) {
+    if (id != null) {
+        for (var i=0; i<polys.length; ++i) {
+            if (polys[i].id==id) {
+                return i;
+            }
+        }
+    }
+    return null;
+}
+
+function getShutIndexById(polyIndex, id) {
+    if (id != null) {
+        for (var i=0; i<polys[polyIndex].shutters.length; ++i) {
+            if (polys[polyIndex].shutters[i].id == id) {
+                return i;
+            }
+        }
+    }
+    return null;
 }
 
 /* ## RULES MANAGER ## */
@@ -88,6 +118,7 @@ function updateRulesList(str, selectTab, norules) {
 
 /* ## FLOOR MANAGERS ## */
 function editFloor(){
+    scope = 1;
     if (currEditPoly!=null) {
         changeShuttersFillColor(currEditPoly, -1, false);
         polys[currEditPoly].changeFillColor(false);
@@ -130,6 +161,7 @@ function addPoly(poly) {
 }
 
 function editRoom(index) {
+    scope = 2;
     if (currEditPoly != index) {
         //reset currEditPoly shutter selection
         if (currEditPoly != null) {
@@ -222,10 +254,43 @@ function changePolysFillColor(index) {
         polys[i].changeFillColor(i==index);
     }
 }
+function resetPolysAndShutsFillColor() {
+    for (var i=0; i<polys.length; ++i) {
+        polys[i].changeFillColor(false);
+        resetShutsFillColor(i);
+    }
+}
+function resetShutsFillColor(polyIndex) {
+    var shuts = polys[polyIndex].shutters;
+    for (var k=0; k < shuts.length; ++k) {
+        shuts[k].changeFillColor(false, false);
+    }
+}
+
+function selectPolysAndShuttersByRule(ruleIndex) {
+    if (rulesList != null) {
+        if (rulesList.length > 0) {
+            var rule = rulesList[ruleIndex];
+            // polys
+            for (var i=0; i < rule.rooms.length; ++i) {
+                var room = rule.rooms[i];
+                var polyIndex = getPolyIndexById(room.id);
+                polys[polyIndex].changeFillColor(true);
+                // windows
+                for (var k=0; k < room.windows.length; ++k) {
+                    var shut = room.windows[k];
+                    var shutIndex = getShutIndexById(polyIndex, shut.id);
+                    polys[polyIndex].shutters[shutIndex].changeFillColor(true, true);
+                }
+            }
+        }
+    }
+}
 
 
 /* ## SHUTTER MANAGERS ## */
 function editShutter(indexPoly, indexShut) {
+    scope = 3;
     if (currEditPoly != indexPoly || currEditShut != indexShut) {
         // changed poly?
         if (currEditPoly != indexPoly) {
@@ -318,7 +383,6 @@ $(addRuleForm).on('submit', function() {
 });
 
 function calculatePriorities() {
-    var scope = parseInt($(addRuleForm).find('select[name="scope"]').val());
     var roomId = null;
     var shutId = null;
     if (currEditPoly != null) {
@@ -422,7 +486,7 @@ function preloader_wrapper(pos) {
 
 function rules_table_element(rule, index) {
     return ' \
-        <tr> \
+        <tr data-toggle="'+(index)+'"> \
             <td class="name">'+rule.name+'</td> \
             <td class="starttime">'+rule.startTime.hour+':'+rule.startTime.minutes+'</td> \
             <td class="endtime">'+rule.endTime.hour+':'+rule.endTime.minutes+'</td> \
