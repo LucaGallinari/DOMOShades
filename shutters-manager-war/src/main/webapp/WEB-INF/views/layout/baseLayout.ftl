@@ -8,7 +8,7 @@
         </head>
         <body class="grey lighten-5">
             <header>
-                <nav class="top-nav teal">
+                <nav class="top-nav indigo">
                     <div class="container">
                         <div class="nav-wrapper">
                             <a href="/" class="brand-logo center"><img src="/assets/images/logo-white.svg" width="300px" height="40px" style="margin-top: 41px" ></a>
@@ -17,7 +17,7 @@
                     </div>
                 </nav>
                 <ul id="nav-mobile" class="side-nav fixed">
-                    <li class="logo teal  darken-2">
+                    <li class="logo indigo darken-2">
                         <div class="user_profile"> <img src="null" /> </div>
                         <div class="user_name"> ${userNick} </div>
                         <div class="user_email"> ${userEmail} </div>

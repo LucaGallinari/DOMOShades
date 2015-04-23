@@ -303,7 +303,7 @@ function addListElement(id) {
     // add element
     var el = $(list_element(id,type,homeId));
     el.hide();
-    //$(listFloors).find('tbody').append(el);
+    //$(listFloors).find('tbody').append(el)4;
     $(listFloors).append(el);
     $('.tooltipped').tooltip({delay: 0});
     el.fadeIn();
