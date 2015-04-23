@@ -61,7 +61,7 @@
 
         <div class="col s10 offset-s1 card" id="rulesArea">
             <div class="col s12" style="position: relative;">
-                <!--<div class="transp-overlay">&nbsp;</div>-->
+                <div class="transp-overlay">&nbsp;</div>
                 <ul class="tabs">
                     <li class="tab col s4"><a class="active" href="#floorRules"><i class="mdi-maps-layers prefix"></i>&nbsp;&nbsp;Floor Rules</a></li>
                     <li class="tab col s4"><a href="#roomRules"><i class="mdi-navigation-apps prefix"></i>&nbsp;&nbsp;Room Rules</a></li>
@@ -69,7 +69,7 @@
                 </ul>
             </div>
             <div id="floorRules" class="col s12">
-                <div class="card-panel red lighten-1 hidden" id="noFloorRules">There are no rules for this floor.</div>
+                <div class="card-panel red-text hidden" id="noFloorRules">There are no rules for this floor.</div>
                 <div class="row rules-list"></div>
                 <div class="row buttons-row">
                     <!--
@@ -83,7 +83,7 @@
                 </div>
             </div>
             <div id="roomRules" class="col s12">
-                <div class="card-panel red lighten-1 hidden" id="noRoomRules">There are no rules for this room.</div>
+                <div class="card-panel red-text hidden" id="noRoomRules">There are no rules for this room.</div>
                 <div class="rules-list"></div>
                 <div class="row buttons-row">
                     <!--
@@ -97,7 +97,7 @@
                 </div>
             </div>
             <div id="windowRules" class="col s12">
-                <div class="card-panel red lighten-1 hidden" id="noWindowRules">There are no rules for this window</div>
+                <div class="card-panel red-text hidden" id="noWindowRules">There are no rules for this window</div>
                 <div class="rules-list"></div>
                 <div class="row buttons-row">
                     <!--
