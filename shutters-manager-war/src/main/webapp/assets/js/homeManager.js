@@ -102,12 +102,15 @@ $(document).ready(function(){
         $(this).attr('for',$(this).attr('for')+'Modify')
     });
 
-	$(modifyHomeForm).find('button').attr('class', 'btn-floating btn-flat btn-large waves-effect waves-light light-blue right'); // modify button
-    $(modifyHomeForm).find('button i').attr('class', 'mdi-action-done'); // modify button
+	$(modifyHomeForm).find('button').replaceWith(
+    '<button class="btn-flat waves-effect waves-orange right deep-orange-text" type="submit" name="submit"> ' +
+        'Save' +
+    '</button>');
+
     // add close modal button
     $(modifyHomeForm).find('.buttons-row').append(
-        '<button class="btn-floating btn-large btn-flat waves-effect waves-light modal-close left grey lighten-3" type="button"> ' +
-            '<i class="mdi-content-clear grey-text"></i>' +
+        '<button class="btn-flat waves-effect waves-orange modal-close left" style="background-color: #FAFAFA;" type="button"> ' +
+            'Close' +
         '</button>'
     );
 

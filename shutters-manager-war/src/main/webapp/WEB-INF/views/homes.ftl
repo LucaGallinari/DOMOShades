@@ -68,7 +68,7 @@
             </table>
 
             <div id="noHomes" class="card-panel red lighten-1 <#if homes?has_content>hidden</#if>">
-                No homes found! Insert one by using the form below.
+                <p class="flow-text">No homes found! Insert one by using the form below.</p>
             </div>
 
             <!-- Remove Home Confirm Modal -->

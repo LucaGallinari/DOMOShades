@@ -113,8 +113,10 @@
 			<!-- Save canvas modal -->
 			<div id="savingModal" class="modal">
 				<div class="modal-content">
-					<h4>Saving floor..</h4>
-					<p>Don't close this page! The floor is being processed, it can take a while (5/10 seconds) based on the complexity of the floor.</p>
+					<h4 class="deep-orange-text">Saving floor..</h4>
+					<p class="flow-text">Don't close this page while saving your floor. <br />
+                        This process may take a while.
+                    </p>
                     <!-- Errors -->
                     <div class="card-panel red lighten-1 row container hidden" id="saveCanvasErrors"></div>
                     <div class="progress">
@@ -139,7 +141,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat" id="gotIt">
+                    <a href="#" class="modal-action modal-close waves-effect waves-orange btn-flat deep-orange-text" id="gotIt">
                         Got It
                     </a>
                 </div>
@@ -176,7 +178,7 @@
 
                 </div>
                 <div class="modal-footer">
-                    <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat deep-orange-text" id="close_modal">
+                    <a href="#" class="modal-action modal-close waves-effect waves-orange btn-flat deep-orange-text" id="close_modal">
                         Save
                     </a>
                 </div>

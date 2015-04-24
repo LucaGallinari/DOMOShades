@@ -487,12 +487,13 @@ function preloader_wrapper(pos) {
 function rules_table_element(rule, index) {
     return ' \
         <tr data-toggle="'+(index)+'"> \
-            <td class="name">'+rule.name+'</td> \
-            <td class="starttime">'+rule.startTime.hour+':'+rule.startTime.minutes+'</td> \
-            <td class="endtime">'+rule.endTime.hour+':'+rule.endTime.minutes+'</td> \
-            <td class="closedPerc">'+rule.closedPercentage+'</td> \
+            <td class="null"></td>\
+            <td class="name"><strong>'+rule.name+'</strong></td> \
+            <td class="starttime"> starts at '+rule.startTime.hour+':'+rule.startTime.minutes+'</td> \
+            <td class="endtime"> ends at '+rule.endTime.hour+':'+rule.endTime.minutes+'</td> \
+            <td class="closedPerc"> shutters closed at '+rule.closedPercentage+'%</td> \
             <td> \
-                <a data-toggle="'+(index)+'" class="small waves-effect waves-red btn-flat removeRule tooltipped" data-position="bottom" data-delay="50" data-tooltip="Remove Rule"> \
+                <a data-toggle="'+(index)+'" class="small waves-effect waves-red btn-flat removeRule tooltipped right" data-position="bottom" data-delay="50" data-tooltip="Remove Rule"> \
                     <i class="mdi-content-clear red-text"></i> \
                 </a> \
             </td> \
@@ -502,7 +503,7 @@ function rules_table_element(rule, index) {
 function rules_table() {
     return ' \
         <table class="hoverable"> \
-            <thead> \
+            <!--<thead> \
                 <tr> \
                     <th data-field="name">Name</th> \
                     <th data-field="starttime">Start Time</th> \
@@ -510,7 +511,7 @@ function rules_table() {
                     <th data-field="closedPerc">Closed %</th> \
                     <th></th> \
                 </tr> \
-            </thead> \
+            </thead>--> \
             <tbody id="listRules"> \
             </tbody> \
         </table>';

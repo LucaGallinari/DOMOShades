@@ -1,27 +1,29 @@
 <#macro footerLayout showFooter=true>
     <#if showFooter>
-    <footer class="page-footer blue-grey darken-3">
+    <footer class="page-footer indigo darken-4">
         <div class="container">
             <div class="row">
                 <div class="col l6 s12">
-                    <h5 class="white-text">About DOMOShades</h5>
-                    <p class="grey-text text-lighten-4">DOMOShades wants to be a simple project for easily manage domotic shutters.<br />
-                    This project is and will always be completely open source and it's only available for academic use.</p>
+                    <h5 class="deep-orange-text text-lighten-3">About DOMOShades</h5>
+                    <p class="grey-text text-lighten-4">DOMOShades aims to be a simple project for easily manage domotic shutters.<br />
+                    This project is made for academic purposes using MaterializeCss and will always be completely open source.<br />
+                    If you want to see the source code please check out the GitHub repos.<br />
+                    For any other comunications feel free to contact the developers via mail.</p>
                 </div>
                 <div class="col l4 offset-l2 s12">
-                    <h5 class="white-text">Links</h5>
+                    <h5 class="deep-orange-text text-lighten-3">Source Code Links</h5>
                     <ul>
-                        <li><a class="grey-text text-lighten-3" href="#!">Link GitHub_API</a></li>
-                        <li><a class="grey-text text-lighten-3" href="#!">Link GitHub_Progetto</a></li>
-                        <li><a class="grey-text text-lighten-3" href="#!">Link Materialize</a></li>
-                        <li><a class="grey-text text-lighten-3" href="#!">Link Canvas</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://github.com/BrosDs/DomoShades_APIs" target="_blank">DomoShades APIs</a></li>
+                        <li><a class="grey-text text-lighten-3" href="https://github.com/LucaGallinari/DOMOShades" target="_blank">DomoShades Web</a></li>
+                        <li><a class="grey-text text-lighten-3" href="http://materializecss.com/" target="_blank">MaterializeCss</a></li>
+                        <!--<li><a class="grey-text text-lighten-3" href="#!">Link Canvas</a></li>-->
                     </ul>
                 </div>
             </div>
         </div>
         <div class="footer-copyright">
             <div class="container">
-                © 2015 <a href="#" class="white-text">Luca Gallinari</a> & <a href="#" class="white-text">Dario Stabili</a>
+                © 2015 <a href="mailto:luke.gallinari@gmail.com" class="deep-orange-text text-lighten-3">Luca Gallinari</a> & <a href="mailto:brosds@gmail.com" class="deep-orange-text text-lighten-3">Dario Stabili</a>
             </div>
         </div>
     </footer>

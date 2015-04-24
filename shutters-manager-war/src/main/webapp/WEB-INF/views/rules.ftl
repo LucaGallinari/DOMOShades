@@ -119,14 +119,14 @@
                         <form class="col s12" method="post" id="addRuleForm" action="/rules/?mode=add&home=${home}&floor=${floor.id}">
                             <div class="row">
                                 <div class="input-field col s12">
-                                    <i class="mdi-editor-mode-edit prefix"></i>
+                                    <i class="mdi-editor-mode-edit blue-grey-text prefix"></i>
                                     <input id="name" type="text" class="validate" name="name" required="required">
                                     <label for="name">Rule Name (EG: Morning Rule)</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s2">
-                                    <i class="mdi-image-style prefix"></i>
+                                    <i class="mdi-image-style blue-grey-text prefix"></i>
                                     <label for="scope">Scope</label>
                                 </div>
                                 <div class="input-field col s5">
@@ -139,7 +139,7 @@
                             </div>
                             <div class="row">
                                 <div class="input-field col s2">
-                                    <i class="mdi-av-timer prefix"></i>
+                                    <i class="mdi-av-timer blue-grey-text prefix"></i>
                                     <label>Timer</label>
                                 </div>
                                 <div class="input-field col s5">
@@ -155,7 +155,7 @@
                             </div>
                             <div class="row">
                                 <div class="input-field col s2">
-                                    <i class="mdi-editor-vertical-align-bottom prefix"></i>
+                                    <i class="mdi-editor-vertical-align-bottom blue-grey-text prefix"></i>
                                     <label for="closedPercentage">Closed&#37;</label>
                                 </div>
                                 <div class="input-field col s10">
@@ -170,7 +170,7 @@
                                 <input type="hidden" name="rooms" value="">
                             </div>
                             <div class="row buttons-row">
-                                <button class="btn-flat waves-effect waves-light deep-orange-text right" type="submit" name="submit">
+                                <button class="btn-flat waves-effect waves-orange deep-orange-text right" type="submit" name="submit">
                                     Save
                                 </button>
                             </div>
@@ -188,10 +188,10 @@
                     <input type="hidden" value="" name="targetRule" />
                 </div>
                 <div class="modal-footer">
-                    <a class="modal-action modal-close waves-effect waves-green btn-flat teal-text right" id="agreeRemove">
+                    <a class="modal-action modal-close waves-effect waves-orange btn-flat deep-orange-text right" id="agreeRemove">
                         Agree
                     </a>
-                    <a class="modal-action modal-close waves-effect waves-red btn-flat left" id="disagreeRemove">
+                    <a class="modal-action modal-close waves-effect waves-orange btn-flat left" id="disagreeRemove">
                         Disagree
                     </a>
                 </div>
@@ -200,8 +200,8 @@
 			<!-- Save rules modal -->
 			<div id="savingModal" class="modal">
 				<div class="modal-content">
-					<h4>Saving rules..</h4>
-					<p class="flow-text">Don't close this page while saving your rule. This process may take a while.</p>
+					<h4 class="deep-orange-text">Saving rules..</h4>
+					<p class="flow-text">Don't close this page while saving your rule. <br />This process may take a while.</p>
                     <!-- Errors -->
                     <div class="card-panel red-text lighten-1 row container hidden" id="saveRulesErrors"></div>
                     <div class="progress">

@@ -72,7 +72,7 @@
                 </tbody>
             </table>
 
-            <div id="noFloors" class="card-panel red lighten-1 <#if floors?has_content>hidden</#if>">
+            <div id="noFloors" class="card-panel red-text <#if floors?has_content>hidden</#if>">
                 No floors saved! <br />
                 Insert add one using the button.
             </div>
