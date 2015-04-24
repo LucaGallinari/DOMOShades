@@ -9,7 +9,7 @@
         </head>
         <body class="blue-grey lighten-4">
             <header>
-                <nav class="top-nav teal huge">
+                <nav class="top-nav huge indigo">
                     <div class="container">
                         <div class="nav-wrapper">
                         </div>

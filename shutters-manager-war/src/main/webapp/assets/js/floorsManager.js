@@ -303,9 +303,9 @@ function addListElement(id) {
     // add element
     var el = $(list_element(id,type,homeId));
     el.hide();
-    //$(listFloors).find('tbody').append(el);
-    $(listFloors).append(el);
-    $('.tooltipped').tooltip({delay: 0});
+    $(listFloors).find('tbody').append(el);
+    //$(listFloors).append(el);
+    $('.dropdown-button').dropdown();
     el.fadeIn();
 }
 
@@ -332,30 +332,23 @@ function list_element(id, type, homeId) {
             </td> \
         </tr>';
 */
+
+
     return '    \
-        <li id="listFloor'+(id)+'" class="collection-item new">' +
-            '<span>' + floorTypes[type].str +'</span>'+
-            '<a href="/rules/?home='+(homeId)+'&floor='+(id)+'"    \
-                class="tiny waves-effect waves-orange manageRules tooltipped right" \
-                data-position="bottom" data-tooltip="Manage Rules"> \
-                    <i class="mdi-content-content-paste orange-text"></i> \
-            </a> \
-            <a href="/floor/manage?home='+(homeId)+'&floor='+(id)+'"    \
-                class="tiny waves-effect waves-blue manageFloor tooltipped right" \
-                data-position="bottom" data-tooltip="Manage Floor"> \
-                    <i class="mdi-content-forward blue-text"></i> \
-            </a> \
-            <a data-toggle="'+(id)+'" \
-                class="tiny waves-effect waves-red removeFloor tooltipped right" \
-                data-position="bottom" data-tooltip="Delete Floor"> \
-                    <i class="mdi-content-clear red-text"></i> \
-            </a> \
-            <a data-toggle="'+(id)+'" \
-                class="tiny waves-effect waves-green modifyFloor tooltipped right" \
-                data-position="bottom" data-tooltip="Modify Floor Values"> \
-                    <i class="mdi-content-create green-text"></i> \
-            </a> \
-        </li>';
+        <tr id="listFloor'+(id)+'" class="collection-item new"> \
+            <td class="floorName"> \
+                <span>'+ floorTypes[type].str +'</span> \
+            </div> \
+            <td class="floorAction">   \
+                <a class="dropdown-button right grey-text" href="#" data-activates="dropdown'+(id)+'"><i class="mdi-navigation-more-vert grey-text"></i></a>\
+                <ul id="dropdown'+(id)+'" class="dropdown-content">\
+                    <li><a href="/floor/manage?home='+(homeId)+'&floor='+(id)+'" class="manageFloor black-text"> Manage </a></li>\
+                    <li><a data-toggle="'+(id)+'" class="modifyFloor black-text"> Edit </a></li> \
+                    <li><a data-toggle="'+(id)+'" class="removeFloor black-text">Remove</a></li>\
+                    <li><a href="/rules/?home='+(homeId)+'&floor='+(id)+'" class="manageRules black-text">Rules </a></li>\
+                </ul>\
+            </td> \
+        </tr>';
 }
 
 function preloader_wrapper(pos) {

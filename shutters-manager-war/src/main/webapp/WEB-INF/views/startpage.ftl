@@ -24,7 +24,7 @@
         <!-- Table + Modals -->
         <div class="row">
             <div class="xl9 offset-xl1">
-                <h4 class="amber-text">Start Page!</h4>
+                <h4 class="deep-orange-text">Start Page!</h4>
                 <a href="/homes/">Manage houses</a>
                 <p>TODO</p>
             </div>

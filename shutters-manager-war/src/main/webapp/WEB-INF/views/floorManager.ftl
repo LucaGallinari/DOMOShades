@@ -51,18 +51,25 @@
 
         <!-- Tools + Canvas -->
         <div class="xl12">
-            <div class="row l10 offset-l1 m10 offset-m1 s10 offset-s1">
-                <h4 class="col l10 m10 s10 amber-text center">Draw Floor Layout</h4>
+            <div class="col l10 offset-l1 m10 offset-m1 s10 offset-s1">
+                <h4 class="deep-orange-text">Draw Floor Layout</h4>
 
-                <div class="col l2 m2 s2">
-                    <a class="waves-effect waves-light small btn-flat modal-trigger shortcuts-modal" href="#"><i class="mdi-action-info light-blue-text"></i></a>
-                    <a class="waves-effect waves-light small btn-flat modal-trigger canvas-modal" href="#"><i class="mdi-action-settings blue-grey-text"></i></a>
+                <div class="row">
+                    <div class="col l9 m9 s9 left">
+                        <p class="flow-text">In this page you can design and recreate your home's floor layout.
+                            <br />
+                            This is necessary to have a better control over the rules in your home in the Rule page.</p>
+                    </div>
+                    <div class="col l1 m1 s1 right">
+                        <a class="waves-effect waves-light small btn-flat modal-trigger shortcuts-modal" href="#"><i class="mdi-action-info light-blue-text"></i></a>
+                        <a class="waves-effect waves-light small btn-flat modal-trigger canvas-modal" href="#"><i class="mdi-action-settings blue-grey-text"></i></a>
+                    </div>
                 </div>
             </div>
 
             <!-- This is necessary to create fancy alignment -->
             <div class="col l10 offset-l1 m10 offset-m1 s10 offset-s1">
-                <h5>Plant Drawing Area</h5>
+                <h5 class="deep-orange-text">Plant Drawing Area</h5>
             </div>
 
             <div class="canvas col l10 offset-l1 m10 offset-m1 s10 offset-s1 left">
@@ -91,7 +98,7 @@
         <div class="row">
             <!-- List of rooms -->
             <div class="col l5 m5 s10 offset-l1 offset-m1 offset-s1">
-                <h5>Rooms list</h5>
+                <h5 class="deep-orange-text">Rooms list</h5>
                 <div class="row">
                     <ul id="rooms-list" class="collapsible" data-collapsible="accordion"></ul>
                 </div>
@@ -119,8 +126,10 @@
 			<!-- Save canvas modal -->
 			<div id="savingModal" class="modal">
 				<div class="modal-content">
-					<h4>Saving floor..</h4>
-					<p>Don't close this page! The floor is being processed, it can take a while (5/10 seconds) based on the complexity of the floor.</p>
+					<h4 class="deep-orange-text">Saving floor..</h4>
+					<p class="flow-text">Don't close this page while saving your floor. <br />
+                        This process may take a while.
+                    </p>
                     <!-- Errors -->
                     <div class="card-panel red lighten-1 row container hidden" id="saveCanvasErrors"></div>
                     <div class="progress">
@@ -132,21 +141,21 @@
             <!-- Shortcuts modal -->
             <div id="shortcutsModal" class="modal">
                 <div class="modal-content">
-                    <h4>Keyboard Shortcuts</h4>
+                    <h4 class="deep-orange-text">Keyboard Shortcuts</h4>
                     <div>
 		                <p class="flow-text">Use the Canvas like a Pro!</p>
 		                <ul>
-		                    <li><span class="teal-text">ESC</span>&nbsp;&nbsp;Toggle "add room" and Save room while adding one.</li>
-		                    <li><span class="teal-text">Q</span>&nbsp;&nbsp;Toggle "show grid".</li>
-		                    <li><span class="teal-text">+/-</span>&nbsp;&nbsp;Zoom in and out the grid.</li>
-		                    <li><span class="teal-text">X</span>&nbsp;&nbsp;Remove last added point while adding a room.</li>
-		                    <li><span class="teal-text">Canc</span>&nbsp;&nbsp;Remove the selected object.</li>
+		                    <li class="flow-text"><span class="indigo-text">ESC</span>&nbsp;&nbsp;Toggle "add room" and Save room while adding one.</li>
+		                    <li class="flow-text"><span class="indigo-text">Q</span>&nbsp;&nbsp;Toggle "show grid".</li>
+		                    <li class="flow-text"><span class="indigo-text">+/-</span>&nbsp;&nbsp;Zoom in and out the grid.</li>
+		                    <li class="flow-text"><span class="indigo-text">X</span>&nbsp;&nbsp;Remove last added point while adding a room.</li>
+		                    <li class="flow-text"><span class="indigo-text">Canc</span>&nbsp;&nbsp;Remove the selected object.</li>
 		                </ul>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat" id="gotIt">
-                        Got it!&nbsp;<i class="mdi-navigation-check green-text"></i>
+                    <a href="#" class="modal-action modal-close waves-effect waves-orange btn-flat deep-orange-text" id="gotIt">
+                        Got It
                     </a>
                 </div>
             </div>
@@ -154,9 +163,9 @@
             <!-- Settings modal -->
             <div id="settingsModal" class="modal">
                 <div class="modal-content">
-                    <h4>Canvas Settings</h4>
+                    <h4 class="deep-orange-text">Canvas Settings</h4>
                     <div class="switch">
-                        <h6 class="nomargin"><small>Show grid</small></h6>
+                        <h6 class="flow-text">Show grid</h6>
                         <label>
                             Off
                             <input type="checkbox" id="showGrid" checked="checked">
@@ -165,7 +174,7 @@
                         </label>
                     </div>
                     <div class="switch">
-                        <h6 class="nomargin"><small>Lock points on grid</small></h6>
+                        <h6 class="flow-text">Lock points on grid</h6>
                         <label>
                             Off
                             <input type="checkbox" id="lockGrid" checked="checked">
@@ -174,7 +183,7 @@
                         </label>
                     </div>
                     <div class="switch">
-                        <label for="zoomGrid" class="nomargin"><small>Zoom grid</small></label>
+                        <h6 class="flow-text">Zoom grid</h6>
                         <p class="range-field">
                             <input type="range" id="zoomGrid" min="0" max="2" value="0" />
                         </p>
@@ -182,8 +191,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <a href="#" class="modal-action modal-close waves-effect waves-green btn-flat" id="close_modal">
-                        Save&nbsp;<i class="mdi-navigation-check green-text"></i>
+                    <a href="#" class="modal-action modal-close waves-effect waves-orange btn-flat deep-orange-text" id="close_modal">
+                        Save
                     </a>
                 </div>
             </div>

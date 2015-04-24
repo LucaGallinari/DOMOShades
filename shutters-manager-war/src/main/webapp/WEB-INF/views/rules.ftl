@@ -43,20 +43,15 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="container">
 
         <!-- Canvas -->
-        <div class="col l12">
-            <div class="row l10 offset-l1 m10 offset-m1 s10 offset-s1">
-                <h4 class="col s12 amber-text center">Manage Floors Rules</h4>
+        <div class="row">
+            <div class="row">
+                <h4 class="col s12 deep-orange-text">Manage Floor Rules</h4>
             </div>
 
-            <!-- This is necessary to create fancy alignment -->
-            <div class="col l10 offset-l1 m10 offset-m1 s10 offset-s1">
-                <h5>Plant Floor Area</h5>
-            </div>
-
-            <div class="canvas col l10 offset-l1 m10 offset-m1 s10 offset-s1 left">
+            <div class="canvas">
                 <canvas id="fabric" height="500"></canvas>
             </div>
         </div><!-- END Canvas -->
@@ -65,39 +60,54 @@
             <br><br>
         </div>
 
-        <div class="col s10 offset-s1" id="rulesArea">
+        <div class="row card" id="rulesArea">
             <div class="col s12" style="position: relative;">
                 <div class="transp-overlay">&nbsp;</div>
-                <ul class="tabs z-depth-1">
+                <ul class="tabs">
                     <li class="tab col s4"><a class="active" href="#floorRules"><i class="mdi-maps-layers prefix"></i>&nbsp;&nbsp;Floor Rules</a></li>
                     <li class="tab col s4"><a href="#roomRules"><i class="mdi-navigation-apps prefix"></i>&nbsp;&nbsp;Room Rules</a></li>
                     <li class="tab col s4"><a href="#windowRules"><i class="mdi-image-crop-portrait prefix"></i>&nbsp;&nbsp;Window Rules</a></li>
                 </ul>
             </div>
             <div id="floorRules" class="col s12">
-                <div class="card-panel red lighten-1 hidden" id="noFloorRules">There are no rules for this floor.</div>
+                <div class="red-text hidden center flow-text" id="noFloorRules" style="margin-top: 20px;">There are no rules for this floor.<br />Add one using the button below</div>
                 <div class="row rules-list"></div>
                 <div class="row buttons-row">
+                    <!--
                     <button class="btn waves-effect waves-light amber right addRule" data-toggle="1">
                         <i class="mdi-content-add"></i> Add Floor Rule
+                    </button>
+                    -->
+                    <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="1">
+                        <i class="mdi-content-add"></i>
                     </button>
                 </div>
             </div>
             <div id="roomRules" class="col s12">
-                <div class="card-panel red lighten-1 hidden" id="noRoomRules">There are no rules for this room.</div>
+                <div class="red-text hidden center flow-text" id="noRoomRules" style="margin-top: 20px;">There are no rules for this room.<br />Add one using the button below</div>
                 <div class="rules-list"></div>
                 <div class="row buttons-row">
+                    <!--
                     <button class="btn waves-effect waves-light amber right addRule" data-toggle="2">
                         <i class="mdi-content-add"></i> Add Room Rule
+                    </button>
+                    -->
+                    <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="2">
+                        <i class="mdi-content-add"></i>
                     </button>
                 </div>
             </div>
             <div id="windowRules" class="col s12">
-                <div class="card-panel red lighten-1 hidden" id="noWindowRules">There are no rules for this window</div>
+                <div class="red-text hidden center flow-text" id="noWindowRules" style="margin-top: 20px;">There are no rules for this window <br />Add one using the button below</div>
                 <div class="rules-list"></div>
                 <div class="row buttons-row">
+                    <!--
                     <button class="btn waves-effect waves-light amber right addRule" data-toggle="3">
                         <i class="mdi-content-add"></i> Add Window Rule
+                    </button>
+                    -->
+                    <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="3">
+                        <i class="mdi-content-add"></i>
                     </button>
                 </div>
             </div>
@@ -109,25 +119,25 @@
             <!-- Add Rule Modal -->
             <div id="addModal" class="modal">
                 <div class="modal-content">
-                    <h4>Add Rule</h4>
-                    <div class="card-panel red lighten-1 hidden" id="addRuleErrors"></div>
+                    <h4 class="deep-orange-text">New Rule</h4>
+                    <div class="card-panel red-text lighten-1 hidden" id="addRuleErrors"></div>
                     <div id="addRuleContainer">
 
                         <form class="col s12" method="post" id="addRuleForm" action="/rules/?mode=add&home=${home}&floor=${floor.id}">
                             <div class="row">
                                 <div class="input-field col s12">
-                                    <i class="mdi-editor-mode-edit prefix"></i>
+                                    <i class="mdi-editor-mode-edit blue-grey-text prefix"></i>
                                     <input id="name" type="text" class="validate" name="name" required="required">
-                                    <label for="name">Brief description (EG: beach house)</label>
+                                    <label for="name">Rule Name (EG: Morning Rule)</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s2">
-                                    <i class="mdi-image-style prefix"></i>
+                                    <i class="mdi-image-style blue-grey-text prefix"></i>
                                     <label for="scope">Scope</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <select class="browser-default validate" id="scope" name="scope" required="required" disabled>
+                                    <select class="validate" id="scope" name="scope" required="required" disabled>
                                         <option value="1">Floor</option>
                                         <option value="2">Room</option>
                                         <option value="3">Window</option>
@@ -136,21 +146,23 @@
                             </div>
                             <div class="row">
                                 <div class="input-field col s2">
-                                    <i class="mdi-av-timer prefix"></i>
+                                    <i class="mdi-av-timer blue-grey-text prefix"></i>
                                     <label>Timer</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <input type="text" name="startTime" id="startTime" class="time_element validate" required="required" />
+                                    <!--<input type="text" name="startTime" id="startTime" class="time_element validate" required="required" />-->
+                                    <input type="text" name="startTime" id="startTime" class="validate" required="required" data-autoclose="true"/>
                                     <label for="startTime" class="hidden">Start Time</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <input type="text" name="endTime" id="endTime" class="time_element validate" required="required" />
+                                    <!--<input type="text" name="endTime" id="endTime" class="time_element validate" required="required" />-->
+                                    <input type="text" name="endTime" id="endTime" class="validate" required="required" data-autoclose="true"/>
                                     <label for="endTime" class="hidden">End Time</label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="input-field col s2">
-                                    <i class="mdi-editor-vertical-align-bottom prefix"></i>
+                                    <i class="mdi-editor-vertical-align-bottom blue-grey-text prefix"></i>
                                     <label for="closedPercentage">Closed&#37;</label>
                                 </div>
                                 <div class="input-field col s10">
@@ -165,8 +177,8 @@
                                 <input type="hidden" name="rooms" value="">
                             </div>
                             <div class="row buttons-row">
-                                <button class="btn-floating btn-large waves-effect waves-light amber right" type="submit" name="submit">
-                                    <i class="mdi-content-add"></i>
+                                <button class="btn-flat waves-effect waves-orange deep-orange-text right" type="submit" name="submit">
+                                    Save
                                 </button>
                             </div>
                         </form>
@@ -175,18 +187,18 @@
                 </div>
             </div>
 
-            <!-- Remove Home Confirm Modal -->
+            <!-- Remove Rule Confirm Modal -->
             <div id="confirmModal" class="modal">
                 <div class="modal-content">
-                    <h4>Confirm rule deleting..</h4>
-                    <p>You are removing a rule! You won't be able to undo that.</p>
+                    <h4 class="deep-orange-text">Remove Rule</h4>
+                    <p class="flow-text">You are removing a rule! You won't be able to undo that.</p>
                     <input type="hidden" value="" name="targetRule" />
                 </div>
                 <div class="modal-footer">
-                    <a class="modal-action modal-close waves-effect waves-green btn-flat teal-text right" id="agreeRemove">
+                    <a class="modal-action modal-close waves-effect waves-orange btn-flat deep-orange-text right" id="agreeRemove">
                         Agree
                     </a>
-                    <a class="modal-action modal-close waves-effect waves-red btn-flat left" id="disagreeRemove">
+                    <a class="modal-action modal-close waves-effect waves-orange btn-flat left" id="disagreeRemove">
                         Disagree
                     </a>
                 </div>
@@ -195,10 +207,10 @@
 			<!-- Save rules modal -->
 			<div id="savingModal" class="modal">
 				<div class="modal-content">
-					<h4>Saving rules..</h4>
-					<p>Don't close this page! Bla bla bla</p>
+					<h4 class="deep-orange-text">Saving rules..</h4>
+					<p class="flow-text">Don't close this page while saving your rule. <br />This process may take a while.</p>
                     <!-- Errors -->
-                    <div class="card-panel red lighten-1 row container hidden" id="saveRulesErrors"></div>
+                    <div class="card-panel red-text lighten-1 row container hidden" id="saveRulesErrors"></div>
                     <div class="progress">
                         <div class="indeterminate"></div>
                     </div>
@@ -215,7 +227,16 @@
 <script type="text/javascript" src="/assets/js/responsiveFloatingActionButton.js"></script>
 <script type="text/javascript" src="/assets/js/timepicki.js"></script>
 
+<script type="text/javascript" src="/assets/js/jquery-clockpicker.min.js"></script>
+
 <script>
+/*
+    $('#startTime').lolliclock();
+    $('#endTime').lolliclock();
+*/
+
+    $('#startTime').clockpicker();
+    $('#endTime').clockpicker();
 
     var windows = [<#list windows as w>${w},</#list>];
     var rooms = [<#list rooms as r>${r},</#list>];
