@@ -54,12 +54,14 @@
             <div class="canvas">
                 <canvas id="fabric" height="500"></canvas>
             </div>
-        </div><!-- END Canvas -->
+        </div>
+        <!-- END Canvas -->
 
         <div class="col s12">
             <br><br>
         </div>
 
+        <!-- Rules table -->
         <div class="row card" id="rulesArea">
             <div class="col s12" style="position: relative;">
                 <div class="transp-overlay">&nbsp;</div>
@@ -73,11 +75,6 @@
                 <div class="red-text hidden center flow-text" id="noFloorRules" style="margin-top: 20px;">There are no rules for this floor.<br />Add one using the button below</div>
                 <div class="row rules-list"></div>
                 <div class="row buttons-row">
-                    <!--
-                    <button class="btn waves-effect waves-light amber right addRule" data-toggle="1">
-                        <i class="mdi-content-add"></i> Add Floor Rule
-                    </button>
-                    -->
                     <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="1">
                         <i class="mdi-content-add"></i>
                     </button>
@@ -87,11 +84,6 @@
                 <div class="red-text hidden center flow-text" id="noRoomRules" style="margin-top: 20px;">There are no rules for this room.<br />Add one using the button below</div>
                 <div class="rules-list"></div>
                 <div class="row buttons-row">
-                    <!--
-                    <button class="btn waves-effect waves-light amber right addRule" data-toggle="2">
-                        <i class="mdi-content-add"></i> Add Room Rule
-                    </button>
-                    -->
                     <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="2">
                         <i class="mdi-content-add"></i>
                     </button>
@@ -101,17 +93,13 @@
                 <div class="red-text hidden center flow-text" id="noWindowRules" style="margin-top: 20px;">There are no rules for this window <br />Add one using the button below</div>
                 <div class="rules-list"></div>
                 <div class="row buttons-row">
-                    <!--
-                    <button class="btn waves-effect waves-light amber right addRule" data-toggle="3">
-                        <i class="mdi-content-add"></i> Add Window Rule
-                    </button>
-                    -->
                     <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="3">
                         <i class="mdi-content-add"></i>
                     </button>
                 </div>
             </div>
         </div>
+        <!-- END Rules table -->
 
         <!-- Modals -->
         <div class="container">
@@ -131,7 +119,7 @@
                                     <label for="name">Rule Name (EG: Morning Rule)</label>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row hidden">
                                 <div class="input-field col s2">
                                     <i class="mdi-image-style blue-grey-text prefix"></i>
                                     <label for="scope">Scope</label>
@@ -150,14 +138,12 @@
                                     <label>Timer</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <!--<input type="text" name="startTime" id="startTime" class="time_element validate" required="required" />-->
                                     <input type="text" name="startTime" id="startTime" class="validate" required="required" data-autoclose="true"/>
-                                    <label for="startTime" class="hidden">Start Time</label>
+                                    <label for="startTime">Start Time</label>
                                 </div>
                                 <div class="input-field col s5">
-                                    <!--<input type="text" name="endTime" id="endTime" class="time_element validate" required="required" />-->
                                     <input type="text" name="endTime" id="endTime" class="validate" required="required" data-autoclose="true"/>
-                                    <label for="endTime" class="hidden">End Time</label>
+                                    <label for="endTime">End Time</label>
                                 </div>
                             </div>
                             <div class="row">
@@ -224,9 +210,6 @@
 <script type="text/javascript" src="/assets/js/fabric.min.js"></script>
 <script type="text/javascript" src="/assets/js/fabricExtended.js"></script>
 <script type="text/javascript" src="/assets/js/rulesManager.js"></script>
-<script type="text/javascript" src="/assets/js/responsiveFloatingActionButton.js"></script>
-<script type="text/javascript" src="/assets/js/timepicki.js"></script>
-
 <script type="text/javascript" src="/assets/js/jquery-clockpicker.min.js"></script>
 
 <script>
@@ -241,33 +224,49 @@
     var windows = [<#list windows as w>${w},</#list>];
     var rooms = [<#list rooms as r>${r},</#list>];
 
-
     $(document).ready(function() {
         // load canvas
         var floorCanvas = '<#if floor.canvas?has_content>${ floor.canvas }<#else>{"rooms":[]}</#if>';
         var decJson = JSON.parse(floorCanvas);
+        var rooms = [];
+
+        // decode rooms
         for (var i = 0; i < decJson.rooms.length; i++) {
-            var room = decJson.rooms[i];
-            drawRoomFromJson(room);
+            rooms.push(decJson.rooms[i]);
         }
+
+        // calc max and min
+        var val = calcRoomsMinAndMaxCoords(rooms);
+
+        // adj canvas
+        var height = (val.max.y - val.min.y) * 1.2;
+        var width = $('#fabric').attr('width');
+        $('canvas').css('height', '');
+        $('canvas').attr('height', height);
+        $('.canvas-container').css('height', height);
+
+        var actualCenter = {x: (val.min.x+val.max.x)/2, y: (val.min.y+val.max.y)/2};
+        var destCenter = {x: width/2, y: height/2};
+
+        // adjust pos and draw
+        rooms = adjustRoomsPos(rooms, actualCenter, destCenter);
+        for (i = 0; i < rooms.length; i++) {
+            drawRoomFromJson(rooms[i]);
+        }
+
 
         // init
         changeMode(0);
         changeShowGrid(false);
         editFloor();
         $('select').material_select();
-        $(".time_element").timepicki({
-            show_meridian:false,
-            min_hour_value:0,
-            max_hour_value:23
-        });
-
 
         // add rule modal
         $('#rulesArea')
             .on('click', '.addRule', function() {
                 var sel = $('#addModal');
                 sel.find('select[name="scope"]').val(scope);
+                sel.find('h4').html("Add "+sel.find('select[name="scope"] option:selected').text()+" Rule");
                 sel.openModal();
             })
             .on('mouseover', 'tbody tr', function() {
@@ -289,6 +288,10 @@
                 }
             });
 
+
+
     });
+
+
 </script>
 </@layout.mainLayout>

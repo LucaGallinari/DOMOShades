@@ -494,12 +494,13 @@ function rules_table_element(rule, index) {
             <td class="closedPerc"> shutters closed at <strong>'+rule.closedPercentage+'&#37;</strong></td> \
             <td>';
     if (rule.priority != 0) {
-        str += '<a data-toggle="'+(index)+'" class="small waves-effect waves-red btn-flat removeRule tooltipped right" data-position="bottom" data-delay="50" data-tooltip="Remove Rule"> \
+        str += '<a data-toggle="'+(index)+'" class="small waves-effect waves-red btn-flat removeRule tooltipped right" data-position="right" data-delay="50" data-tooltip="Remove Rule"> \
                     <i class="mdi-content-clear red-text"></i> \
                 </a>'
     }
     str += '</td> \
         </tr>';
+    $('.tooltipped').tooltip({delay: 0});
     return str;
 }
 
@@ -519,6 +520,74 @@ function rules_table() {
             </tbody> \
         </table>';
 }
+
+
+
+/* ## CANVAS ADAPTER ## */
+
+function calcRoomsMinAndMaxCoords(rooms){
+    var min = {x:null, y:null};
+    var max = {x:null, y:null};
+    for (var i = 0; i < rooms.length; i++) {
+        var room = rooms[i];
+        var vals = calculateMinMaxAbsCoords(room);
+        console.log(vals);
+        // x
+        if (min.x == null || min.x > vals.min.x) { min.x = vals.min.x;}
+        if (max.x == null || max.x < vals.max.x) { max.x = vals.max.x;}
+        // y
+        if (min.y == null || min.y > vals.min.y) { min.y = vals.min.y;}
+        if (max.y == null || max.y < vals.max.y) { max.y = vals.max.y;}
+    }
+    return {min: min, max: max};
+}
+
+
+function adjustRoomsPos (rooms, actualCenter, destCenter) {
+
+    for (var i = 0; i < rooms.length; i++) {
+        var r = rooms[i];
+        // adjust rooms position
+        r.pos = {
+            left: r.pos.left - actualCenter.x + destCenter.x,
+            top: r.pos.top - actualCenter.y + destCenter.y
+        };
+        for (var k=0; k< r.shutters.length; ++k) {
+            var s = r.shutters[k];
+            s.pos = {
+                x: s.pos.x - actualCenter.x + destCenter.x,
+                y: s.pos.y - actualCenter.y + destCenter.y
+            };
+        }
+    }
+    return rooms;
+}
+
+function calculateMinMaxAbsCoords (room) {
+    var vals = { min: {x:null, y:null}, max: {x:null, y:null}};
+    var pCenter = room.pos;
+    var adjPoints = room.points.map(function(p) {
+        return {
+            x: Math.round(p.x + pCenter.left),
+            y: Math.round(p.y + pCenter.top)
+        };
+    });
+    for (var i=0; i < adjPoints.length; ++i) {
+        var p = adjPoints[i];
+        // x
+        if (vals.min.x == null || vals.min.x > p.x) { vals.min.x = p.x;}
+        if (vals.max.x == null || vals.max.x < p.x) { vals.max.x = p.x;}
+        // y
+        if (vals.min.y == null || vals.min.y > p.y) { vals.min.y = p.y;}
+        if (vals.max.y == null || vals.max.y < p.y) { vals.max.y = p.y;}
+
+        //console.log("->point "+i+", x:"+points[i].x+" y:"+points[i].y);
+    }
+    return vals;
+    //console.log("->point "+i+", l:"+polygonCenter.x+" t:"+polygonCenter.y);
+}
+
+
 
 
 
