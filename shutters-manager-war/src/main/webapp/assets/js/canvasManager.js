@@ -75,7 +75,7 @@ function addPolyToHtml(num, name){
             '<div class="collapsible-body">' +
                 '<div class="row col s12">' +
                     '<div class="row input-field col s12">' +
-                        '<i class="mdi-action-account-circle prefix"></i>' +
+                        '<i class="mdi-action-account-circle blue-grey-text prefix"></i>' +
                         '<input ' +
                             'name="room-name" ' +
                             'class="validate" ' +
@@ -154,7 +154,7 @@ function refreshShuttersList(id){
         var str =
             '<li class="shutter'+i+'">' +
                 '<div>Shutter'+shutters[i].id+'</div>' +
-                '<div onclick="removeShutter('+id+','+i+');" class="item-icon"><i class="mdi-navigation-cancel"></i></div>' +
+                '<div onclick="removeShutter('+id+','+i+');" class="item-icon"><i class="mdi-navigation-close red-text"></i></div>' +
             '</li>';
         shuttersList.append(str);
     }

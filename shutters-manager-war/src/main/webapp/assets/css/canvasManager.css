@@ -11,11 +11,11 @@
 }
 
 div.active {
-    color:#009efe;
+    color: #3F51B5;
 }
 
 .item-icon > i:hover {
-    color:#43a047;
+    color: red;
     cursor: pointer;
 }
 

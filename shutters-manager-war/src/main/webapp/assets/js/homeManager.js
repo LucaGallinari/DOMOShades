@@ -185,8 +185,10 @@ function addListElement(id) {
     var el = $(list_element(id, descr, addr, city, country, cap));
     el.hide();
     $(listHomes).find('tbody').append(el);
-    $('.tooltipped').tooltip({delay: 0});
+    $('.dropdown-button').dropdown();
+
     el.fadeIn();
+
 }
 
 function list_element(id, descr, addr, city, country, cap) {
@@ -197,18 +199,16 @@ function list_element(id, descr, addr, city, country, cap) {
             <td class="hidden-tc-sm cap">'+cap+'</td> \
             <td class="hidden-tc-m city">'+city+'</td> \
             <td class="hidden-tc-sm country">'+country+'</td> \
-            <td> \
-                <a data-toggle="'+(id)+'" class="small waves-effect waves-green btn-flat modifyHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Modify Home Values"> \
-                    <i class="mdi-content-create green-text"></i> \
-                </a> \
-                <a data-toggle="'+(id)+'" class="small waves-effect waves-red btn-flat removeHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Delete Home"> \
-                    <i class="mdi-content-clear red-text"></i> \
-                </a> \
-                <a href="/floors/?home='+(id)+'" class="small waves-effect waves-blue btn-flat manageHome tooltipped" data-position="bottom" data-delay="50" data-tooltip="Manage Home"> \
-                    <i class="mdi-content-forward blue-text"></i> \
-                </a> \
-            </td> \
+            <td><a class="dropdown-button right grey-text" href="#" data-activates="dropdown'+(id)+'"><i class="mdi-navigation-more-vert grey-text"></i></a> \
+                <ul id="dropdown'+(id)+'" class="dropdown-content"> \
+                    <li><a href="/floors/?home='+(id)+'" class="manageHome black-text">Manage</a> </li> \
+                    <li> <a data-toggle="'+(id)+'" class="modifyHome black-text">Edit</a> </li> \
+                    <li> <a data-toggle="'+(id)+'" class="removeHome black-text">Remove</a> </li> \
+                </ul> \
+            </td>   \
         </tr>';
+
+
 }
 
 function preloader_wrapper(pos) {

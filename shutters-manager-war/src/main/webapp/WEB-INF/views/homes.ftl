@@ -29,7 +29,7 @@
     <!-- Table + Modals -->
     <div class="row">
         <div class="xl9 offset-xl1">
-            <h4 class="deep-orange-text">Homes list</h4>
+            <h4 class="deep-orange-text">Homes List</h4>
             <table class="collection" id="listHomes" class="hoverable <#if !homes?has_content>hidden</#if>">
                 <!--<thead>
                     <tr>
@@ -75,10 +75,10 @@
             <div id="confirmModal" class="modal">
                 <div class="modal-content">
                     <h4 class="deep-orange-text">Delete Home</h4>
-                    <p class="flow-text">You are removing a house and all floors, rooms and shutters associated! You won't be able to undo that.</p>
+                    <p class="flow-text">You are removing a home and all floors, rooms and shutters associated! You won't be able to undo that.</p>
                 </div>
                 <div class="modal-footer">
-                    <a class="modal-action modal-close waves-effect waves-green btn-flat teal-text right" id="agreeRemove">
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat deep-orange-text right" id="agreeRemove">
                         Agree
                     </a>
                     <a href="#" class="modal-action modal-close waves-effect waves-red btn-flat left" id="disagreeRemove">
@@ -100,7 +100,7 @@
     </div>
     <!-- END Table + Modals -->
 
-    <div class="divider xl9 offset-xl1"></div>
+    <!--<div class="divider xl9 offset-xl1"></div>-->
 
     <!-- Add new Home -->
     <div class="row" style="margin-top: 20px;">
@@ -122,13 +122,13 @@
                 </div>
             </#if>
 
-            <h4 class="deep-orange-text">Add home</h4>
+            <h4 class="deep-orange-text">Add Home</h4>
             <form class="col s12" method="post" id="addHomeForm">
                 <div class="row">
                     <div class="input-field col s12">
                         <i class="mdi-editor-mode-edit blue-grey-text prefix"></i>
                         <input id="description" type="text" class="validate" name="description" required="required">
-                        <label for="description">Name (EG: close at night, weekend all open..)</label>
+                        <label for="description">Name</label>
                     </div>
                 </div>
                 <div class="row">
@@ -147,7 +147,7 @@
                     <div class="input-field col s4">
                         <i class="mdi-communication-chat blue-grey-text prefix"></i>
                         <input id="icon_telephone" type="tel" class="validate" name="cap">
-                        <label for="icon_telephone">CAP</label>
+                        <label for="icon_telephone">Postal Code</label>
                     </div>
                 </div>
                 <div class="row">
