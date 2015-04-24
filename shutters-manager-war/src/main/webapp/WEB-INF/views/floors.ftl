@@ -27,6 +27,18 @@
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
 <@layout.mainLayout userNick userEmail logoutURL>
+
+<!-- Breadcrumb -->
+<div class="row">
+    <div class="col s12 left">
+        <p class="breadcrumb">
+            <span><a href="/" class="tooltipped" data-position="bottom" data-tooltip="Start page">Start Page</a></span>
+            <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Houses</a></span>
+            <span>Your Floors</span>
+        </p>
+    </div>
+</div>
+
 <div class="container">
 
     <!-- Table + Modals -->

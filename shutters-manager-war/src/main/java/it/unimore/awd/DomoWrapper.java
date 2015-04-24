@@ -29,6 +29,7 @@ public class DomoWrapper {
 
 
     /** User Functions **/
+
     public User getUser(String email) throws IOException {
         this.scope="/user?email="+email;
         ClientResource cr = new ClientResource(uri+scope);
@@ -39,9 +40,19 @@ public class DomoWrapper {
         return gson.fromJson(returnString,User.class);
     }
 
-    public User putUser(String email, String first_name, String last_name, String profile_pic) throws IOException {
-        this.scope=String.format("/user?email=%s&first_name=%s&last_name=%s&profile_pic=%s",email,first_name,last_name,profile_pic);
-        ClientResource cr = new ClientResource(uri+scope);
+    public User putUser(String email, String first_name, String last_name, String profile_pic)
+        throws IOException, URISyntaxException {
+        this.scope=String.format("email=%s&first_name=%s&last_name=%s&profile_pic=%s",email,first_name,last_name,profile_pic);
+        URI uri = new URI(
+            "http",
+            this.domain,
+            "/api/user",
+            this.scope,
+            null);
+        String request = uri.toASCIIString();
+        ClientResource cr = new ClientResource(request);
+        System.out.println(request);
+
         String returnString = cr.put(User.class).getText();
         if(returnString==null)
             return null;
@@ -49,6 +60,7 @@ public class DomoWrapper {
         return gson.fromJson(returnString,User.class);
     }
 
+    //TODO: ??
     public User deleintteUser(String email) throws IOException {
         this.scope="/user?email="+email;
         ClientResource cr = new ClientResource(uri+scope);
@@ -58,6 +70,7 @@ public class DomoWrapper {
         Gson gson = new Gson();
         return gson.fromJson(returnString,User.class);
     }
+
 
     /** Home functions **/
 
@@ -72,10 +85,19 @@ public class DomoWrapper {
         return gson.fromJson(returnString,token.getType());
     }
 
-    public Home updateHome(String owner, Long home, String description, String city, int cap, String country, String address) throws IOException {
-        this.scope= String.format("/home?owner=%s&home=%s&description=%s&city=%s&cap=%s&country=%s&address=%s", owner, home , URLEncoder.encode(description, "UTF-8"), URLEncoder.encode(city,"UTF-8"), cap, URLEncoder.encode(country,"UTF-8"), URLEncoder.encode(address,"UTF-8"));
-        ClientResource cr = new ClientResource(uri+scope);
-        System.out.println(uri+scope);
+    public Home updateHome(String owner, Long home, String description, String city, int cap, String country, String address)
+        throws IOException, URISyntaxException {
+        this.scope= String.format("owner=%s&home=%s&description=%s&city=%s&cap=%s&country=%s&address=%s", owner, home , URLEncoder.encode(description, "UTF-8"), URLEncoder.encode(city,"UTF-8"), cap, URLEncoder.encode(country,"UTF-8"), URLEncoder.encode(address,"UTF-8"));
+        URI uri = new URI(
+                "http",
+                this.domain,
+                "/api/home",
+                this.scope,
+                null);
+        String request = uri.toASCIIString();
+        ClientResource cr = new ClientResource(request);
+        System.out.println(request);
+
         String returnString = cr.put(Home.class).getText();
         if(returnString.equals("[]"))
             return null;
@@ -83,10 +105,19 @@ public class DomoWrapper {
         return gson.fromJson(returnString,Home.class);
     }
 
-    public Home putHome(String owner, String description, String city, int cap, String country, String address) throws IOException {
-        this.scope= String.format("/home?owner=%s&description=%s&city=%s&cap=%s&country=%s&address=%s", owner, URLEncoder.encode(description, "UTF-8"), URLEncoder.encode(city,"UTF-8"), cap, URLEncoder.encode(country,"UTF-8"), URLEncoder.encode(address,"UTF-8"));
-        ClientResource cr = new ClientResource(uri+scope);
-        System.out.println(uri+scope);
+    public Home putHome(String owner, String description, String city, int cap, String country, String address)
+        throws IOException, URISyntaxException {
+        this.scope= String.format("owner=%s&description=%s&city=%s&cap=%s&country=%s&address=%s", owner, URLEncoder.encode(description, "UTF-8"), URLEncoder.encode(city, "UTF-8"), cap, URLEncoder.encode(country,"UTF-8"), URLEncoder.encode(address, "UTF-8"));
+        URI uri = new URI(
+                "http",
+                this.domain,
+                "/api/home",
+                this.scope,
+                null);
+        String request = uri.toASCIIString();
+        ClientResource cr = new ClientResource(request);
+        System.out.println(request);
+
         String returnString = cr.put(Home.class).getText();
         if(returnString.equals("[]"))
             return null;
@@ -105,6 +136,7 @@ public class DomoWrapper {
         return gson.fromJson(returnString,token.getType());
     }
 
+
     /** Floor Functions **/
 
     public List<FloorToken> getFloorsByHome(String owner, String home) throws IOException {
@@ -118,27 +150,6 @@ public class DomoWrapper {
         List<FloorToken> lf = gson.fromJson(returnString,token.getType());
         return lf;
     }
-
-    /**
-    public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException, URISyntaxException {
-        this.scope=String.format("owner=%s&home=%s&id=%s&type=%s&canvas=%s",owner,home,id,type,canvas);
-        URI uri = new URI(
-            "http",
-            this.domain,
-            "/api/floor",
-            this.scope,
-            null
-        );
-        String request = uri.toASCIIString();
-        ClientResource cr = new ClientResource(request);
-        System.out.println(request);
-        String returnString = cr.put(Floor.class).getText();
-        if(returnString.equals("[]"))
-            return null;
-        Gson gson = new Gson();
-        return gson.fromJson(returnString,Floor.class);
-    }
-    */
 
     public Floor putFloor(String owner, String home, String id, String type, String canvas) throws IOException, URISyntaxException {
         // calculate string len after encoding the string
@@ -183,6 +194,7 @@ public class DomoWrapper {
         TypeToken<List<Floor>> token = new TypeToken<List<Floor>>(){};
         return gson.fromJson(returnString,token.getType());
     }
+
 
     /** Room functions **/
 
@@ -266,11 +278,22 @@ public class DomoWrapper {
         return gson.fromJson(returnString,token.getType());
     }
 
+
     /** Rules Functions **/
 
-    public Window putRule(String owner, String home, String id, String room_id, String window_id, String rule_name, Integer rule_priority, String rule_start, String rule_end, Integer rule_closed) throws IOException{
-        this.scope=String.format("/rule?owner=%s&home=%s&id=%s&room_id=%s&window_id=%s&rule_name=%s&rule_priority=%s&rule_start=%s&rule_end=%s&rule_closed=%s",owner,home,id,room_id,window_id,rule_name,rule_priority.toString(),rule_start,rule_end,rule_closed.toString());
-        ClientResource cr = new ClientResource(uri+scope);
+    public Window putRule(String owner, String home, String id, String room_id, String window_id, String rule_name, Integer rule_priority, String rule_start, String rule_end, Integer rule_closed)
+        throws IOException, URISyntaxException {
+        this.scope=String.format("owner=%s&home=%s&id=%s&room_id=%s&window_id=%s&rule_name=%s&rule_priority=%s&rule_start=%s&rule_end=%s&rule_closed=%s",owner,home,id,room_id,window_id,rule_name,rule_priority.toString(),rule_start,rule_end,rule_closed.toString());
+        URI uri = new URI(
+            "http",
+            this.domain,
+            "/api/rule",
+            this.scope,
+            null);
+        String request = uri.toASCIIString();
+        ClientResource cr = new ClientResource(request);
+        System.out.println(request);
+
         String returnString = cr.put(Rules.class).getText();
         if(returnString.equals("[]"))
             return null;
@@ -280,9 +303,17 @@ public class DomoWrapper {
     }
 
 
-    public Window deleteRule(String owner, String home, String id, String room_id, String window_id, String rule_name, Integer rule_priority, String rule_start, String rule_end, Integer rule_closed) throws IOException{
-        this.scope=String.format("/rule?owner=%s&home=%s&id=%s&room_id=%s&window_id=%s&rule_name=%s&rule_priority=%s&rule_start=%s&rule_end=%s&rule_closed=%s",owner,home,id,room_id,window_id,rule_name,rule_priority.toString(),rule_start,rule_end,rule_closed.toString());
-        ClientResource cr = new ClientResource(uri+scope);
+    public Window deleteRule(String owner, String home, String id, String room_id, String window_id, String rule_name, Integer rule_priority, String rule_start, String rule_end, Integer rule_closed)
+        throws IOException, URISyntaxException {
+        this.scope=String.format("owner=%s&home=%s&id=%s&room_id=%s&window_id=%s&rule_name=%s&rule_priority=%s&rule_start=%s&rule_end=%s&rule_closed=%s",owner,home,id,room_id,window_id,rule_name,rule_priority.toString(),rule_start,rule_end,rule_closed.toString());
+        URI uri = new URI(
+            "http",
+            this.domain,
+            "/api/rule",
+            this.scope,
+            null);
+        String request = uri.toASCIIString();
+        ClientResource cr = new ClientResource(request);
         String returnString = cr.delete().getText();
         if(returnString.equals("[]"))
             return null;

@@ -30,7 +30,7 @@ function isRoomRule(val){
 function isWindowRule(val){
     return between(val,1,33);
 }
-function isDefaultRule(){
+function isDefaultRule(val){
     return val==0;
 }
 function between(x, min, max) {
@@ -327,7 +327,7 @@ function editShutterRulesHtml(indexPoly, indexShut) {
                         var rules = w.rulesLists;
                         for (var rule in rules) {
                             rule = rules[rule];
-                            if (isWindowRule(rule.priority)) {
+                            if (isWindowRule(rule.priority) || isDefaultRule(rule.priority)) {
                                 var ruleIndex = ruleAlreadyInserted(rule, rulesList);
                                 if (ruleIndex == -1) {// not found, add rule
                                     rule.rooms = [];
@@ -485,18 +485,21 @@ function preloader_wrapper(pos) {
 }
 
 function rules_table_element(rule, index) {
-    return ' \
+    var str = ' \
         <tr data-toggle="'+(index)+'"> \
             <td class="name">'+rule.name+'</td> \
             <td class="starttime">'+rule.startTime.hour+':'+rule.startTime.minutes+'</td> \
             <td class="endtime">'+rule.endTime.hour+':'+rule.endTime.minutes+'</td> \
             <td class="closedPerc">'+rule.closedPercentage+'</td> \
-            <td> \
-                <a data-toggle="'+(index)+'" class="small waves-effect waves-red btn-flat removeRule tooltipped" data-position="bottom" data-delay="50" data-tooltip="Remove Rule"> \
+            <td>';
+    if (rule.priority != 0) {
+        str += '<a data-toggle="'+(index)+'" class="small waves-effect waves-red btn-flat removeRule tooltipped" data-position="bottom" data-delay="50" data-tooltip="Remove Rule"> \
                     <i class="mdi-content-clear red-text"></i> \
-                </a> \
-            </td> \
+                </a>'
+    }
+    str += '</td> \
         </tr>';
+    return str;
 }
 
 function rules_table() {

@@ -32,19 +32,7 @@ public class RulesController extends Controller {
 
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
-
-            // check if user has been already inserted
             User domoUser = domoWrapper.getUser(owner);
-            if (!compareDomouserGaeuser(domoUser, gaeUser)) {
-                System.out.println(
-                    domoWrapper.putUser(
-                        owner,
-                        gaeUser.getNickname(),
-                        gaeUser.getNickname(),
-                        "http://dummy.pic/ture"
-                    )
-                );
-            }
 
             String homeIdStr = req.getParameter("home");
             if (homeIdStr != null && !homeIdStr.isEmpty()) { // check home par exists

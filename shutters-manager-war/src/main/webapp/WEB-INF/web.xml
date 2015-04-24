@@ -3,13 +3,13 @@
 
     <!-- Login -->
     <servlet>
-        <servlet-name>LoginController</servlet-name>
+        <servlet-name>IndexController</servlet-name>
         <servlet-class>
-            it.unimore.awd.controllers.LoginController
+            it.unimore.awd.controllers.IndexController
         </servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>LoginController</servlet-name>
+        <servlet-name>IndexController</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
 
@@ -61,7 +61,7 @@
         <url-pattern>/rules/*</url-pattern>
     </servlet-mapping>
 
-    <!-- TODO: update security constraints -->
+    <!-- TODO: update security constraints
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>home</web-resource-name>
@@ -70,7 +70,7 @@
         <auth-constraint>
             <role-name>*</role-name>
         </auth-constraint>
-    </security-constraint>
+    </security-constraint>-->
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>

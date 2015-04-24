@@ -30,6 +30,19 @@
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
 <@layout.mainLayout userNick userEmail logoutURL>
+
+    <!-- Breadcrumb -->
+    <div class="row">
+        <div class="col s12 left">
+            <p class="breadcrumb">
+                <span><a href="/" class="tooltipped" data-position="bottom" data-tooltip="Start page">Start Page</a></span>
+                <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Houses</a></span>
+                <span><a href="/floors/?home=${home}" class="tooltipped" data-position="bottom" data-tooltip="List of your floors">Floors</a></span>
+                <span>Rules Manager</span>
+            </p>
+        </div>
+    </div>
+
     <div class="row">
 
         <!-- Canvas -->
@@ -44,15 +57,8 @@
             </div>
 
             <div class="canvas col l10 offset-l1 m10 offset-m1 s10 offset-s1 left">
-                <canvas id="fabric" height="500" class="z-depth-1"></canvas>
+                <canvas id="fabric" height="500"></canvas>
             </div>
-            <!--
-            <div class="col l1 m1 s1 right right-align" style="height: 500px; margin-bottom: 10px; position: relative">
-                <div class="fab-container" style="position: absolute; bottom: -42px">
-                    <a style="margin-bottom: 42px;" href="javascript:saveCanvas('#canvasForm');" id="fancy-fab" class="btn-floating btn-large waves-effect waves-light yellow darken-2 tooltipped" data-position="left" data-delay="0" data-tooltip="Save Floor" ><i class="mdi-maps-layers"></i></a>
-                </div>
-            </div>
-            -->
         </div><!-- END Canvas -->
 
         <div class="col s12">
@@ -226,6 +232,7 @@
 
         // init
         changeMode(0);
+        changeShowGrid(false);
         editFloor();
         $('select').material_select();
         $(".time_element").timepicki({

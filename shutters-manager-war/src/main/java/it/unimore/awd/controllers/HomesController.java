@@ -36,39 +36,27 @@ public class HomesController extends Controller {
 
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
-
-            // check if user has been already inserted
             User domoUser = domoWrapper.getUser(owner);
-            if (!compareDomouserGaeuser(domoUser, gaeUser)) {
-                System.out.println(
-                    domoWrapper.putUser(
-                        owner,
-                        gaeUser.getNickname(),
-                        gaeUser.getNickname(),
-                        "http://dummy.pic/ture"
-                    )
-                );
+
+            if (domoUser != null) {
+
+                // get user's homes
+                List<Home> hl = domoWrapper.getHomesByUser(owner);
+
+                // model the page
+                Map<String, Object> root = new HashMap<String, Object>();
+                root.put("error", error);
+                root.put("message", "Home!");
+                root.put("userEmail", owner);
+                root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
+                root.put("logoutURL", userService.createLogoutURL("/"));
+                root.put("homes", hl);
+                // output it
+                TemplateHelper.callTemplate(cfg, resp, ctrlName + "/homes.ftl", root);
+
+            } else {// not yet signed up!
+                resp.sendRedirect("/");
             }
-
-            // wanted to add a home?
-            if (req.getParameter("submit")!=null) {// TODO: you can submit even with "modify" and "remove"
-                error = this.add();
-            }
-
-            // get user's homes
-            List<Home> hl = domoWrapper.getHomesByUser(owner);
-
-            // model the page
-            Map<String, Object> root = new HashMap<String, Object>();
-            root.put("error", error);
-            root.put("message", "Home!");
-            root.put("userEmail", owner);
-            root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
-            root.put("logoutURL", userService.createLogoutURL("/"));
-            root.put("homes", hl);
-            // output it
-            TemplateHelper.callTemplate(cfg, resp, ctrlName + "/homes.ftl", root);
-
         } else { // not logged, redirect
             resp.sendRedirect("/");
         }
