@@ -399,7 +399,7 @@ function resetNewRoomInput(form) {
                         edit = false;
                         canvas.add(currentPoly.fabricText);
                     }
-                    changeMode(0);
+                    changeMode(1);
                     currentPoly=null;
                 }, 500, pos);
             } else if (mode==2) {//remove poly

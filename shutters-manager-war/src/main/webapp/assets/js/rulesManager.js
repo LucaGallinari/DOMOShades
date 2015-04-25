@@ -375,12 +375,40 @@ $(addRuleForm).on('submit', function() {
     buttonsRow.append(preloader_wrapper('right'));
 
     var obj = calculatePriorities();
+    if (obj == null) {
+        Materialize.toast("Start and end times must be set!", 3000);
+        return false;
+    }
     var objJson = JSON.stringify(obj);
     $(addRuleForm).append('<input type="hidden" name="priorities" value=\''+objJson+'\' />');
     // $(addRuleForm).submit();
 
     return true; // avoid to execute the actual submit of the form.*/
 });
+
+function getPriorityType(priority) {
+    if (isFloorRule(priority))         return 1;
+    else if (isRoomRule(priority))     return 2;
+    else if (isWindowRule(priority))   return 3;
+}
+
+function checkRulesCollision(rule, newRuleStart, newRuleEnd) {
+    // split times
+    var startT2 = newRuleStart.split(":");
+    var endT2   = newRuleEnd.split(":");
+    // set dates
+    var startTime1  = new Date(2015, 0, 1, parseInt(rule.startTime.hour), parseInt(rule.startTime.minutes));
+    var endTime1    = new Date(2015, 0, 1, parseInt(rule.endTime.hour), parseInt(rule.endTime.minutes));
+    var startTime2  = new Date(2015, 0, 1, parseInt(startT2[0]), parseInt(startT2[1]));
+    var endTime2    = new Date(2015, 0, 1, parseInt(endT2[0]), parseInt(endT2[1]));
+    // get times
+    startTime1 = startTime1.getTime();
+    endTime1 = endTime1.getTime();
+    startTime2 = startTime2.getTime();
+    endTime2 = endTime2.getTime();
+    // check
+    return ((startTime1 <= endTime2) &&  (endTime1 > startTime2));
+}
 
 function calculatePriorities() {
     var roomId = null;
@@ -390,6 +418,13 @@ function calculatePriorities() {
     }
     if (currEditShut != null) {
         shutId = polys[currEditPoly].shutters[currEditShut].id;
+    }
+
+    var newRuleStartTime = $(addRuleForm).find('input[name="startTime"]').val();
+    var newRuleEndTime = $(addRuleForm).find('input[name="endTime"]').val();
+
+    if (newRuleStartTime == "" || newRuleEndTime == "") {
+        return null;
     }
 
     var obj = {"rooms":[]};
@@ -407,27 +442,17 @@ function calculatePriorities() {
                         var priority = (3-scope)*33 + 1;
                         for (var rule in rules) {
                             rule = rules[rule];
-                            var collision = false;
-                            switch (scope) {
-                                case 1://floor
-                                    collision = isFloorRule(rule.priority);
-                                    break;
-                                case 2:// room
-                                    collision = isRoomRule(rule.priority);
-                                    break;
-                                case 3:// window
-                                    collision = isWindowRule(rule.priority);
-                                    break;
-                            }
-                            // check collision with other rules, if it does
-                            // and the prioirty of this rule is gretaer than actual
-                            // set it doing + 1
-                            if (collision) {
-                                if (rule.priority >= priority) {
-                                    priority = rule.priority + 1;
+                            if (scope == getPriorityType(rule.priority)) {
+                                // check collision with other rules, if it does and the prioirty of this
+                                // rule is greater than actual, set it doing + 1
+                                if (checkRulesCollision(rule, newRuleStartTime, newRuleEndTime)) {
+                                    // Materialize.toast("Times collision!", 3000);
+                                    if (rule.priority >= priority) {
+                                        priority = rule.priority + 1;
+                                    }
                                 }
                             }
-                        }//end for rules
+                        } //end for rules
                         var objShut = {"id": w.windowId, "priority":priority};
                         objRoom.windows.push(objShut);
                     }
