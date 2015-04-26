@@ -49,36 +49,17 @@
                 <tbody>
                 <#list floors as floor>
                     <tr id="listFloor${floor.id}" class="collection-item">
-                        <td class="floorName">
+                        <td class="floorName" data-value="${floor.type}">
                             <span>${floorTypes[floor.type].str}</span>
                         </td>
                         <td class="floorAction">
                             <a class='dropdown-button right grey-text' href='#' data-activates='dropdown${floor.id}'><i class="mdi-navigation-more-vert grey-text"></i></a>
                         </td>
-
                         <ul id="dropdown${floor.id}" class="dropdown-content">
-                            <li>
-                                <a href="/floor/manage?home=${home}&floor=${floor.id}" class="manageFloor black-text">
-                                    Manage
-                                </a>
-                            </li>
-                            <li>
-                                <a data-toggle="${floor.id}" class="modifyFloor black-text">
-                                    Edit
-                                </a>
-                            </li>
-                            <li>
-                                <a data-toggle="${floor.id}" class="removeFloor black-text">
-                                    Remove
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/rules/?home=${home}&floor=${floor.id}" class="manageRules black-text">
-                                    Rules
-                                </a>
-                            </li>
+                            <li><a href="/floor/manage?home=${home}&floor=${floor.id}" class="manageFloor black-text">Manage</a></li>
+                            <li><a data-toggle="${floor.id}" class="removeFloor black-text"> Remove </a></li>
+                            <li><a href="/rules/?home=${home}&floor=${floor.id}" class="manageRules black-text"> Rules </a> </li>
                         </ul>
-
                     </tr>
                 </#list>
                 </tbody>
@@ -95,14 +76,6 @@
                         id="add-new-floor">
                     <i class="mdi-content-add"></i>
                 </a>
-                <!--
-                <a href="#"
-                   class="btn-floating btn-large red waves-effect waves-light modal-trigger add-modal tooltipped right"
-                   data-position="bottom" data-tooltip="New Floor">
-                    <i class="mdi-content-add"></i>
-                </a>
-
-                <a href="#!" class="btn" onclick="Materialize.showStaggeredList('#new-floor')">Click Me</a>-->
             </div>
 
             <!-- Remove Floor Confirm Modal -->
@@ -121,79 +94,9 @@
                 </div>
             </div>
 
-            <!-- Modify Floor Modal -->
-            <div id="modifyModal" class="modal">
-                <div class="modal-content">
-                    <h4 class="deep-orange-text">Modify Floor</h4>
-                    <div class="card-panel red lighten-1 hidden" id="modifyFloorErrors"></div>
-                    <div id="modifyFloorContainer"><!-- Form goes here --></div>
-                </div>
-            </div>
-
-            <!-- Add Floor Modal ->
-            <div id="addModal" class="modal" style="min-height: 60%">
-                <div class="modal-content">
-                    <h4>Add Floor</h4>
-                    <div class="card-panel hidden" id="addFloorErrors"></div>
-                    <div id="modifyFloorContainer">
-                        <form class="col s12" method="post" id="addFloorForm">
-                            <div class="row center">
-                                <div class="input-field col s12 m8 offset-m2">
-                                    <#list floorTypes as type>
-                                        <#assign found=false>
-                                        <#list floors as f>
-                                            <#if f.type!=0 && f.type==type.id>
-                                                <#assign found=true>
-                                            </#if>
-                                        </#list>
-                                        <#if !found>
-                                            <p>
-                                                <input name="group1" type="radio" id="${type.id}" value="${type.id}" />
-                                                <label for="${type.id}">${type.str}</label>
-                                            </p>
-                                        </#if>
-                                    </#list>
-
-                                    <!--
-                                    <select name="type" id="typef" required="required">
-                                        <#list floorTypes as type>
-                                            <#assign found=false>
-                                            <#list floors as f>
-                                                <#if f.type!=0 && f.type==type.id>
-                                                    <#assign found=true>
-                                                </#if>
-                                            </#list>
-                                            <#if !found>
-                                                <option value="${type.id}">${type.str}</option>
-                                            </#if>
-                                        </#list>
-                                    </select>
-                                    <label for="typef">Type of floor</label>
-                                    --><!--
-                                </div>
-                            </div>
-
-                            <input type="hidden" name="canvas" value='{"rooms":[]}' />
-                            <input type="hidden" name="home" value='${home}' />
-
-                            <div class="row buttons-row">
-                                <button class="btn-floating btn-large waves-effect waves-light amber right" type="submit" name="submit">
-                                    <i class="mdi-content-save"></i>
-                                </button>
-                                <a class="modal-action modal-close waves-effect waves-light btn-flat left">
-                                    <i class="mdi-content-clear"></i>
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            -->
         </div>
     </div>
     <!-- END Table + Modals -->
-<!--
-    <div class="divider xl9 offset-xl1"></div>
 
     <!-- Add new Floor -->
     <div class="row">
@@ -246,14 +149,13 @@
                                 </button>
                             </div>
                         </form>
+
                     </div>
                 </div>
             </li>
         </ul>
-    </div><!-- END Add new Floor ->
+    </div><!-- END Add new Floor -->
 
-</div>
--->
     <script type="text/javascript">
         $(document).ready(function() {$('select').material_select();});
 

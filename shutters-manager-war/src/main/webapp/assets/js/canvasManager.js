@@ -22,6 +22,36 @@ function removePoly(index) {
     canvas.renderAll();
 }
 
+function confirmPoly(pos){
+    longClickPoly = true;
+
+    if (pos != null) {
+        var realPos = processPosition(pos);
+        currentPoly.addPoint(realPos);
+    }
+
+    // confirm poly
+    removePointerCircle();
+    var ret = currentPoly.confirm(function(x, y){
+        var c = makeCircle(x, y, 4);
+        canvas.add(c);
+        return c;
+    }, true);
+    if (ret != 1) { // not ok
+        cleanCurrentPoly();
+        Materialize.toast('A room must have at least 3 points!', 3000, 'rounded');
+    } else {
+        var i = addPoly(currentPoly);
+        $('.collapsible').collapsible();
+        editRoom(currentPoly.id, false, false, null);
+        edit = false;
+        canvas.add(currentPoly.fabricText);
+    }
+    changeMode(1);
+    currentPoly=null;
+    return i;
+}
+
 function resetPolysStatusVars(){
     countRemoved=0;
     for (var i=0; i<polys.length; ++i) {
@@ -376,32 +406,7 @@ function resetNewRoomInput(form) {
             var indexes;
             var polyId;
             if (mode == 1) {// add/edit room
-                longClickPolyTimeout = setTimeout(function(pos){
-                    longClickPoly = true;
-
-                    var realPos = processPosition(pos);
-                    currentPoly.addPoint(realPos);
-
-                    // confirm poly
-                    removePointerCircle();
-                    var ret = currentPoly.confirm(function(x, y){
-                        var c = makeCircle(x, y, 4);
-                        canvas.add(c);
-                        return c;
-                    }, true);
-                    if (ret != 1) { // not ok
-                        cleanCurrentPoly();
-                        Materialize.toast('A room must have at least 3 points!', 3000, 'rounded');
-                    } else {
-                        var i = addPoly(currentPoly);
-                        $('.collapsible').collapsible();
-                        editRoom(currentPoly.id, false, false, null);
-                        edit = false;
-                        canvas.add(currentPoly.fabricText);
-                    }
-                    changeMode(1);
-                    currentPoly=null;
-                }, 500, pos);
+                longClickPolyTimeout = setTimeout(confirmPoly, 500, pos);
             } else if (mode==2) {//remove poly
                 obj = canvas.getActiveObject();
                 if (obj instanceof fabric.Polygon) {
@@ -447,7 +452,17 @@ function resetNewRoomInput(form) {
                 var pos = canvas.getPointer(event.e);
                 var realPos = processPosition(pos);
                 if (edit) {// edit polygon
-                    currentPoly.addPoint(realPos);
+                    // when i add a point over the first point it's like closing the
+                    // polygon, so confirm this
+                    var lefttop = {
+                        x: currentPoly.fabricPoly.get("left"),
+                        y: currentPoly.fabricPoly.get("top")
+                    };
+                    if (realPos.x == lefttop.x && realPos.y == lefttop.y) {
+                        confirmPoly(null);
+                    } else {
+                        currentPoly.addPoint(realPos);
+                    }
                 } else {// add polygon
                     if (longClickPoly) {
                         longClickPoly=false;
