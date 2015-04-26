@@ -4,6 +4,9 @@ var windowRules = 'windowRules';
 var noFloorRules    = '#noFloorRules';
 var noRoomRules     = '#noRoomRules';
 var noWindowRules   = '#noWindowRules';
+var floorVisual    = '#floorVisual';
+var roomVisual     = '#roomVisual';
+var windowVisual   = '#windowVisual';
 
 var addRuleForm = '#addRuleForm';
 
@@ -113,11 +116,89 @@ function updateRulesList(str, selectTab, norules) {
         sel.find('.rules-list').html('');
     }
     $('ul.tabs').tabs('select_tab', selectTab);
+}
 
+function updateTimetable(selectTab) {
+    var sel = $('#'+selectTab);
+    var str = '';
+    var wnum = 60*24;
+    var width = $('#rulesArea').width()-70;
+    var wdelta = width / wnum;
+    // sort
+    var rulesListSorted = [];
+    for (var rule in rulesList) {
+        var rule = rulesList[rule];
+        rulesListSorted.push([rule, rule.startTime]);
+    }
+    rulesListSorted.sort(function(r1, r2){return (r1[1].hour*60 + r1[1].minutes) - (r2[1].hour*60 + r2[1].minutes) });
+    console.log(rulesListSorted);
+
+    //
+    var startTime1 = null;
+    for (var rule in rulesListSorted) {
+        var printLast = true;
+        var i = parseInt(rule);
+        var rule = rulesListSorted[rule];
+        if (startTime1==null || startTime1 < (rule[1].hour*60 + rule[1].minutes)) {
+            startTime1 = (rule[1].hour*60 + rule[1].minutes);
+        }
+        var endTime1 = (rule[0].endTime.hour*60 + rule[0].endTime.minutes);
+
+        str += '<div style="width:100%;position:relative;"><div>Rule '+i+'</div>';
+
+        if (i != rulesListSorted.length-1) {
+            for (var k=i+1; k<rulesListSorted.length; ++k) {
+                var rule2 = rulesListSorted[k];
+                // collision and low priority, add a div until new rule starttime
+                if (checkRulesCollision(rule[0], rule2[0])) {
+                    if (rule[0].priority < rule2[0].priority) { // actual rule hasn't a higher priority
+                        // add black div
+                        // var startTime1 = (rule[1].hour*60 + rule[1].minutes) * wdelta;
+                        var startTime2 = (rule2[1].hour*60 + rule2[1].minutes);
+                        var endTime2 = (rule2[0].endTime.hour*60 + rule2[0].endTime.minutes);
+                        if (startTime2 > startTime1) {
+                            var ruleWidth = (startTime2 - startTime1) * wdelta;
+                            str += '<div style="background-color:#000;position:relative; left:'+startTime1*wdelta+'px; width:'+ruleWidth+'px;">&nbsp;</div>';
+                            // TODO: other divs with grey background
+                            // no sense to continue if this collision goes over actual rule endtime
+                            if (endTime2 >= endTime1) {
+                                printLast = false;
+                                break;
+                            } else {
+                                startTime1 = endTime2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // all collision has been checked but i am not at the end of my time, wrote a div until that
+        if (printLast) {
+            // add black div
+            var startTime = startTime1 * wdelta;
+            var ruleWidth  = (endTime1 * wdelta - startTime);
+            startTime1 = endTime1;
+            str += '<div style="background-color:#000;position:relative; left:'+startTime+'px; width:'+ruleWidth+'px;">&nbsp;</div>';
+        }
+        str += '</div>';
+    }
+
+/* no collision timetable
+    for (var rule in rulesListSorted) {
+        var rule = rulesListSorted[rule];
+        var startTimeW = (rule[1].hour*60 + rule[1].minutes) * wdelta;
+        var ruleWidth = (rule[0].endTime.hour*60 + rule[0].endTime.minutes)*wdelta - startTimeW;
+        str +=  '<p style="position:relative;"> \
+                    <div style="background-color:#000;position:relative; left:'+startTimeW+'px; width:'+ruleWidth+'px;">&nbsp;</div> \
+                </p>';
+    }
+*/
+    sel.find('.rules-timetable').html(str);
 }
 
 /* ## FLOOR MANAGERS ## */
 function editFloor(){
+    var sel = $('#'+floorRules);
     scope = 1;
     if (currEditPoly!=null) {
         changeShuttersFillColor(currEditPoly, -1, false);
@@ -126,6 +207,14 @@ function editFloor(){
         currEditShut = null;
     }
     editFloorRulesHtml();
+    updateTimetable(floorRules);
+    if ($(floorVisual).is(':checked')) {
+        $(sel).find('.rules-list').hide();
+        $(sel).find('.rules-timetable').show();
+    } else {
+        $(sel).find('.rules-timetable').hide();
+        $(sel).find('.rules-list').show();
+    }
 }
 
 function editFloorRulesHtml() {
@@ -392,15 +481,12 @@ function getPriorityType(priority) {
     else if (isWindowRule(priority))   return 3;
 }
 
-function checkRulesCollision(rule, newRuleStart, newRuleEnd) {
-    // split times
-    var startT2 = newRuleStart.split(":");
-    var endT2   = newRuleEnd.split(":");
+function checkRulesCollision(rule1, rule2) {
     // set dates
-    var startTime1  = new Date(2015, 0, 1, parseInt(rule.startTime.hour), parseInt(rule.startTime.minutes));
-    var endTime1    = new Date(2015, 0, 1, parseInt(rule.endTime.hour), parseInt(rule.endTime.minutes));
-    var startTime2  = new Date(2015, 0, 1, parseInt(startT2[0]), parseInt(startT2[1]));
-    var endTime2    = new Date(2015, 0, 1, parseInt(endT2[0]), parseInt(endT2[1]));
+    var startTime1  = new Date(2015, 0, 1, parseInt(rule1.startTime.hour), parseInt(rule1.startTime.minutes));
+    var endTime1    = new Date(2015, 0, 1, parseInt(rule1.endTime.hour), parseInt(rule1.endTime.minutes));
+    var startTime2  = new Date(2015, 0, 1, parseInt(rule2.startTime.hour), parseInt(rule2.startTime.minutes));
+    var endTime2    = new Date(2015, 0, 1, parseInt(rule2.endTime.hour), parseInt(rule2.endTime.minutes));
     // get times
     startTime1 = startTime1.getTime();
     endTime1 = endTime1.getTime();
@@ -408,6 +494,17 @@ function checkRulesCollision(rule, newRuleStart, newRuleEnd) {
     endTime2 = endTime2.getTime();
     // check
     return ((startTime1 <= endTime2) &&  (endTime1 > startTime2));
+}
+
+function checkRulesCollisionSpecial(rule1, newRuleStart, newRuleEnd) {
+    // split times
+    var startT2 = newRuleStart.split(":");
+    var endT2   = newRuleEnd.split(":");
+    var rule2 = {
+        startTime: {hour: startT2[0], minutes: startT2[1]},
+        endTime: {hour: endT2[0], minutes: endT2[1]}
+    };
+    return checkRulesCollision(rule1, rule2);
 }
 
 function calculatePriorities() {
@@ -445,7 +542,7 @@ function calculatePriorities() {
                             if (scope == getPriorityType(rule.priority)) {
                                 // check collision with other rules, if it does and the prioirty of this
                                 // rule is greater than actual, set it doing + 1
-                                if (checkRulesCollision(rule, newRuleStartTime, newRuleEndTime)) {
+                                if (checkRulesCollisionSpecial(rule, newRuleStartTime, newRuleEndTime)) {
                                     // Materialize.toast("Times collision!", 3000);
                                     if (rule.priority >= priority) {
                                         priority = rule.priority + 1;
@@ -556,7 +653,6 @@ function calcRoomsMinAndMaxCoords(rooms){
     for (var i = 0; i < rooms.length; i++) {
         var room = rooms[i];
         var vals = calculateMinMaxAbsCoords(room);
-        console.log(vals);
         // x
         if (min.x == null || min.x > vals.min.x) { min.x = vals.min.x;}
         if (max.x == null || max.x < vals.max.x) { max.x = vals.max.x;}
@@ -606,10 +702,8 @@ function calculateMinMaxAbsCoords (room) {
         if (vals.min.y == null || vals.min.y > p.y) { vals.min.y = p.y;}
         if (vals.max.y == null || vals.max.y < p.y) { vals.max.y = p.y;}
 
-        //console.log("->point "+i+", x:"+points[i].x+" y:"+points[i].y);
     }
     return vals;
-    //console.log("->point "+i+", l:"+polygonCenter.x+" t:"+polygonCenter.y);
 }
 
 

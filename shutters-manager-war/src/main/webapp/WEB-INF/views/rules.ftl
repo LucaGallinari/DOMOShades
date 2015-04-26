@@ -57,9 +57,7 @@
         </div>
         <!-- END Canvas -->
 
-        <div class="col s12">
-            <br><br>
-        </div>
+        <div class="col s12"><br><br></div>
 
         <!-- Rules table -->
         <div class="row card" id="rulesArea">
@@ -74,7 +72,16 @@
             <div id="floorRules" class="col s12">
                 <div class="red-text hidden center flow-text" id="noFloorRules" style="margin-top: 20px;">There are no rules for this floor.<br />Add one using the button below</div>
                 <div class="row rules-list"></div>
+                <div class="row rules-timetable" style="position:relative;"></div>
                 <div class="row buttons-row">
+                    <div class="switch">
+                        <label>
+                            List
+                            <input type="checkbox" name="floorVisual" id="floorVisual">
+                            <span class="lever"></span>
+                            Timetable
+                        </label>
+                    </div>
                     <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="1">
                         <i class="mdi-content-add"></i>
                     </button>
