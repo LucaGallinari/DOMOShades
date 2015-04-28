@@ -91,68 +91,80 @@
     </div>
     <!-- END Table + Modals -->
 
+    <div class="row buttons-row">
+        <a onclick="toggleBottomCard('#new-home')"
+           class="btn-floating btn-large deep-orange waves-effect waves-light right"
+           id="add-new-floor">
+            <i class="mdi-content-add"></i>
+        </a>
+    </div>
+
     <!-- Add new Home -->
     <div class="row" style="margin-top: 20px;">
-        <div class="xl9 offset-xl1" id="addHome">
+        <ul id="new-home">
+            <li style="opacity: 0;">
+                <div class="xl9 offset-xl1" id="addHome">
 
-            <#if error!="">
-                <div class="card-panel red-text lighten-1" id="addHomeErrors">
-                    <#if error=="1">
-                        Home not added! One or more mandatory inputs were blank.
-                    <#elseif error=="2">
-                        Home not added! CAP must be a number.
-                    <#elseif error=="3">
-                        Home not added! This home already exists.
+                    <#if error!="">
+                        <div class="card-panel red-text lighten-1" id="addHomeErrors">
+                            <#if error=="1">
+                                Home not added! One or more mandatory inputs were blank.
+                            <#elseif error=="2">
+                                Home not added! CAP must be a number.
+                            <#elseif error=="3">
+                                Home not added! This home already exists.
+                            </#if>
+                        </div>
+                    <#else>
+                        <div class="card-panel red-text lighten-1 hidden" id="addHomeErrors">
+                            An unexpected error occured. Please try again a few moments.
+                        </div>
                     </#if>
-                </div>
-            <#else>
-                <div class="card-panel red-text lighten-1 hidden" id="addHomeErrors">
-                    An unexpected error occured. Please try again a few moments.
-                </div>
-            </#if>
 
-            <h4 class="deep-orange-text">Add Home</h4>
-            <form class="col s12" method="post" id="addHomeForm">
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="mdi-editor-mode-edit blue-grey-text prefix"></i>
-                        <input id="description" type="text" class="validate" name="description" required="required">
-                        <label for="description">Name</label>
-                    </div>
+                    <h4 class="deep-orange-text">Add Home</h4>
+                    <form class="col s12" method="post" id="addHomeForm">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="mdi-editor-mode-edit blue-grey-text prefix"></i>
+                                <input id="description" type="text" class="validate" name="description" required="required">
+                                <label for="description">Name</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="mdi-action-explore blue-grey-text prefix"></i>
+                                <input id="address" type="text" class="validate" name="address" required="required">
+                                <label for="address">Address</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s8">
+                                <i class="mdi-social-location-city blue-grey-text prefix"></i>
+                                <input id="city" type="text" class="validate" name="city">
+                                <label for="city">City</label>
+                            </div>
+                            <div class="input-field col s4">
+                                <i class="mdi-communication-chat blue-grey-text prefix"></i>
+                                <input id="icon_telephone" type="tel" class="validate" name="cap">
+                                <label for="icon_telephone">Postal Code</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="mdi-social-public blue-grey-text prefix"></i>
+                                <input id="country" type="text" class="validate" name="country">
+                                <label for="country">Country</label>
+                            </div>
+                        </div>
+                        <div class="row buttons-row">
+                            <button class="btn-flat waves-effect waves-light right deep-orange-text" type="submit" name="submit">
+                                Save
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="mdi-action-explore blue-grey-text prefix"></i>
-                        <input id="address" type="text" class="validate" name="address" required="required">
-                        <label for="address">Address</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s8">
-                        <i class="mdi-social-location-city blue-grey-text prefix"></i>
-                        <input id="city" type="text" class="validate" name="city">
-                        <label for="city">City</label>
-                    </div>
-                    <div class="input-field col s4">
-                        <i class="mdi-communication-chat blue-grey-text prefix"></i>
-                        <input id="icon_telephone" type="tel" class="validate" name="cap">
-                        <label for="icon_telephone">Postal Code</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <i class="mdi-social-public blue-grey-text prefix"></i>
-                        <input id="country" type="text" class="validate" name="country">
-                        <label for="country">Country</label>
-                    </div>
-                </div>
-                <div class="row buttons-row">
-                    <button class="btn-floating btn-large waves-effect waves-light deep-orange right" type="submit" name="submit">
-                        <i class="mdi-content-add"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
+            </li>
+        </ul>
     </div><!-- END Add new Home -->
 
 </div>

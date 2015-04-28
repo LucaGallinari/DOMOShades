@@ -42,9 +42,9 @@
     <div class="row">
         <div class="col s12 left">
             <p class="breadcrumb">
-                <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Houses</a></span>
+                <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Homes</a></span>
                 <span><a href="/floors/?home=${home}" class="tooltipped" data-position="bottom" data-tooltip="List of your floors">Floors</a></span>
-                <span>Floor Designer</span>
+                <span>Plant</span>
             </p>
         </div>
     </div>

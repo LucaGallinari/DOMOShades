@@ -29,6 +29,8 @@ $(document).ready(function(){
             // rollback
             buttonsRow.find('.preloader-wrapper').remove();
             buttonsRow.find('button').show();
+            toggleBottomCard('#new-home');
+
             if (data.indexOf("Ok")!=-1) { // if everything's ok
                 Materialize.toast('Home added!', 3000, 'rounded');
                 var id = data.substr(4, data.length-4);
@@ -196,7 +198,7 @@ function addListElement(id) {
 
 function list_element(id, descr, addr, city, country, cap) {
     return ' \
-        <tr id="listHome'+(id)+'" class="new"> \
+        <tr id="listHome'+(id)+'" class="new collection-item"> \
             <td class="description">'+descr+'</td> \
             <td class="address">'+addr+'</td> \
             <td class="hidden-tc-sm cap">'+cap+'</td> \

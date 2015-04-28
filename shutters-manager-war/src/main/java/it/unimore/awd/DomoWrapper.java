@@ -1,14 +1,13 @@
 package it.unimore.awd;
 
-import it.unimore.awd.classes.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import it.unimore.awd.classes.*;
 import org.restlet.data.MediaType;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -60,8 +59,7 @@ public class DomoWrapper {
         return gson.fromJson(returnString,User.class);
     }
 
-    //TODO: ??
-    public User deleintteUser(String email) throws IOException {
+    public User deleteUser(String email) throws IOException {
         this.scope="/user?email="+email;
         ClientResource cr = new ClientResource(uri+scope);
         String returnString = cr.delete().getText();

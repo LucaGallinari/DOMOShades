@@ -41,9 +41,9 @@
     <div class="row">
         <div class="col s12 left">
             <p class="breadcrumb">
-                <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Houses</a></span>
+                <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Homes</a></span>
                 <span><a href="/floors/?home=${home}" class="tooltipped" data-position="bottom" data-tooltip="List of your floors">Floors</a></span>
-                <span>Rules Manager</span>
+                <span>Rules</span>
             </p>
         </div>
     </div>

@@ -35,8 +35,8 @@
 <div class="row">
     <div class="col s12 left">
         <p class="breadcrumb">
-            <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Houses</a></span>
-            <span>Your Floors</span>
+            <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Homes</a></span>
+            <span>Floors</span>
         </p>
     </div>
 </div>
@@ -73,7 +73,7 @@
             </div>
 
             <div class="row buttons-row">
-                <a onclick="toggleBottomCard()"
+                <a onclick="toggleBottomCard('#new-floor')"
                    class="btn-floating btn-large deep-orange waves-effect waves-light right"
                         id="add-new-floor">
                     <i class="mdi-content-add"></i>

@@ -34,7 +34,7 @@ $(document).ready(function(){
             // rollback
             buttonsRow.find('.preloader-wrapper').remove();
             buttonsRow.find('button').show();
-            hideBottomCard();
+            toggleBottomCard('#new-floor');
 
             if (data.indexOf("Ok")!=-1) { // if everything's ok
                 Materialize.toast('Floor added!', 3000, 'rounded');
@@ -42,6 +42,7 @@ $(document).ready(function(){
                 addListElement(floorId);
                 updateTypesList('#typef');
                 $(addFloorForm).trigger("reset");
+
                 // hide errors
                 if ($('.removeFloor').length==1) {
                     $(listFloors).show();
@@ -102,66 +103,6 @@ $(document).ready(function(){
     });
 
 });
-
-function toggleBottomCard(){
-    switch(close){
-        case 0: showBottomCard();
-            break;
-        case 1: hideBottomCard();
-            break;
-    }
-}
-
-function showBottomCard() {
-    Materialize.showStaggeredList('#new-floor');
-
-    $({deg: 0}).animate(
-        {deg: 45},
-        {
-            duration: 90,
-            queue: false,
-            step: function(now){rotate($('#add-new-floor:first i'), now)}
-        }
-    );
-
-    close = 1;
-}
-
-function hideBottomCard() {
-    hideStaggeredList('#new-floor');
-
-
-    $({deg: 45}).animate(
-        {deg: 0},
-        {
-            duration: 90,
-            queue: false,
-            step: function(now){rotate($('#add-new-floor:first i'), now)}
-        }
-    );
-
-    close = 0;
-}
-
-function rotate(icon, now){
-    icon.css({
-        transform: "rotate(" + now + "deg)"
-    });
-}
-
-function hideStaggeredList(selector) {
-    var time = 0;
-    $(selector).find('li').velocity(
-        { translateX: "0px"},
-        { duration: 0 });
-
-    $(selector).find('li').each(function() {
-        $(this).velocity(
-            { opacity: "0", translateX: "-100"},
-            { duration: 800, delay: time, easing: [60, 10] });
-        time += 120;
-    });
-}
 
 function updateTypesList(typef) {
     $(typef).empty();
