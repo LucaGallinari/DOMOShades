@@ -11,6 +11,9 @@
 <#if !logoutURL??>
     <#assign logoutURL="ERROR: value for 'logourURL' not passed to the template."/>
 </#if>
+<#if !homes??>
+    <#assign homes=""/>
+</#if>
 <#if !home??>
     <#assign home=""/>
 </#if>
@@ -26,13 +29,12 @@
 
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
-<@layout.mainLayout userNick userEmail logoutURL>
+<@layout.mainLayout userNick userEmail logoutURL homes floors>
 
 <!-- Breadcrumb -->
 <div class="row">
     <div class="col s12 left">
         <p class="breadcrumb">
-            <span><a href="/" class="tooltipped" data-position="bottom" data-tooltip="Start page">Start Page</a></span>
             <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Houses</a></span>
             <span>Your Floors</span>
         </p>
@@ -45,7 +47,7 @@
     <div class="row">
         <div class="xl9 offset-xl1">
             <h4 class="deep-orange-text">Floor List</h4>
-            <table class="collection" id="listFloors" class="hoverable <#if !floors?has_content>hidden</#if>"style="position:static">
+            <table id="listFloors" class="collection hoverable <#if !floors?has_content>hidden</#if>" style="position:static">
                 <tbody>
                 <#list floors as floor>
                     <tr id="listFloor${floor.id}" class="collection-item">
@@ -54,12 +56,12 @@
                         </td>
                         <td class="floorAction">
                             <a class='dropdown-button right grey-text' href='#' data-activates='dropdown${floor.id}'><i class="mdi-navigation-more-vert grey-text"></i></a>
+                            <ul id="dropdown${floor.id}" class="dropdown-content">
+                                <li><a href="/floor/manage?home=${home}&floor=${floor.id}" class="manageFloor black-text">Manage</a></li>
+                                <li><a data-toggle="${floor.id}" class="removeFloor black-text"> Remove </a></li>
+                                <li><a href="/rules/?home=${home}&floor=${floor.id}" class="manageRules black-text"> Rules </a> </li>
+                            </ul>
                         </td>
-                        <ul id="dropdown${floor.id}" class="dropdown-content">
-                            <li><a href="/floor/manage?home=${home}&floor=${floor.id}" class="manageFloor black-text">Manage</a></li>
-                            <li><a data-toggle="${floor.id}" class="removeFloor black-text"> Remove </a></li>
-                            <li><a href="/rules/?home=${home}&floor=${floor.id}" class="manageRules black-text"> Rules </a> </li>
-                        </ul>
                     </tr>
                 </#list>
                 </tbody>

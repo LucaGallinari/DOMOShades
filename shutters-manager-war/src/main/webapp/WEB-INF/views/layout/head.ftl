@@ -11,6 +11,5 @@
 
     <!-- jQuery is required by Materialize to function -->
     <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/js/jquery.cookie.js"></script>
 
 </#macro>

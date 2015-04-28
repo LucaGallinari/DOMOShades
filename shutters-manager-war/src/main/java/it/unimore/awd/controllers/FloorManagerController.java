@@ -46,6 +46,9 @@ public class FloorManagerController extends Controller {
                 String floorIdStr = req.getParameter("floor");
                 if (floorIdStr != null && !floorIdStr.isEmpty()) { // check home par exists
 
+                    // get user's homes
+                    List<Home> hl = domoWrapper.getHomesByUser(owner);
+
                     // get floors
                     List<FloorToken> fl = domoWrapper.getFloorsByHome(owner, homeIdStr);
 
@@ -56,6 +59,7 @@ public class FloorManagerController extends Controller {
                     root.put("userEmail", owner);
                     root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
                     root.put("logoutURL", userService.createLogoutURL("/"));
+                    root.put("homes", hl);
                     root.put("home", homeIdStr);
                     root.put("floors", fl);
                     root.put("floorId", Integer.parseInt(floorIdStr));

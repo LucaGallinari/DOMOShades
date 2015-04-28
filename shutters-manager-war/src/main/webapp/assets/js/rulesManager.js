@@ -21,7 +21,7 @@ var rulesList = [];
 var scope = 1;
 
 /* HELPERS */
-function isHomeRule(){
+function isHomeRule(val){
     return val==100;
 }
 function isFloorRule(val){
@@ -122,7 +122,7 @@ function updateTimetable(selectTab) {
     var sel = $('#'+selectTab);
     var str = '';
     var wnum = 60*24;
-    var width = $('#rulesArea').width()-70;
+    var width = $('#rulesArea').width()-170;
     var wdelta = width / wnum;
     // sort
     var rulesListSorted = [];
@@ -138,13 +138,22 @@ function updateTimetable(selectTab) {
     for (var rule in rulesListSorted) {
         var printLast = true;
         var i = parseInt(rule);
+        var ruleWidth;
         var rule = rulesListSorted[rule];
+
+        str += '<div style="width:100%;display:inline-flex;">' +
+                    '<div style="width:150px;">'+rule[0].name+'</div>' +
+                    '<div style="width:100%;position:relative;" class="timeline">';
+
         if (startTime1==null || startTime1 < (rule[1].hour*60 + rule[1].minutes)) {
             startTime1 = (rule[1].hour*60 + rule[1].minutes);
+        } else {
+            var realStartTime1 = (rule[1].hour*60 + rule[1].minutes);
+            ruleWidth = (startTime1 - realStartTime1) * wdelta;
+            str += '<div style="background-color:#aaa;position:absolute; left:'+realStartTime1*wdelta+'px; width:'+ruleWidth+'px; z-index:2;opacity:0.5;">&nbsp;</div>';
         }
         var endTime1 = (rule[0].endTime.hour*60 + rule[0].endTime.minutes);
 
-        str += '<div style="width:100%;position:relative;"><div>Rule '+i+'</div>';
 
         if (i != rulesListSorted.length-1) {
             for (var k=i+1; k<rulesListSorted.length; ++k) {
@@ -156,14 +165,12 @@ function updateTimetable(selectTab) {
                         // var startTime1 = (rule[1].hour*60 + rule[1].minutes) * wdelta;
                         var startTime2 = (rule2[1].hour*60 + rule2[1].minutes);
                         var endTime2 = (rule2[0].endTime.hour*60 + rule2[0].endTime.minutes);
-                        if (startTime2 > startTime1) {
-                            var ruleWidth = (startTime2 - startTime1) * wdelta;
-                            str += '<div style="background-color:#000;position:relative; left:'+startTime1*wdelta+'px; width:'+ruleWidth+'px;">&nbsp;</div>';
-                            // TODO: other divs with grey background
+                        if (startTime2 >= startTime1) {
+                            str += getBlock(0, startTime1*wdelta, (startTime2 - startTime1) * wdelta);
+                            str += getBlock(1, startTime2*wdelta, (endTime1 - startTime2) * wdelta);
                             // no sense to continue if this collision goes over actual rule endtime
                             if (endTime2 >= endTime1) {
-                                printLast = false;
-                                break;
+                                printLast = false; break;
                             } else {
                                 startTime1 = endTime2;
                             }
@@ -176,24 +183,42 @@ function updateTimetable(selectTab) {
         if (printLast) {
             // add black div
             var startTime = startTime1 * wdelta;
-            var ruleWidth  = (endTime1 * wdelta - startTime);
+            ruleWidth  = (endTime1 * wdelta - startTime);
             startTime1 = endTime1;
-            str += '<div style="background-color:#000;position:relative; left:'+startTime+'px; width:'+ruleWidth+'px;">&nbsp;</div>';
+            str += '<div style="background-color:#000;position:absolute; left:'+startTime+'px; width:'+ruleWidth+'px; z-index:2;opacity:0.5;">&nbsp;</div>';
         }
-        str += '</div>';
+
+        str += getVerticalLineBlocks(width, 0);
+        str += '</div></div>';
     }
 
-/* no collision timetable
-    for (var rule in rulesListSorted) {
-        var rule = rulesListSorted[rule];
-        var startTimeW = (rule[1].hour*60 + rule[1].minutes) * wdelta;
-        var ruleWidth = (rule[0].endTime.hour*60 + rule[0].endTime.minutes)*wdelta - startTimeW;
-        str +=  '<p style="position:relative;"> \
-                    <div style="background-color:#000;position:relative; left:'+startTimeW+'px; width:'+ruleWidth+'px;">&nbsp;</div> \
-                </p>';
-    }
-*/
+    // last line with hours and lines
+    str += '<div style="width:100%;display:inline-flex;">' +
+                '<div style="width:150px;">&nbsp;</div>' +
+                '<div style="width:100%;position:relative;" class="timeline">';
+
+    str += getVerticalLineBlocks(width, 1);
+    str += '</div></div>';
+
     sel.find('.rules-timetable').html(str);
+}
+
+function getBlock(type, left, width) {
+    var color = (type==0 ? '#000' : '#aaa');
+    return '<div style="background-color:'+color+';position:absolute; ' +
+                 'left:'+left+'px; width:'+width+'px; ' +
+                 'z-index:2; opacity:0.5;">&nbsp;</div>';
+}
+function getVerticalLineBlocks(width, type) {
+    var str = '';
+    var whour = width / 24;
+    for (var j=0; j < 24; ++j) {
+        str += '<div style="border-right:1px solid #aaa;position:absolute; ' +
+                    'left:'+(j*whour)+'px; width:'+whour+'px; ' +
+                    'text-align:center;z-index:1">' +
+                    ''+(type==0 ? '&nbsp;' : j)+'</div>';
+    }
+    return str;
 }
 
 /* ## FLOOR MANAGERS ## */
@@ -227,7 +252,7 @@ function editFloorRulesHtml() {
         var rules = w.rulesLists;
         for (var rule in rules) {
             rule = rules[rule];
-            if (isFloorRule(rule.priority)) {
+            if (isFloorRule(rule.priority) || isHomeRule(rule.priority)) {
                 var ruleIndex = ruleAlreadyInserted(rule, rulesList);
                 if (ruleIndex == -1) {// not found, add rule
                     rule.rooms = [];
@@ -615,7 +640,7 @@ function rules_table_element(rule, index) {
             <td class="endtime"> ends at <strong>'+rule.endTime.hour+':'+ (rule.endTime.minutes == '0' ? rule.endTime.minutes+'0' : rule.endTime.minutes) +'</strong></td> \
             <td class="closedPerc"> shutters closed at <strong>'+rule.closedPercentage+'&#37;</strong></td> \
             <td>';
-    if (rule.priority != 0) {
+    if (rule.priority!=0 && rule.priority!=100) {
         str += '<a data-toggle="'+(index)+'" class="small waves-effect waves-red btn-flat removeRule tooltipped right" data-position="right" data-delay="50" data-tooltip="Remove Rule"> \
                     <i class="mdi-content-clear red-text"></i> \
                 </a>'
@@ -629,15 +654,6 @@ function rules_table_element(rule, index) {
 function rules_table() {
     return ' \
         <table class="hoverable"> \
-            <!--<thead> \
-                <tr> \
-                    <th data-field="name">Name</th> \
-                    <th data-field="starttime">Start Time</th> \
-                    <th data-field="endtime">End Time</th> \
-                    <th data-field="closedPerc">Closed %</th> \
-                    <th></th> \
-                </tr> \
-            </thead>--> \
             <tbody id="listRules"> \
             </tbody> \
         </table>';

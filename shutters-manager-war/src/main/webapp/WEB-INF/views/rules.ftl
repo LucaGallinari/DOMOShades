@@ -14,8 +14,14 @@
 <#if !home??>
     <#assign home=""/>
 </#if>
+<#if !homes??>
+    <#assign homes=""/>
+</#if>
 <#if !floor??>
     <#assign floor=""/>
+</#if>
+<#if !floors??>
+    <#assign floors=""/>
 </#if>
 <#if !rooms??>
     <#assign rooms=[]/>
@@ -29,13 +35,12 @@
 
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
-<@layout.mainLayout userNick userEmail logoutURL>
+<@layout.mainLayout userNick userEmail logoutURL homes floors>
 
     <!-- Breadcrumb -->
     <div class="row">
         <div class="col s12 left">
             <p class="breadcrumb">
-                <span><a href="/" class="tooltipped" data-position="bottom" data-tooltip="Start page">Start Page</a></span>
                 <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Houses</a></span>
                 <span><a href="/floors/?home=${home}" class="tooltipped" data-position="bottom" data-tooltip="List of your floors">Floors</a></span>
                 <span>Rules Manager</span>
@@ -74,7 +79,7 @@
                 <div class="row rules-list"></div>
                 <div class="row rules-timetable" style="position:relative;"></div>
                 <div class="row buttons-row">
-                    <div class="switch">
+                    <div class="switch left">
                         <label>
                             List
                             <input type="checkbox" name="floorVisual" id="floorVisual">
@@ -220,10 +225,6 @@
 <script type="text/javascript" src="/assets/js/jquery-clockpicker.min.js"></script>
 
 <script>
-/*
-    $('#startTime').lolliclock();
-    $('#endTime').lolliclock();
-*/
 
     $('#startTime').clockpicker();
     $('#endTime').clockpicker();
@@ -295,10 +296,18 @@
                 }
             });
 
-
+        $('#floorVisual').on('change', function() {
+            var sel = $('#floorRules');
+            if ($(this).is(':checked')) {
+                $(sel).find('.rules-list').hide();
+                $(sel).find('.rules-timetable').show();
+            } else {
+                $(sel).find('.rules-timetable').hide();
+                $(sel).find('.rules-list').show();
+            }
+        });
 
     });
-
 
 </script>
 </@layout.mainLayout>

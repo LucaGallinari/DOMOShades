@@ -23,17 +23,7 @@
 
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
-<@layout.mainLayout userNick userEmail logoutURL>
-
-<!-- Breadcrumb -->
-<div class="row">
-    <div class="col s12 left">
-        <p class="breadcrumb">
-            <span><a href="/" class="tooltipped" data-position="bottom" data-tooltip="Start page">Start Page</a></span>
-            <span>Floor Designer</span>
-        </p>
-    </div>
-</div>
+<@layout.mainLayout userNick userEmail logoutURL homes floors>
 
 <div class="container">
 
@@ -41,17 +31,7 @@
     <div class="row">
         <div class="xl9 offset-xl1">
             <h4 class="deep-orange-text">Homes List</h4>
-            <table class="collection" id="listHomes" class="hoverable <#if !homes?has_content>hidden</#if>" style="position:static">
-                <!--<thead>
-                    <tr>
-                        <th data-field="description">Brief description</th>
-                        <th data-field="address">Address</th>
-                        <th class="hidden-tc-sm" data-field="cap">Cap</th>
-                        <th class="hidden-tc-m" data-field="city">City</th>
-                        <th class="hidden-tc-sm" data-field="country">Country</th>
-                        <th></th>
-                    </tr>
-                </thead>-->
+            <table id="listHomes" class="collection hoverable <#if !homes?has_content>hidden</#if>" style="position:static">
                 <tbody>
                 <#list homes as home>
                     <tr id="listHome${home.id}" class="collection-item">
@@ -110,8 +90,6 @@
         </div>
     </div>
     <!-- END Table + Modals -->
-
-    <!--<div class="divider xl9 offset-xl1"></div>-->
 
     <!-- Add new Home -->
     <div class="row" style="margin-top: 20px;">

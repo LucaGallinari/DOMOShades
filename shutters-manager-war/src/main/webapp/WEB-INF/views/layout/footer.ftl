@@ -33,7 +33,7 @@
 
     <script type="text/javascript" src="/assets/js/materialize.min.js"></script>
     <script type="text/javascript" src="/assets/js/customs.js"></script>
-
+    <script type="text/javascript" src="/assets/js/sidebarManager.js"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {

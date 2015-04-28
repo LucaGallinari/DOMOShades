@@ -19,10 +19,16 @@
     <#if !logoutURL??>
         <#assign logoutURL="ERROR: value for 'logourURL' not passed to the template."/>
     </#if>
+    <#if !homes??>
+        <#assign homes=[]/>
+    </#if>
+    <#if !floors??>
+        <#assign floors=[]/>
+    </#if>
 
     <#-- Import and display -->
     <#import "layout/baseLayout.ftl" as layout>
-    <@layout.mainLayout userNick userEmail logoutURL>
+    <@layout.mainLayout userNick userEmail logoutURL homes floors>
         <div style="color: rgb(250,10,10);">
             ${message}
         </div>

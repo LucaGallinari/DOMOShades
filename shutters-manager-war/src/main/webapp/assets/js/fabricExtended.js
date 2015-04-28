@@ -329,9 +329,9 @@ PolygonExtended.prototype.getClosestCornerPoint = function (point, max_dist) {
 /**
  * Calculate the closest point lying on poly's sides to the given one (point) but
  * that can't be too far (max_dist).
- * @point Object with x and y variables
- * @max_dist int for the maximum wanted distance
- * @ret the closest point or a null point
+ * @param point Object with x and y variables
+ * @param max_dist int for the maximum wanted distance
+ * @return Object the closest point or a null point
  */
 PolygonExtended.prototype.getClosestLinePoint = function (point, max_dist) {
     var points = this.fabricPoly.get("points");
@@ -358,8 +358,7 @@ PolygonExtended.prototype.getClosestLinePoint = function (point, max_dist) {
         var y2 = Math.round(points[i].y + polygonCenter.y);
 
         // calculate coefficients of "y = mx + q"
-        var deltaX = x2-x1;
-        var deltaY = y2-y1;
+        var deltaX = x2-x1, deltaY = y2-y1;
         if (deltaX == 0) {// special case 1: x1=x2
             x = x1;
             y = point.y;

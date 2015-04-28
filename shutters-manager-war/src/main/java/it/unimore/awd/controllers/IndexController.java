@@ -1,6 +1,5 @@
 package it.unimore.awd.controllers;
 
-import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import it.unimore.awd.DomoWrapper;
@@ -21,7 +20,6 @@ public class IndexController extends Controller {
     public void root() throws IOException, ServletException
     {
 
-        String error = "";
         UserService userService = UserServiceFactory.getUserService();
         com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
 
@@ -45,22 +43,17 @@ public class IndexController extends Controller {
             }
             domoUser = domoWrapper.getUser(owner);
 
-            // model the page
-            Map<String, Object> root = new HashMap<String, Object>();
-            root.put("error", error);
-            root.put("message", "Start page!");
-            root.put("userEmail", owner);
-            root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
-            root.put("logoutURL", userService.createLogoutURL("/"));
-            // output it
-            TemplateHelper.callTemplate(cfg, resp, ctrlName + "/startpage.ftl", root);
-
+            if (domoUser != null) {//logged
+                resp.sendRedirect("/homes/");
+            } else { // not logged, show login
+                Map<String, Object> root = new HashMap<String, Object>();
+                root.put("loginURL", userService.createLoginURL("/homes/"));
+                TemplateHelper.callTemplate(cfg, resp, ctrlName + "/login.ftl", root);
+            }
         } else { // not logged, show login
-
             Map<String, Object> root = new HashMap<String, Object>();
-            root.put("loginURL", userService.createLoginURL("/"));
+            root.put("loginURL", userService.createLoginURL("/homes/"));
             TemplateHelper.callTemplate(cfg, resp, ctrlName + "/login.ftl", root);
-
         }
     }
 

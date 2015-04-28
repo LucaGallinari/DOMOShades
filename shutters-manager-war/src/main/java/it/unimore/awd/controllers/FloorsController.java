@@ -5,10 +5,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import it.unimore.awd.DomoWrapper;
-import it.unimore.awd.classes.Floor;
-import it.unimore.awd.classes.FloorToken;
-import it.unimore.awd.classes.Room;
-import it.unimore.awd.classes.User;
+import it.unimore.awd.classes.*;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -41,6 +38,9 @@ public class FloorsController extends Controller {
             String homeIdStr = req.getParameter("home");
             if (homeIdStr != null && !homeIdStr.isEmpty()) { // check home par exists
 
+                // get user's homes
+                List<Home> hl = domoWrapper.getHomesByUser(owner);
+
                 // get floors
                 List<FloorToken> fl = domoWrapper.getFloorsByHome(owner, homeIdStr);
 
@@ -53,6 +53,7 @@ public class FloorsController extends Controller {
                 root.put("userEmail", owner);
                 root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
                 root.put("logoutURL", userService.createLogoutURL("/"));
+                root.put("homes", hl);
                 root.put("home", homeIdStr);
                 root.put("floorTypes", fk);
                 root.put("floors", fl);

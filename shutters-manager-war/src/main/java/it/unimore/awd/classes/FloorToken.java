@@ -3,6 +3,9 @@ package it.unimore.awd.classes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class FloorToken {
     Long id;
     HouseToken house;

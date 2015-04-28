@@ -11,6 +11,9 @@
 <#if !logoutURL??>
     <#assign logoutURL="ERROR: value for 'logourURL' not passed to the template."/>
 </#if>
+<#if !homes??>
+    <#assign homes=""/>
+</#if>
 <#if !home??>
     <#assign home=""/>
 </#if>
@@ -33,13 +36,12 @@
 
 <#-- Import and display -->
 <#import "layout/baseLayout.ftl" as layout>
-<@layout.mainLayout userNick userEmail logoutURL>
+<@layout.mainLayout userNick userEmail logoutURL homes floors>
 
     <!-- Breadcrumb -->
     <div class="row">
         <div class="col s12 left">
             <p class="breadcrumb">
-                <span><a href="/" class="tooltipped" data-position="bottom" data-tooltip="Start page">Start Page</a></span>
                 <span><a href="/homes/" class="tooltipped" data-position="bottom" data-tooltip="List of your houses">Houses</a></span>
                 <span><a href="/floors/?home=${home}" class="tooltipped" data-position="bottom" data-tooltip="List of your floors">Floors</a></span>
                 <span>Floor Designer</span>

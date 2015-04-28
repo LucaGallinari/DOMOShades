@@ -40,6 +40,9 @@ public class RulesController extends Controller {
                 String floorIdStr = req.getParameter("floor");
                 if (floorIdStr != null && !floorIdStr.isEmpty()) { // check home par exists
 
+                    // get user's homes
+                    List<Home> hl = domoWrapper.getHomesByUser(owner);
+
                     String mode = req.getParameter("mode");
 
                     // TODO: gestire errori e conferme
@@ -86,6 +89,7 @@ public class RulesController extends Controller {
                         root.put("userEmail", owner);
                         root.put("userNick", domoUser.getFirst_name()); // TODO: usernick is not the same as firstname
                         root.put("logoutURL", userService.createLogoutURL("/"));
+                        root.put("homes", hl);
                         root.put("home", homeIdStr);
                         root.put("floor", ft);
                         root.put("rooms", rl);

@@ -208,6 +208,53 @@ public class HomesController extends Controller {
         return error;
     }
 
+
+    /*
+     *  Open or close all shutters of a house.
+     *  If called by another function (eg: root()) you need to set ajax global variable to false.
+     *  If called by ajax you only need to send the form with "serialized" data.
+     *
+     *  @par id Id of the home
+     *  @ret String Ok if successful, an error if not.
+    */
+    public String special()
+            throws IOException, ServletException
+    {
+        String error="";
+
+        if (gaeUser != null) { // already logged
+            String owner = gaeUser.getEmail();
+            String homeId = req.getParameter("id");
+            String scope = req.getParameter("scope");
+
+            if (homeId != null && scope != null) {
+                try {
+                    if (scope.equals("0")) { // open
+                        domoWrapper.openHome(owner, homeId);
+                    } else if (scope.equals("1")) { // close
+                        domoWrapper.closeHome(owner, homeId);
+                    } else if (scope.equals("2")) { // remove
+                        domoWrapper.removeSpecialFromHome(owner, homeId);
+                    }
+                    if (this.ajax) {
+                        resp.getWriter().write("Ok");
+                    }
+                } catch (Exception e) { // home not found
+                    System.out.println("Parametri inviati errati!");
+                    if (this.ajax) {resp.getWriter().write("Error: wrong parameters!");}
+                    else {error = "3";}
+                }
+            } else {
+                if (this.ajax) {resp.getWriter().write("Error: expected and id parameter.");}
+                else {error="2";}
+            }
+        } else { // not logged, error
+            if (this.ajax) {resp.getWriter().write("Error: you are not logged in.");}
+            else {error="1";}
+        }
+        return error;
+    }
+
     private boolean compareDomouserGaeuser(User domoUser, com.google.appengine.api.users.User gaeUser) {
         return (
             domoUser.getFirst_name().equals(gaeUser.getNickname())

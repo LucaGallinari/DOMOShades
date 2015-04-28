@@ -62,6 +62,34 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
     opacity: 0;
 }
 
+/* side bar */
+#nav-mobile li {
+    padding:0;
+    width:100%;
+}
+#nav-mobile li.logo {
+    padding:0 15px;
+}
+#nav-mobile li:hover {
+    background-color: #ffab91;
+}
+#nav-mobile .collapsible li.active {
+    background-color:#ff5722;
+}
+#nav-mobile .collapsible li a {
+    color:#444;
+    padding:0;
+}
+#nav-mobile .collapsible li.active a {
+    padding:0;
+    color:#fff;
+}
+#nav-mobile .collapsible li.active .collapsible-body li a {
+    padding:0;
+    color:#444;
+}
+
+
 
 .tabs .tab a{
     color: #039BE5;
