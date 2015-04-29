@@ -314,6 +314,33 @@
                 }
             });
 
+
+        $('#startTime').on('change', function() {
+            if (!checkTimes()) {
+                $(this).val('');
+            }
+        });
+
+        $('#endTime').on('change', function() {
+            if (!checkTimes()) {
+                $(this).val('');
+            }
+        });
+
+        function checkTimes() {
+            var start = $('#startTime').val().split(':');
+            var end = $('#endTime').val().split(':');
+            if (start.length > 0 && end.length > 0) {
+                var startTime = parseInt(start[0])*60+parseInt(start[1]);
+                var endTime = parseInt(end[0])*60+parseInt(end[1]);
+                if (startTime > endTime) {
+                    Materialize.toast('End time must be past the start time!',4000,'rounded');
+                    return false;
+                }
+            }
+            return true;
+        }
+
         $('#floorVisual').on('change', function() {
             var sel = $('#floorRules');
             if ($(this).is(':checked')) {

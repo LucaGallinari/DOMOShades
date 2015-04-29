@@ -256,7 +256,6 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
         points.pop();
         strokeCorrection = this.fabricPoly.get("strokeWidth")/2;
     }
-    console.log(points);
     // some checks
     if (points.length < 3) {
         return -1;
@@ -290,7 +289,6 @@ PolygonExtended.prototype.confirm = function (makeCircleCallback, removelast) {
     });
     this.fabricPoly.set({points: adjPoints});
 
-    console.log(adjPoints);
     // add circles
     this.addCornersCircles(makeCircleCallback);
 

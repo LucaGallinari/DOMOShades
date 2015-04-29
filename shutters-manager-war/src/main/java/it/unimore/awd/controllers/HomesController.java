@@ -32,9 +32,29 @@ public class HomesController extends Controller {
         String error = "";
         this.ajax=false;
 
+        userService = UserServiceFactory.getUserService();
+        gaeUser = userService.getCurrentUser();
+
+
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
-            User domoUser = domoWrapper.getUser(owner);
+
+            // check if user has been already inserted, or if it's no updated
+            it.unimore.awd.classes.User domoUser = domoWrapper.getUser(owner);
+            if (domoUser == null || !compareDomouserGaeuser(domoUser, gaeUser)) { // logged in but not found in the database? add user, or update user
+                try {
+                    domoWrapper.putUser(
+                            owner,
+                            gaeUser.getNickname(),
+                            gaeUser.getNickname(),
+                            "http://dummy.pic/ture"
+                    );
+                } catch (Exception e) {
+                    System.out.println("putUser failed!");
+                    resp.sendRedirect("/");
+                }
+            }
+            domoUser = domoWrapper.getUser(owner);
 
             if (domoUser != null) {
 
