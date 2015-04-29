@@ -2,6 +2,7 @@
 
     <title>${title}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="shortcut icon" type="image/png" href="/assets/images/icon.png">
 
     <link rel="stylesheet" type="text/css" href="/assets/css/jquery-clockpicker.min.css" />
     <link type="text/css" rel="stylesheet" href="/assets/css/materialize.min.css"  media="screen,projection"/>

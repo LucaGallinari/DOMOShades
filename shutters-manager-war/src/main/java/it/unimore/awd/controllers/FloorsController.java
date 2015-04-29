@@ -21,15 +21,15 @@ public class FloorsController extends Controller {
 
     private boolean ajax = true;
 
-    private UserService userService = UserServiceFactory.getUserService();
-    private com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
-
     DomoWrapper domoWrapper = new DomoWrapper();
 
     public void root()
         throws IOException, ServletException {
         String error = "";
         this.ajax = false;
+
+        UserService userService = UserServiceFactory.getUserService();
+        com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
 
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
@@ -80,6 +80,9 @@ public class FloorsController extends Controller {
     public String add()
             throws IOException, ServletException
     {
+        UserService userService = UserServiceFactory.getUserService();
+        com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
+
         String error="";
         if (gaeUser != null) { // already logged
 
@@ -132,6 +135,9 @@ public class FloorsController extends Controller {
     public String remove()
         throws IOException, ServletException
     {
+        UserService userService = UserServiceFactory.getUserService();
+        com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
+
         String error="";
 
         if (gaeUser != null) { // already logged

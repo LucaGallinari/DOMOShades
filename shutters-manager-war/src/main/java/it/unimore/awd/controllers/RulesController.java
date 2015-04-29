@@ -27,6 +27,10 @@ public class RulesController extends Controller {
 
     public void root()
         throws IOException, ServletException {
+
+        UserService userService = UserServiceFactory.getUserService();
+        com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
+
         String error = "";
         this.ajax = false;
 
@@ -123,6 +127,9 @@ public class RulesController extends Controller {
     public String add()
         throws IOException, ServletException
     {
+        UserService userService = UserServiceFactory.getUserService();
+        com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
+
         String error="";
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
@@ -199,6 +206,9 @@ public class RulesController extends Controller {
     public String remove()
         throws IOException, ServletException
     {
+        UserService userService = UserServiceFactory.getUserService();
+        com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
+
         String error="";
 
         if (gaeUser != null) { // already logged

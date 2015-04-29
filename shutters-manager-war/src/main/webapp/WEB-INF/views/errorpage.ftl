@@ -29,8 +29,9 @@
     <#-- Import and display -->
     <#import "layout/baseLayout.ftl" as layout>
     <@layout.mainLayout userNick userEmail logoutURL homes floors>
-        <div style="color: rgb(250,10,10);">
-            ${message}
+        <div class="row center">
+            <h2 class="deep-orange-text">${message}</h2>
+            <h5><a href="/homes/" style="color:#444;">Return to the homes page</a></h5>
         </div>
     </@layout.mainLayout>
 <#else>
@@ -38,8 +39,9 @@
     <#-- Import and display -->
     <#import "layout/loginLayout.ftl" as layout>
     <@layout.mainLayout>
-        <div style="color: rgb(250,10,10);">
-            ${message}
+        <div class="row center">
+            <h2 class="deep-orange-text">${message}</h2>
+            <h5><a href="/" style="color:#444;">Return to the login page</a></h5>
         </div>
     </@layout.mainLayout>
 </#if>

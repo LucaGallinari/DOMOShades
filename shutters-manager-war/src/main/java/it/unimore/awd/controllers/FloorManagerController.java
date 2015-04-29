@@ -25,14 +25,14 @@ public class FloorManagerController extends Controller {
 
     private boolean ajax = true;
 
-    private UserService userService = UserServiceFactory.getUserService();
-    private com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
-
     DomoWrapper domoWrapper = new DomoWrapper();
 
     public void manage()
         throws IOException, ServletException
     {
+        UserService userService = UserServiceFactory.getUserService();
+        com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
+
         String error = "";
         this.ajax=false;
 
@@ -88,6 +88,9 @@ public class FloorManagerController extends Controller {
     public String modify()
             throws IOException, ServletException, URISyntaxException, ResourceException
     {
+        UserService userService = UserServiceFactory.getUserService();
+        com.google.appengine.api.users.User gaeUser = userService.getCurrentUser();
+
         String error="";
         if (gaeUser != null) { // already logged
             String owner = gaeUser.getEmail();
