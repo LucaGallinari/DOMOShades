@@ -8,7 +8,6 @@
 </#if>
 
 <#if logged=="true" >
-    <#-- TODO: this case has the same code as homes.ftl -->
     <#-- Some checks -->
     <#if !userNick??>
         <#assign userNick="ERROR: value for 'userNick' not passed to the template."/>

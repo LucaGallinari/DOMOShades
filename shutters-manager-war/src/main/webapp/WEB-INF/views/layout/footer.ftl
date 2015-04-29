@@ -40,6 +40,21 @@
             if($('.tooltipped').length>0) {
                 $('.tooltipped').tooltip({delay: 0});
             }
+            if ($('.user_profile').length>0) {
+                var colors = [
+                    {'c':'#FFF','b':'#26a69a'},
+                    {'c':'#444','b':'#4caf50'},
+                    {'c':'#ff5722','b':'#eeeeee'},
+                    {'c':'#e91e63','b':'#03a9f4'},
+                    {'c':'#ffeb3b','b':'#673ab7'},
+                    {'c':'#444','b':'#ffeb3b'}
+                ];
+                var sel = colors[Math.floor((Math.random() * (colors.length-1)))];
+                $('.user_profile').find('div').css({
+                    'background-color':sel.b,
+                    'color':sel.c
+                });
+            }
         });
     </script>
 

@@ -19,7 +19,9 @@
                 <ul id="nav-mobile" class="side-nav fixed">
 
                     <li class="logo indigo darken-2">
-                        <div class="user_profile"> <img src="null" /> </div>
+                        <div class="user_profile">
+                             <div>${userNick?substring(0,1)?cap_first}</div>
+                        </div>
                         <div class="user_name"> ${userNick} </div>
                         <div class="user_email"> ${userEmail} </div>
                     </li>

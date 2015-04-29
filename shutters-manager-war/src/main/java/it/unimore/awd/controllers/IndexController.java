@@ -41,10 +41,4 @@ public class IndexController extends Controller {
         }
     }
 
-    private boolean compareDomouserGaeuser(User domoUser, com.google.appengine.api.users.User gaeUser) {
-        return (
-                domoUser.getFirst_name().equals(gaeUser.getNickname())
-                        && domoUser.getLast_name().equals(gaeUser.getNickname())
-        );
-    }
 }
