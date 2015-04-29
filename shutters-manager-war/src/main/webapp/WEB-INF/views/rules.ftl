@@ -95,7 +95,16 @@
             <div id="roomRules" class="col s12">
                 <div class="red-text hidden center flow-text" id="noRoomRules" style="margin-top: 20px;">There are no rules for this room.<br />Add one using the button below</div>
                 <div class="rules-list"></div>
+                <div class="row rules-timetable" style="position:relative;"></div>
                 <div class="row buttons-row">
+                    <div class="switch left">
+                        <label>
+                            List
+                            <input type="checkbox" name="roomVisual" id="roomVisual">
+                            <span class="lever"></span>
+                            Timetable
+                        </label>
+                    </div>
                     <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="2">
                         <i class="mdi-content-add"></i>
                     </button>
@@ -104,7 +113,16 @@
             <div id="windowRules" class="col s12">
                 <div class="red-text hidden center flow-text" id="noWindowRules" style="margin-top: 20px;">There are no rules for this window <br />Add one using the button below</div>
                 <div class="rules-list"></div>
+                <div class="row rules-timetable" style="position:relative;"></div>
                 <div class="row buttons-row">
+                    <div class="switch left">
+                        <label>
+                            List
+                            <input type="checkbox" name="windowVisual" id="windowVisual">
+                            <span class="lever"></span>
+                            Timetable
+                        </label>
+                    </div>
                     <button class="btn-large btn-floating waves-effect waves-light deep-orange right addRule" data-toggle="3">
                         <i class="mdi-content-add"></i>
                     </button>
@@ -298,6 +316,28 @@
 
         $('#floorVisual').on('change', function() {
             var sel = $('#floorRules');
+            if ($(this).is(':checked')) {
+                $(sel).find('.rules-list').hide();
+                $(sel).find('.rules-timetable').show();
+            } else {
+                $(sel).find('.rules-timetable').hide();
+                $(sel).find('.rules-list').show();
+            }
+        });
+
+        $('#roomVisual').on('change', function() {
+            var sel = $('#roomRules');
+            if ($(this).is(':checked')) {
+                $(sel).find('.rules-list').hide();
+                $(sel).find('.rules-timetable').show();
+            } else {
+                $(sel).find('.rules-timetable').hide();
+                $(sel).find('.rules-list').show();
+            }
+        });
+
+        $('#windowVisual').on('change', function() {
+            var sel = $('#windowRules');
             if ($(this).is(':checked')) {
                 $(sel).find('.rules-list').hide();
                 $(sel).find('.rules-timetable').show();

@@ -63,6 +63,9 @@ nav.top-nav, .logo ,nav .nav-wrapper i, nav a.button-collapse, nav a.button-coll
 }
 
 /* side bar */
+#nav-mobile i {
+    font-size: 1.4em;
+}
 #nav-mobile li {
     padding:0;
     width:100%;

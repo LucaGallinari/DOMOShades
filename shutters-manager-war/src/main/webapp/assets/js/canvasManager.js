@@ -153,12 +153,16 @@ function editRoom(id, noclick, nosel, indexShutt) {
 }
 
 function removeEditRoom(){
-    var index = getPolyIndexById(currentEdit);
-    changeShuttersFillColor(index, -1, false);
-    polys[index].changeFillColor(false);
-    currentEdit = null;
-    $('#rooms-list').find('.active').removeClass("active");
-    $('.collapsible').collapsible();
+    if (currentEdit != null) {
+        var index = getPolyIndexById(currentEdit);
+        if( index != null) {
+            changeShuttersFillColor(index, -1, false);
+            polys[index].changeFillColor(false);
+            currentEdit = null;
+            $('#rooms-list').find('.active').removeClass("active");
+            $('.collapsible').collapsible();
+        }
+    }
 }
 
 function confirmName(id) {

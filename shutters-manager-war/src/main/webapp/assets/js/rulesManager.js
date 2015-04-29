@@ -118,7 +118,7 @@ function updateRulesList(str, selectTab, norules) {
     $('ul.tabs').tabs('select_tab', selectTab);
 }
 
-function updateTimetable(selectTab) {
+function updateTimetable(selectTab, visualTab) {
     var sel = $('#'+selectTab);
     var str = '';
     var wnum = 60*24;
@@ -131,29 +131,20 @@ function updateTimetable(selectTab) {
         rulesListSorted.push([rule, rule.startTime]);
     }
     rulesListSorted.sort(function(r1, r2){return (r1[1].hour*60 + r1[1].minutes) - (r2[1].hour*60 + r2[1].minutes) });
-    console.log(rulesListSorted);
 
-    //
-    var startTime1 = null;
+    var rightPointer = null;
     for (var rule in rulesListSorted) {
         var printLast = true;
         var i = parseInt(rule);
-        var ruleWidth;
         var rule = rulesListSorted[rule];
 
-        str += '<div style="width:100%;display:inline-flex;">' +
+        str += '<div style="width:100%;display:inline-flex;padding:0 5px;height:50px;overflow: hidden;">' +
                     '<div style="width:150px;">'+rule[0].name+'</div>' +
-                    '<div style="width:100%;position:relative;" class="timeline">';
+                    '<div style="width:100%;height:100%;position:relative;" class="timeline">';
 
-        if (startTime1==null || startTime1 < (rule[1].hour*60 + rule[1].minutes)) {
-            startTime1 = (rule[1].hour*60 + rule[1].minutes);
-        } else {
-            var realStartTime1 = (rule[1].hour*60 + rule[1].minutes);
-            ruleWidth = (startTime1 - realStartTime1) * wdelta;
-            str += '<div style="background-color:#aaa;position:absolute; left:'+realStartTime1*wdelta+'px; width:'+ruleWidth+'px; z-index:2;opacity:0.5;">&nbsp;</div>';
-        }
+        var startTime1 = (rule[1].hour*60 + rule[1].minutes);
+        if (rightPointer==null) {rightPointer = startTime1;}
         var endTime1 = (rule[0].endTime.hour*60 + rule[0].endTime.minutes);
-
 
         if (i != rulesListSorted.length-1) {
             for (var k=i+1; k<rulesListSorted.length; ++k) {
@@ -161,60 +152,93 @@ function updateTimetable(selectTab) {
                 // collision and low priority, add a div until new rule starttime
                 if (checkRulesCollision(rule[0], rule2[0])) {
                     if (rule[0].priority < rule2[0].priority) { // actual rule hasn't a higher priority
-                        // add black div
+
+                        if (rightPointer>startTime1 && rightPointer<endTime1) {
+                            str += getBlock(1, startTime1*wdelta, (rightPointer - startTime1) * wdelta);
+                            startTime1 = rightPointer;
+                        } else if (rightPointer >= endTime1) {// can't show this rule highlighted
+                            str += getBlock(1, startTime1*wdelta, (endTime1 - startTime1) * wdelta);
+                            printLast = false; break;
+                        }
+
                         // var startTime1 = (rule[1].hour*60 + rule[1].minutes) * wdelta;
                         var startTime2 = (rule2[1].hour*60 + rule2[1].minutes);
                         var endTime2 = (rule2[0].endTime.hour*60 + rule2[0].endTime.minutes);
                         if (startTime2 >= startTime1) {
+
                             str += getBlock(0, startTime1*wdelta, (startTime2 - startTime1) * wdelta);
                             str += getBlock(1, startTime2*wdelta, (endTime1 - startTime2) * wdelta);
+                            rightPointer = startTime2;
                             // no sense to continue if this collision goes over actual rule endtime
                             if (endTime2 >= endTime1) {
                                 printLast = false; break;
                             } else {
                                 startTime1 = endTime2;
                             }
+                        } else {
+                            if (endTime2 >= endTime1) {// can't show this rule highlighted
+                                str += getBlock(1, startTime1*wdelta, (endTime1 - startTime1) * wdelta);
+                                printLast = false; break;
+                            } else {
+                                startTime1 = endTime2;
+                            }
                         }
+
                     }
                 }
             }
         }
         // all collision has been checked but i am not at the end of my time, wrote a div until that
         if (printLast) {
-            // add black div
-            var startTime = startTime1 * wdelta;
-            ruleWidth  = (endTime1 * wdelta - startTime);
-            startTime1 = endTime1;
-            str += '<div style="background-color:#000;position:absolute; left:'+startTime+'px; width:'+ruleWidth+'px; z-index:2;opacity:0.5;">&nbsp;</div>';
+            if (rightPointer >= endTime1) {// can't show this rule highlighted
+                str += getBlock(1, startTime1*wdelta, (endTime1 - startTime1) * wdelta);
+            } else {
+                if (rightPointer>startTime1 && rightPointer<endTime1) {
+                    str += getBlock(1, startTime1*wdelta, (rightPointer - startTime1) * wdelta);
+                    startTime1 = rightPointer;
+                }
+                // add black div
+                var startTime = startTime1 * wdelta;
+                str += getBlock(0, startTime, (endTime1 * wdelta - startTime));
+                rightPointer = endTime1;
+            }
         }
 
         str += getVerticalLineBlocks(width, 0);
-        str += '</div></div>';
+        str += '</div><div style="width:45px;">'+rule[0].closedPercentage+'&#37;</div></div>';
     }
 
     // last line with hours and lines
-    str += '<div style="width:100%;display:inline-flex;">' +
+    str += '<div style="width:100%;display:inline-flex;padding:0 5px;height:50px;overflow: hidden;">' +
                 '<div style="width:150px;">&nbsp;</div>' +
-                '<div style="width:100%;position:relative;" class="timeline">';
-
+                '<div style="width:100%;height:100%;position:relative;" class="timeline">';
     str += getVerticalLineBlocks(width, 1);
-    str += '</div></div>';
+    str += '</div><div style="width:45px;">&nbsp;</div></div>';
 
     sel.find('.rules-timetable').html(str);
+
+
+    if ($(visualTab).is(':checked')) {
+        $(sel).find('.rules-list').hide();
+        $(sel).find('.rules-timetable').show();
+    } else {
+        $(sel).find('.rules-timetable').hide();
+        $(sel).find('.rules-list').show();
+    }
 }
 
 function getBlock(type, left, width) {
-    var color = (type==0 ? '#000' : '#aaa');
+    var color = (type==0 ? '#ff5722' : '#aaa');
     return '<div style="background-color:'+color+';position:absolute; ' +
-                 'left:'+left+'px; width:'+width+'px; ' +
-                 'z-index:2; opacity:0.5;">&nbsp;</div>';
+                 'left:'+left+'px; width:'+width+'px; height:100%; ' +
+                 'z-index:2; opacity:0.7;">&nbsp;</div>';
 }
 function getVerticalLineBlocks(width, type) {
     var str = '';
     var whour = width / 24;
     for (var j=0; j < 24; ++j) {
         str += '<div style="border-right:1px solid #aaa;position:absolute; ' +
-                    'left:'+(j*whour)+'px; width:'+whour+'px; ' +
+                    'left:'+(j*whour)+'px; width:'+whour+'px;height:100%; ' +
                     'text-align:center;z-index:1">' +
                     ''+(type==0 ? '&nbsp;' : j)+'</div>';
     }
@@ -232,14 +256,7 @@ function editFloor(){
         currEditShut = null;
     }
     editFloorRulesHtml();
-    updateTimetable(floorRules);
-    if ($(floorVisual).is(':checked')) {
-        $(sel).find('.rules-list').hide();
-        $(sel).find('.rules-timetable').show();
-    } else {
-        $(sel).find('.rules-timetable').hide();
-        $(sel).find('.rules-list').show();
-    }
+    updateTimetable(floorRules, floorVisual);
 }
 
 function editFloorRulesHtml() {
@@ -294,8 +311,8 @@ function editRoom(index) {
         //reset currEditPoly shutter selection
         changeShuttersFillColor(currEditPoly,-1,true);
         editRoomRulesHtml(index);
-
     }
+    updateTimetable(roomRules, roomVisual);
 }
 
 function editRoomRulesHtml(index) {
@@ -422,6 +439,7 @@ function editShutter(indexPoly, indexShut) {
             canvas.setActiveObject(polys[indexPoly].shutters[indexShut].fabricRect);
         }
         editShutterRulesHtml(indexPoly, indexShut);
+        updateTimetable(windowRules, windowRules);
     }
 }
 

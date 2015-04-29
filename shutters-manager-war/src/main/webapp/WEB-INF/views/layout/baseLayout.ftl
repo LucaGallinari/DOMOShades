@@ -23,8 +23,18 @@
                         <div class="user_name"> ${userNick} </div>
                         <div class="user_email"> ${userEmail} </div>
                     </li>
-                    <li class="bold"><a href="${logoutURL}" class="waves-effect waves-orange">Logout</a></li>
-                    <li class="bold"><a href="/homes/" class="waves-effect waves-orange">Manage Homes</a></li>
+                    <li class="bold">
+                        <a href="${logoutURL}" class="waves-effect waves-orange">
+                            <i class="mdi-hardware-keyboard-return"></i>
+                            Logout
+                        </a>
+                    </li>
+                    <li class="bold">
+                        <a href="/homes/" class="waves-effect waves-orange">
+                            <i class="mdi-action-settings-applications"></i>
+                            Manage Homes
+                        </a>
+                    </li>
 
                     <#if homes?has_content>
                         <#list homes as home>
@@ -32,15 +42,38 @@
                             <ul class="collapsible" data-collapsible="accordion">
                                 <li>
                                     <div class="collapsible-header bold nomargin nopadding">
-                                        <a>${home.description}</a>
+                                        <a>
+                                            <i class="mdi-action-home"></i>
+                                            ${home.description}
+                                        </a>
                                     </div>
                                     <div class="collapsible-body">
                                         <!-- Homes list -->
                                         <ul>
-                                            <li class="waves-effect waves-blue"><a href="/floors/?home=${home.id}">Manage this house</a></li>
-                                            <li class="toggleShut waves-effect waves-teal"><a href="#" data-toggle="${home.id}" data-scope="0">Open all shutters</a></li>
-                                            <li class="toggleShut waves-effect waves-purple"><a href="#" data-toggle="${home.id}" data-scope="1">Close all shutters</a></li>
-                                            <li class="toggleShut waves-effect waves-red"><a href="#" data-toggle="${home.id}" data-scope="2">Remove open/close</a></li>
+                                            <li class="waves-effect waves-blue">
+                                                <a href="/floors/?home=${home.id}">
+                                                    <i class="mdi-action-settings"></i>
+                                                    Manage this house
+                                                </a>
+                                            </li>
+                                            <li class="toggleShut waves-effect waves-teal">
+                                                <a href="#" data-toggle="${home.id}" data-scope="0">
+                                                    <i class="mdi-file-file-upload"></i>
+                                                    Open all shutters
+                                                </a>
+                                            </li>
+                                            <li class="toggleShut waves-effect waves-purple">
+                                                <a href="#" data-toggle="${home.id}" data-scope="1">
+                                                    <i class="mdi-file-file-download"></i>
+                                                    Close all shutters
+                                                </a>
+                                            </li>
+                                            <li class="toggleShut waves-effect waves-red">
+                                                <a href="#" data-toggle="${home.id}" data-scope="2">
+                                                    <i class="mdi-content-clear"></i>
+                                                    Remove open/close
+                                                </a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </li>

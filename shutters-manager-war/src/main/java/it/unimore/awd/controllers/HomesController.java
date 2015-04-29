@@ -2,7 +2,6 @@ package it.unimore.awd.controllers;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import it.unimore.awd.DomoWrapper;
 
-import it.unimore.awd.classes.FloorToken;
 import it.unimore.awd.classes.User;
 import it.unimore.awd.classes.Home;
 
